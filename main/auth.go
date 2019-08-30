@@ -4,15 +4,23 @@ import (
 	"crypto/md5"
 	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
 
 const salt = "NFUCA"
 
+type jwtCustomClaims struct {
+	Name  string `json:"name"`
+	Mail  string `json:"mail"`
+	Level int64  `json:"level"`
+	jwt.StandardClaims
+}
+
 func oaLogin(c echo.Context) error {
 	u := User{}
-	var re Callback
 	if err := c.Bind(&u); err != nil {
 		return err
 	}
@@ -22,15 +30,34 @@ func oaLogin(c echo.Context) error {
 	getuser := User{Mail: u.Mail}
 	user := getUser(getuser)
 	if len(user) == 0 {
-		re = Callback{Code: 0, Info: "ERROR"}
+		re := Callback{Code: 0, Info: "ERROR"}
 		return c.JSON(http.StatusOK, re)
 	}
 	if user[0].Password == md5str1 {
-		re = Callback{Code: 200, Info: "OK"}
-	} else {
-		re = Callback{Code: 0, Info: "account or password incorrect"}
+		claims := &jwtCustomClaims{
+			user[0].Username,
+			user[0].Mail,
+			user[0].Level,
+			jwt.StandardClaims{
+				ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+			},
+		}
+
+		// Create token with claims
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+		// Generate encoded token and send it as response.
+		t, err := token.SignedString([]byte("NFUCA"))
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusOK, echo.Map{
+			"token": t,
+		})
 	}
-	return c.JSON(http.StatusOK, re)
+	return echo.ErrUnauthorized
+
 }
 
 func oaRegister(c echo.Context) error {
@@ -59,4 +86,18 @@ func oaRegister(c echo.Context) error {
 
 func oaGetJwt(user User) string {
 	return ""
+}
+
+func accessible(c echo.Context) error {
+	return c.String(http.StatusOK, "Accessible")
+}
+
+func checkAuth(c echo.Context) jwt.Claims {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims //.(jwt.MapClaims)
+	return claims
+}
+
+func checkPower(c echo.Context) error {
+	return c.JSON(http.StatusOK, checkAuth(c))
 }

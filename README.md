@@ -35,9 +35,9 @@ XvA-Go
 | --- | --- | --- | --- |
 | auth/login |(POST) username,password||(JSON) {status:(200/000),jwt:(jwt/none)}|
 | auth/register | (POST) username,password,mail| |(JSON) {status:(200/000)}|
-| client/setup | (GET) ipv4,*ipv6(option)*,hostname| |(JSON) {status:(200/000),token:(TOKEN)}|
-| client/update | (GET) id,token,info(json2string) ||(JSON) {status:(200/000),info:(none/errorinfo)}|
-| client/get | (GET) id,token | |(JSON) {status:(200/201/000),info:(JSON)}|
+| web/setup | (GET) ipv4,*ipv6(option)*,hostname| |(JSON) {status:(200/000),token:(TOKEN)}|
+| web/update | (GET) id,token,info(json2string) ||(JSON) {status:(200/000),info:(none/errorinfo)}|
+| web/get | (GET) id,token | |(JSON) {status:(200/201/000),info:(JSON)}|
 | server/getUpdate | (POST) jwt | | (JSON) |
 | server/getFile | (POST) jwt,path | | (String) |
 | server/editFile | (POST) jwt,(File) | |(JSON) {status:(200/000)} |

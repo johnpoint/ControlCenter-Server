@@ -60,7 +60,11 @@ func getServer(server Server) []Server {
 	defer db.Close()
 	db.AutoMigrate(&Server{})
 	servers := []Server{}
-	db.Where(server).Find(&servers)
+	if server.Hostname == "*" {
+		db.Find(&servers)
+	} else {
+		db.Where(server).Find(&servers)
+	}
 	return servers
 }
 

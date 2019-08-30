@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 type User struct {
@@ -44,37 +45,17 @@ type Callback struct {
 }
 
 func main() {
-	e := echo.New() /*
-		e.GET("/", func(c echo.Context) error {
-			return c.String(http.StatusOK, "Hello, get")
-		})
-
-		e.POST("/", func(c echo.Context) error {
-			return c.String(http.StatusOK, "Hello, post")
-		})
-		e.GET("/show", show)*/
+	e := echo.New()
 	e.POST("/auth/login", oaLogin)
 	e.POST("/auth/register", oaRegister)
-	/*
-		type User struct {
-			Name  string `json:"name" xml:"name" form:"name" query:"name"`
-			Email string `json:"email" xml:"email" form:"email" query:"email"`
-		}
 
-		e.POST("/users", func(c echo.Context) error {
-			u := new(User)
-			if err := c.Bind(u); err != nil {
-				return err
-			}
-			return c.JSON(http.StatusCreated, u)
-		})
+	// Unauthenticated route
+	e.GET("/", accessible)
 
-		e.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
-			if username == "johnpoint" && password == "200632482" {
-				return true, nil
-			}
-			return false, nil
-		}))
-	*/
+	// Restricted group
+	r := e.Group("/")
+	r.Use(middleware.JWT([]byte("NFUCA")))
+	r.POST("debug/check", checkPower)
+	r.POST("web/getUpdate", getUpdate)
 	e.Logger.Fatal(e.Start(":1323"))
 }
