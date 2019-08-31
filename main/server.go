@@ -14,10 +14,11 @@ type User struct {
 }
 
 type Server struct {
-	Hostname string
-	Ipv4     string
-	Ipv6     string
-	ID       int64 `gorm:"AUTO_INCREMENT"`
+	Token    string
+	Hostname string `json:"hostname" xml:"hostname" form:"hostname" query:"hostname"`
+	Ipv4     string `json:"ipv4" xml:"ipv4" form:"ipv4" query:"ipv4"`
+	Ipv6     string `json:"ipv6" xml:"ipv6" form:"ipv6" query:"ipv6"`
+	ID       int64  `gorm:"AUTO_INCREMENT"`
 }
 
 type Service struct {
@@ -46,16 +47,15 @@ type Callback struct {
 
 func main() {
 	e := echo.New()
+	e.Debug = true
+	e.HideBanner = true
 	e.POST("/auth/login", oaLogin)
 	e.POST("/auth/register", oaRegister)
-
-	// Unauthenticated route
+	e.POST("/server/setup", setupServer)
 	e.GET("/", accessible)
-
-	// Restricted group
 	r := e.Group("/")
 	r.Use(middleware.JWT([]byte("NFUCA")))
 	r.POST("debug/check", checkPower)
-	r.POST("web/getUpdate", getUpdate)
+	r.POST("web/getUpdate", getServerInfo)
 	e.Logger.Fatal(e.Start(":1323"))
 }

@@ -30,7 +30,7 @@ func oaLogin(c echo.Context) error {
 	getuser := User{Mail: u.Mail}
 	user := getUser(getuser)
 	if len(user) == 0 {
-		re := Callback{Code: 0, Info: "ERROR"}
+		re := Callback{Code: 0, Info: "account or password incorrect"}
 		return c.JSON(http.StatusOK, re)
 	}
 	if user[0].Password == md5str1 {
@@ -42,11 +42,7 @@ func oaLogin(c echo.Context) error {
 				ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 			},
 		}
-
-		// Create token with claims
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-		// Generate encoded token and send it as response.
 		t, err := token.SignedString([]byte("NFUCA"))
 		if err != nil {
 			return err
@@ -56,7 +52,7 @@ func oaLogin(c echo.Context) error {
 			"token": t,
 		})
 	}
-	return echo.ErrUnauthorized
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "account or password incorrect"})
 
 }
 
@@ -66,7 +62,9 @@ func oaRegister(c echo.Context) error {
 	if err := c.Bind(&u); err != nil {
 		return err
 	}
+	fmt.Println(u)
 	checkUser := getUser(User{Mail: u.Mail})
+	fmt.Println(checkUser)
 	if len(checkUser) != 0 {
 		re = Callback{Code: 0, Info: "This account has been used"}
 	} else {
@@ -94,7 +92,7 @@ func accessible(c echo.Context) error {
 
 func checkAuth(c echo.Context) jwt.Claims {
 	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims //.(jwt.MapClaims)
+	claims := user.Claims
 	return claims
 }
 
