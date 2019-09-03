@@ -62,9 +62,7 @@ func oaRegister(c echo.Context) error {
 	if err := c.Bind(&u); err != nil {
 		return err
 	}
-	fmt.Println(u)
 	checkUser := getUser(User{Mail: u.Mail})
-	fmt.Println(checkUser)
 	if len(checkUser) != 0 {
 		re = Callback{Code: 0, Info: "This account has been used"}
 	} else {

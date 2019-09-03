@@ -76,3 +76,25 @@ func getDomain(domain Domain) []Domain {
 	db.Where(domain).Find(&domains)
 	return domains
 }
+
+func updateDomain(where Domain, domain Domain) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Domain{})
+	db.Model(&domain).Where(where).Update(domain)
+	if len(getDomain(domain)) != 0 {
+		return true
+	}
+	return false
+}
+
+func updateServer(where Server, server Server) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Server{})
+	db.Model(&server).Where(where).Update(server)
+	if len(getServer(server)) != 0 {
+		return true
+	}
+	return false
+}

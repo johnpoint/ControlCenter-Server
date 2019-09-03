@@ -17,6 +17,7 @@
     <title>DNMP</title>
 </head>
 
+
 <body>
     <style>
         section#header .logo-text {
@@ -24,33 +25,6 @@
             font-weight: 400;
             font-size: 2.6em;
             white-space: nowrap;
-        }
-
-        .tiles .tile {
-            padding: 12px 20px;
-            background-color: #f8f8f8;
-            border-right: 1px solid #ccc;
-        }
-
-        .tile .icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 48px;
-            line-height: 1;
-            color: #ccc;
-        }
-
-        .tile .stat {
-            margin-top: 20px;
-            font-size: 40px;
-            line-height: 1;
-        }
-
-        .tiles .tile .highlight {
-            margin-top: 4px;
-            height: 2px;
-            border-radius: 2px;
         }
     </style>
     <section id="title">
@@ -79,15 +53,16 @@
                 <div class="collapse navbar-collapse" id="primary-nav">
 
                     <ul class="nav navbar-nav">
-                        <li class="active" id="Primary_Navbar-Home">
+                        <li menuitemname="Home" class="" id="Primary_Navbar-Home">
                             <a href="/">
                                 首页
                             </a>
+                        </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                 aria-haspopup="true" aria-expanded="false">监控 <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="/status/domain.html">域名监控</a></li>
+                                <li><a href="/status/domain.html">网站监控</a></li>
                                 <li><a href="/status/server.html">服务器监控</a></li>
                             </ul>
                         </li>
@@ -141,104 +116,87 @@
 
     <section id="main-body">
         <div class="container">
-            <div class="page-header">
-                <h1>Welcome! <small>Overview</small></h1>
-            </div>
+            <div id="loginerror"></div>
             <div class="row">
-                <div class="col-md-4">
-                    <div class="panel panel-default" onclick="window.location='status/server.html'">
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-8 col-xs-8">
-                                        <h1 id="lenserver">0</h1>
-                                        <p>Server</p>
+
+                <!-- Container for main page display content -->
+
+                <div class="col-md-6 col-md-offset-3 main-content">
+                    <div class="logincontainer">
+                        <div class="header-lined">
+                            <h1>登入 <small>请使用您的账户登入</small></h1>
+                        </div>
+                        <div class="providerLinkingFeedback"></div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                <form method="post" action="https://my.bootvm.com/dologin.php" class="login-form"
+                                    role="form" data-op-form-id="0">
+                                    <input type="hidden" name="token" value="ae1665febf501fa432f3fcc3323436795c33d8e3">
+                                    <div class="form-group">
+                                        <label for="inputEmail">Email 地址</label>
+                                        <input type="email" name="username" class="form-control" id="inputEmail"
+                                            placeholder="輸入 email" autofocus="" data-op-id="0">
                                     </div>
-                                    <div class="col-md-4 col-xs-4">
-                                        <i class="fas fa-cubes fa-4x"></i>
+
+                                    <div class="form-group">
+                                        <label for="inputPassword">密码</label>
+                                        <input type="password" name="password" class="form-control" id="inputPassword"
+                                            placeholder="密碼" autocomplete="off">
                                     </div>
-                                </div>
+
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="rememberme"> 记住我
+                                        </label>
+                                    </div>
+                                    <div class="text-center margin-bottom">
+                                    </div>
+                                    <div align="center">
+                                        <a id="loginbtn" type="button" class="btn btn-default">登入</a>
+                                    </div>
+                                </form>
+
+                            </div>
+                            <div class="col-sm-5 hidden">
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-default" onclick="window.location='status/domain.html'">
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-8 col-xs-8">
-                                        <h1 id="lendomain">0</h1>
-                                        <p>Domain</p>
-                                    </div>
-                                    <div class="col-md-4 col-xs-4">
-                                        <i class="fas fa-globe fa-4x"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-default" onclick="window.location='certificate.html'">
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-8 col-xs-8">
-                                        <h1>0</h1>
-                                        <p>Certificate</p>
-                                    </div>
-                                    <div class="col-md-4 col-xs-4">
-                                        <i class="fas fa-file fa-4x"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+                    <p style="text-align:center;">Powered by <a href="/" target="_blank">DNMP-Dashboard</a></p>
+
+                </div><!-- /.main-content -->
+                <div class="clearfix"></div>
             </div>
         </div>
     </section>
     <script src="/js/checkPower.js"></script>
     <script>
 
-        $.ajax({
-            "url": "http://127.0.0.1:1323/web/ServerInfo",
-            "method": "GET",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": "Bearer " + userjwt
-            },
-            success: function (data) {
-                $('#lenserver')[0].innerText = data.length
-            }
-        });
-        $.ajax({
-            "url": "http://127.0.0.1:1323/web/DomainInfo",
-            "method": "GET",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": "Bearer " + userjwt
-            },
-            success: function (data) {
-                $('#lendomain')[0].innerText = data.length
-            }
-        });
-        $('#logout').click(function () {
-            clearCookie("jwt")
-            window.location.pathname = "/login.html"
+        $('#loginbtn').click(function login() {
+            $.ajax({
+                "url": "http://127.0.0.1:1323/auth/login",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                "data": {
+                    "email": $('#inputEmail')[0].value,
+                    "password": $('#inputPassword')[0].value
+                },
+                success: function (data) {
+                    if (data["token"] != null) {
+                        document.cookie = "jwt=" + data["token"]
+                        window.location.pathname = "/"
+                    }
+                },
+                error: function () {
+                    $('#loginerror')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> oh~ 帐号或密码错误!</div > '
+                }
+            })
         })
-        function setCookie(cname, cvalue, exdays) {
-            var d = new Date();
-            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-            var expires = "expires=" + d.toUTCString();
-            document.cookie = cname + "=" + cvalue + "; " + expires;
-        }
-        function clearCookie(name) {
-            setCookie(name, "", -1);
-        }
     </script>
 
 </body>

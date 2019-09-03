@@ -17,6 +17,7 @@
     <title>DNMP</title>
 </head>
 
+
 <body>
     <style>
         section#header .logo-text {
@@ -24,33 +25,6 @@
             font-weight: 400;
             font-size: 2.6em;
             white-space: nowrap;
-        }
-
-        .tiles .tile {
-            padding: 12px 20px;
-            background-color: #f8f8f8;
-            border-right: 1px solid #ccc;
-        }
-
-        .tile .icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 48px;
-            line-height: 1;
-            color: #ccc;
-        }
-
-        .tile .stat {
-            margin-top: 20px;
-            font-size: 40px;
-            line-height: 1;
-        }
-
-        .tiles .tile .highlight {
-            margin-top: 4px;
-            height: 2px;
-            border-radius: 2px;
         }
     </style>
     <section id="title">
@@ -79,7 +53,7 @@
                 <div class="collapse navbar-collapse" id="primary-nav">
 
                     <ul class="nav navbar-nav">
-                        <li class="active" id="Primary_Navbar-Home">
+                        <li menuitemname="Home" class="" id="Primary_Navbar-Home">
                             <a href="/">
                                 首页
                             </a>
@@ -99,7 +73,7 @@
                                 <li><a href="/service/manage.html">服务管理</a></li>
                             </ul>
                         </li>
-                        <li>
+                        <li class="active">
                             <a href="/certificate.html">
                                 证书管理
                             </a>
@@ -141,91 +115,12 @@
 
     <section id="main-body">
         <div class="container">
-            <div class="page-header">
-                <h1>Welcome! <small>Overview</small></h1>
-            </div>
             <div class="row">
-                <div class="col-md-4">
-                    <div class="panel panel-default" onclick="window.location='status/server.html'">
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-8 col-xs-8">
-                                        <h1 id="lenserver">0</h1>
-                                        <p>Server</p>
-                                    </div>
-                                    <div class="col-md-4 col-xs-4">
-                                        <i class="fas fa-cubes fa-4x"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-default" onclick="window.location='status/domain.html'">
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-8 col-xs-8">
-                                        <h1 id="lendomain">0</h1>
-                                        <p>Domain</p>
-                                    </div>
-                                    <div class="col-md-4 col-xs-4">
-                                        <i class="fas fa-globe fa-4x"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-default" onclick="window.location='certificate.html'">
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-8 col-xs-8">
-                                        <h1>0</h1>
-                                        <p>Certificate</p>
-                                    </div>
-                                    <div class="col-md-4 col-xs-4">
-                                        <i class="fas fa-file fa-4x"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
     <script src="/js/checkPower.js"></script>
     <script>
-
-        $.ajax({
-            "url": "http://127.0.0.1:1323/web/ServerInfo",
-            "method": "GET",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": "Bearer " + userjwt
-            },
-            success: function (data) {
-                $('#lenserver')[0].innerText = data.length
-            }
-        });
-        $.ajax({
-            "url": "http://127.0.0.1:1323/web/DomainInfo",
-            "method": "GET",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": "Bearer " + userjwt
-            },
-            success: function (data) {
-                $('#lendomain')[0].innerText = data.length
-            }
-        });
         $('#logout').click(function () {
             clearCookie("jwt")
             window.location.pathname = "/login.html"

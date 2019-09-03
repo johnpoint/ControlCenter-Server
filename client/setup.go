@@ -9,10 +9,10 @@ import (
 
 func main() {
 
-	url := "127.0.0.1:1323/server/setup"
+	url := "http://127.0.0.1:1323/server/setup"
 	method := "POST"
 
-	payload := strings.NewReader("hostname=localhost&ipv4=127.0.0.1")
+	payload := strings.NewReader("hostname=localhost&ipv4=127.0.0.5")
 
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
