@@ -53,94 +53,10 @@
             border-radius: 2px;
         }
     </style>
-    <section id="title">
-        <div class="jumbotron"
-            style="margin-bottom:0px;padding-top:0px;padding-bottom:0px;margin-bottom:0px;background-color: white">
-            <div class="container">
-                <center><img src="/img/logo.PNG"></center>
-            </div>
-        </div>
-    </section>
-
-    <section id="main-menu">
-        <nav id="nav" class="navbar navbar-default navbar-main" role="navigation">
-            <div class="container">
-                <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#primary-nav">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="primary-nav">
-
-                    <ul class="nav navbar-nav">
-                        <li class="active" id="Primary_Navbar-Home">
-                            <a href="/">
-                                首页
-                            </a>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                aria-haspopup="true" aria-expanded="false">监控 <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/status/domain.html">域名监控</a></li>
-                                <li><a href="/status/server.html">服务器监控</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                aria-haspopup="true" aria-expanded="false">服务 <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/service/add.html">添加服务</a></li>
-                                <li><a href="/service/manage.html">服务管理</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="/certificate.html">
-                                证书管理
-                            </a>
-                        </li>
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li menuitemname="Account" class="dropdown" id="nologin_Navbar-Account">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-                                账户
-                                &nbsp;<b class="caret"></b> </a>
-                            <ul class="dropdown-menu">
-                                <li menuitemname="Login" id="Secondary_Navbar-Account-Login">
-                                    <a href="/login.html">
-                                        登录
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li menuitemname="Account" class="dropdown" id="login_Navbar-Account" style="display: none">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"
-                                id="username"><b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li menuitemname="Login" id="Secondary_Navbar-Account-Login">
-                                    <a id="logout">
-                                        注销
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                    </ul>
-
-                </div><!-- /.navbar-collapse -->
-            </div>
-        </nav>
-
-    </section>
-
+    <section id="nav"></section>
     <section id="main-body">
         <div class="container">
+            <div id="error"></div>
             <div class="page-header">
                 <h1>Welcome! <small>Overview</small></h1>
             </div>
@@ -180,12 +96,12 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="panel panel-default" onclick="window.location='certificate.html'">
+                    <div class="panel panel-default" onclick="window.location='certificate'">
                         <div class="panel-body">
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-md-8 col-xs-8">
-                                        <h1>0</h1>
+                                        <h1 id="lencer">0</h1>
                                         <p>Certificate</p>
                                     </div>
                                     <div class="col-md-4 col-xs-4">
@@ -196,11 +112,64 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default" onclick="window.location='site/manage.html'">
+                        <div class="panel-body">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-8 col-xs-8">
+                                        <h1 id="lensite">0</h1>
+                                        <p>Site</p>
+                                    </div>
+                                    <div class="col-md-4 col-xs-4">
+                                        <i class="far fa-window-restore fa-4x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
+    <section id="footer"></section>
+    <script>
+        $("#nav").load('/part/nav.html');
+        $("#footer").load('/part/footer.html');
+    </script>
     <script src="/js/checkPower.js"></script>
     <script>
+        $.ajax({
+            "url": "http://127.0.0.1:1323/web/Certificate",
+            "method": "GET",
+            "timeout": 0,
+            "headers": {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer " + userjwt
+            },
+            "data": {
+                name: "*"
+            },
+            success: function (data) {
+                $('#lencer')[0].innerHTML = data.length
+            }
+        });
+        $.ajax({
+            "url": "http://127.0.0.1:1323/web/SiteInfo",
+            "method": "GET",
+            "timeout": 0,
+            "headers": {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer " + userjwt
+            },
+            data: { name: "*" },
+            success: function (data) {
+                $('#lensite')[0].innerHTML = data.length
+            },
+            error: function () {
+                $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '
+            }
+        });
 
         $.ajax({
             "url": "http://127.0.0.1:1323/web/ServerInfo",
@@ -212,6 +181,9 @@
             },
             success: function (data) {
                 $('#lenserver')[0].innerText = data.length
+            },
+            error: function () {
+                $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '
             }
         });
         $.ajax({

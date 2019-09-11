@@ -32,10 +32,9 @@
         <div class="container">
             <div id="error"></div>
             <div class="page-header">
-                <h1>Server <small>Overview</small></h1>
+                <h1>Site <small>Manage</small></h1>
             </div>
-            <div class="row" id="serverinfo">
-
+            <div class="row" id="siteinfo">
             </div>
         </div>
     </section>
@@ -46,59 +45,29 @@
     </script>
     <script src="/js/checkPower.js"></script>
     <script>
-
         $.ajax({
-            "url": "http://127.0.0.1:1323/web/ServerInfo",
+            "url": "http://127.0.0.1:1323/web/SiteInfo",
             "method": "GET",
             "timeout": 0,
             "headers": {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer " + userjwt
             },
-            data: { hostname: "*" },
+            data: { name: "*" },
             success: function (data) {
+                console.log(data)
                 var dom = ""
                 for (let index = 0; index < data.length; index++) {
-                    dom += '<div class="col-md-4"><div class="panel panel-success" onclick="window.location=\'serverInfo.html?ip=' + data[index]["ipv4"] + "'\">\
-                            <div class=\"panel-heading\">" + data[index]["ipv4"] +
-                        '</div><div class="panel-body"><p>ID: ' + data[index]["ID"] + '</p><p>Ipv6: ' + data[index]["ipv6"] + '</p><p>Hostname: ' + data[index]["hostname"] + '</p></div ></div></div> '
+                    dom += '<div class="col-md-4"><div class="panel panel-success" onclick="window.location=\'siteInfo.html?name=' + data[index]["name"] + "'\">\
+                            <div class=\"panel-heading\">" + data[index]["name"] +
+                        '</div><div class="panel-body"><p>Status: ' + data[index]["status"] + '</p></div ></div></div> '
                 }
-                $('#serverinfo')[0].innerHTML = dom
-                update()
+                $('#siteinfo')[0].innerHTML = dom
             },
             error: function () {
                 $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '
             }
         });
-
-        function update() {
-            $.ajax({
-                "url": "http://127.0.0.1:1323/web/ServerInfo",
-                "method": "GET",
-                "timeout": 0,
-                "headers": {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "Authorization": "Bearer " + userjwt
-                },
-                data: { hostname: "*" },
-                success: function (data) {
-                    for (let index = 0; index < data.length; index++) {
-                        statusdata = JSON.parse(data[index]["status"])
-                        if ((Date.parse(new Date()) / 1000) - statusdata["BootTime"] - statusdata["Uptime"] > 5) {
-                            document.getElementsByClassName("panel")[index].className = "panel panel-danger"
-                        } else {
-                            document.getElementsByClassName("panel")[index].className = "panel panel-success"
-                        }
-                    }
-                }
-            })
-        }
-
-        const timeId = setInterval(() => {
-            if (true) {
-                clearInterval(this.timeId)
-            }; if (status == 0) { update() };
-        }, 3000)
 
         $('#logout').click(function () {
             clearCookie("jwt")

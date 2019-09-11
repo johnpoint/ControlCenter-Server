@@ -46,6 +46,65 @@ func addDomain(domain Domain) bool {
 	return false
 }
 
+func addSite(site Site) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Site{})
+	db.Create(&site)
+	if !(db.NewRecord(site)) {
+		return true
+	}
+	return false
+}
+
+func getSite(site Site) []Site {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Site{})
+	sites := []Site{}
+	if site.Name == "*" {
+		db.Find(&sites)
+	} else {
+		db.Where(site).Find(&sites)
+	}
+	return sites
+}
+
+func addCer(certificate Certificate) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Certificate{})
+	db.Create(&certificate)
+	if !(db.NewRecord(certificate)) {
+		return true
+	}
+	return false
+}
+
+func updateCer(where Certificate, certificate Certificate) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Certificate{})
+	db.Model(&certificate).Where(where).Update(certificate)
+	if len(getCer(certificate)) != 0 {
+		return true
+	}
+	return false
+}
+
+func getCer(certificate Certificate) []Certificate {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Certificate{})
+	certificates := []Certificate{}
+	if certificate.Name == "*" {
+		db.Find(&certificates)
+		return certificates
+	}
+	db.Where(certificate).Find(&certificates)
+	return certificates
+}
+
 func getUser(user User) []User {
 	db := initDatabase("test.db")
 	defer db.Close()

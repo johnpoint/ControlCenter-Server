@@ -30,15 +30,27 @@
     <section id="nav"></section>
     <section id="main-body">
         <div class="container">
-            <div id="error"></div>
             <div class="page-header">
-                <h1>Server <small>Overview</small></h1>
+                <h1>Certificate <small></small></h1>
             </div>
-            <div class="row" id="serverinfo">
-
+            <div class="row">
+                <div class="panel panel-default">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Domain</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cerinfo">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
+
     <section id="footer"></section>
     <script>
         $("#nav").load('/part/nav.html');
@@ -46,59 +58,31 @@
     </script>
     <script src="/js/checkPower.js"></script>
     <script>
-
         $.ajax({
-            "url": "http://127.0.0.1:1323/web/ServerInfo",
+            "url": "http://127.0.0.1:1323/web/Certificate",
             "method": "GET",
             "timeout": 0,
             "headers": {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer " + userjwt
             },
-            data: { hostname: "*" },
+            "data": {
+                name: "*"
+            },
             success: function (data) {
                 var dom = ""
                 for (let index = 0; index < data.length; index++) {
-                    dom += '<div class="col-md-4"><div class="panel panel-success" onclick="window.location=\'serverInfo.html?ip=' + data[index]["ipv4"] + "'\">\
-                            <div class=\"panel-heading\">" + data[index]["ipv4"] +
-                        '</div><div class="panel-body"><p>ID: ' + data[index]["ID"] + '</p><p>Ipv6: ' + data[index]["ipv6"] + '</p><p>Hostname: ' + data[index]["hostname"] + '</p></div ></div></div> '
+                    dom += '<tr><td>' + data[index]["id"] + '</td><td><strong>' + data[index]["name"] + '</strong></td><td><i onclick="window.location=\'info.html?name=' + data[index]["name"] + '\'" class="far fa-edit"></i></td></tr>'
                 }
-                $('#serverinfo')[0].innerHTML = dom
-                update()
-            },
-            error: function () {
-                $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '
-            }
-        });
-
-        function update() {
-            $.ajax({
-                "url": "http://127.0.0.1:1323/web/ServerInfo",
-                "method": "GET",
-                "timeout": 0,
-                "headers": {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "Authorization": "Bearer " + userjwt
-                },
-                data: { hostname: "*" },
-                success: function (data) {
-                    for (let index = 0; index < data.length; index++) {
-                        statusdata = JSON.parse(data[index]["status"])
-                        if ((Date.parse(new Date()) / 1000) - statusdata["BootTime"] - statusdata["Uptime"] > 5) {
-                            document.getElementsByClassName("panel")[index].className = "panel panel-danger"
-                        } else {
-                            document.getElementsByClassName("panel")[index].className = "panel panel-success"
-                        }
+                $('#cerinfo')[0].innerHTML = dom
+                for (let index = 0; index < data.length; index++) {
+                    var timestamp1 = Date.parse(new Date());
+                    if (parseInt(((timestamp1 / 1000 - data[index]["NotBefore"]) / (data[index]["NotAfter"] - data[index]["NotBefore"])) * 100) >= 100) {
+                        $('td')[index * 3].innerHTML = '<i class="fas fa-exclamation-triangle" style="color: red"></i>'
                     }
                 }
-            })
-        }
-
-        const timeId = setInterval(() => {
-            if (true) {
-                clearInterval(this.timeId)
-            }; if (status == 0) { update() };
-        }, 3000)
+            }
+        });
 
         $('#logout').click(function () {
             clearCookie("jwt")

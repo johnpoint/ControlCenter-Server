@@ -2,6 +2,9 @@ package main
 
 import (
 	"crypto/md5"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -23,6 +26,18 @@ func getServerInfo(c echo.Context) error {
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }
 
+func getSiteInfo(c echo.Context) error {
+	user := checkAuth(c).(jwt.MapClaims)
+	if user != nil {
+		site := Site{}
+		if err := c.Bind(&site); err != nil {
+			panic(err)
+		}
+		return c.JSON(http.StatusOK, getSite(site))
+	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
+}
+
 func setupServer(c echo.Context) error {
 	server := Server{}
 	if err := c.Bind(&server); err != nil {
@@ -41,6 +56,93 @@ func setupServer(c echo.Context) error {
 		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
 	}
 	return c.JSON(http.StatusOK, Callback{Code: 200, Info: md5str1})
+}
+
+func addSiteInfo(c echo.Context) error {
+	site := Site{}
+	if err := c.Bind(&site); err != nil {
+		panic(err)
+	}
+	if !addSite(site) {
+		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
+	}
+	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+}
+
+func addCertificateInfo(c echo.Context) error {
+	certificate := Certificate{}
+	if err := c.Bind(&certificate); err != nil {
+		panic(err)
+	}
+	var certPEMBlock []byte = []byte(certificate.Fullchain)
+	var cert tls.Certificate
+	certDERBlock, restPEMBlock := pem.Decode(certPEMBlock)
+	cert.Certificate = append(cert.Certificate, certDERBlock.Bytes)
+	certDERBlockChain, _ := pem.Decode(restPEMBlock)
+	if certDERBlockChain != nil {
+		cert.Certificate = append(cert.Certificate, certDERBlockChain.Bytes)
+	}
+	x509Cert, err := x509.ParseCertificate(certDERBlock.Bytes)
+	if err != nil {
+		panic(err)
+	}
+	certificate.DNSNames = x509Cert.DNSNames[0]
+	certificate.Issuer = x509Cert.Issuer.String()
+	certificate.IssuingCertificateURL = x509Cert.IssuingCertificateURL[0]
+	certificate.NotAfter = x509Cert.NotAfter.Unix()
+	certificate.NotBefore = x509Cert.NotBefore.Unix()
+	certificate.OCSPServer = x509Cert.OCSPServer[0]
+	certificate.Subject = x509Cert.Subject.String()
+	if !addCer(certificate) {
+		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
+	}
+	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+}
+
+func updateCertificateInfo(c echo.Context) error {
+	user := checkAuth(c).(jwt.MapClaims)
+	if user["level"].(float64) == 1 {
+		certificate := Certificate{}
+		if err := c.Bind(&certificate); err != nil {
+			panic(err)
+		}
+		var certPEMBlock []byte = []byte(certificate.Fullchain)
+		var cert tls.Certificate
+		certDERBlock, restPEMBlock := pem.Decode(certPEMBlock)
+		cert.Certificate = append(cert.Certificate, certDERBlock.Bytes)
+		certDERBlockChain, _ := pem.Decode(restPEMBlock)
+		if certDERBlockChain != nil {
+			cert.Certificate = append(cert.Certificate, certDERBlockChain.Bytes)
+		}
+		x509Cert, err := x509.ParseCertificate(certDERBlock.Bytes)
+		if err != nil {
+			panic(err)
+		}
+		certificate.DNSNames = x509Cert.DNSNames[0]
+		certificate.Issuer = x509Cert.Issuer.String()
+		certificate.IssuingCertificateURL = x509Cert.IssuingCertificateURL[0]
+		certificate.NotAfter = x509Cert.NotAfter.Unix()
+		certificate.NotBefore = x509Cert.NotBefore.Unix()
+		certificate.OCSPServer = x509Cert.OCSPServer[0]
+		certificate.Subject = x509Cert.Subject.String()
+		if updateCer(Certificate{ID: certificate.ID}, certificate) {
+			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+		}
+		return c.JSON(http.StatusBadRequest, Callback{Code: 0, Info: "ERROR"})
+	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
+}
+
+func getCertificateInfo(c echo.Context) error {
+	user := checkAuth(c).(jwt.MapClaims)
+	cer := Certificate{}
+	if err := c.Bind(&cer); err != nil {
+		panic(err)
+	}
+	if user["level"].(float64) == 1 {
+		return c.JSON(http.StatusOK, getCer(cer))
+	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }
 
 func getDomainInfo(c echo.Context) error {

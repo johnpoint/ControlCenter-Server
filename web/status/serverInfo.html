@@ -27,98 +27,30 @@
             white-space: nowrap;
         }
     </style>
-    <section id="title">
-        <div class="jumbotron"
-            style="margin-bottom:0px;padding-top:0px;padding-bottom:0px;margin-bottom:0px;background-color: white">
-            <div class="container">
-                <center><img src="/img/logo.PNG"></center>
-            </div>
-        </div>
-    </section>
-
-    <section id="main-menu">
-        <nav id="nav" class="navbar navbar-default navbar-main" role="navigation">
-            <div class="container">
-                <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#primary-nav">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="primary-nav">
-
-                    <ul class="nav navbar-nav">
-                        <li menuitemname="Home" class="" id="Primary_Navbar-Home">
-                            <a href="/">
-                                首页
-                            </a>
-                        <li class="dropdown active">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                aria-haspopup="true" aria-expanded="false">监控 <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/status/domain.html">域名监控</a></li>
-                                <li class="active"><a href="/status/server.html">服务器监控</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                aria-haspopup="true" aria-expanded="false">服务 <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/service/add.html">添加服务</a></li>
-                                <li><a href="/service/manage.html">服务管理</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="/certificate.html">
-                                证书管理
-                            </a>
-                        </li>
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li menuitemname="Account" class="dropdown" id="nologin_Navbar-Account">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-                                账户
-                                &nbsp;<b class="caret"></b> </a>
-                            <ul class="dropdown-menu">
-                                <li menuitemname="Login" id="Secondary_Navbar-Account-Login">
-                                    <a href="/login.html">
-                                        登录
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li menuitemname="Account" class="dropdown" id="login_Navbar-Account" style="display: none">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"
-                                id="username"><b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li menuitemname="Login" id="Secondary_Navbar-Account-Login">
-                                    <a id="logout">
-                                        注销
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                    </ul>
-
-                </div><!-- /.navbar-collapse -->
-            </div>
-        </nav>
-
-    </section>
-
+    <section id="nav"></section>
     <section id="main-body">
         <div class="container">
-            <div class="row" id="serverinfo">
+            <div id="error"></div>
+            <div class="page-header">
+                <h1>ServerInfo <small id="serverip"></small></h1>
             </div>
             <div class="row">
-                <div class="col-md-8 col-md-offset-2">
+                <div class="col-md-6" id="serverinfo">
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">CPU</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="container-fluid" id="cpuinfo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">Net</h3>
@@ -132,6 +64,11 @@
             </div>
         </div>
     </section>
+    <section id="footer"></section>
+    <script>
+        $("#nav").load('/part/nav.html');
+        $("#footer").load('/part/footer.html');
+    </script>
     <script src="/js/checkPower.js"></script>
     <script>
         function getinfo() {
@@ -148,8 +85,9 @@
                     var dom = ""
                     var dom2 = ""
                     var statusdata = JSON.parse(data[0]["status"])
-                    dom += '<div class="col-md-8 col-md-offset-2"><div id="statuspanel" class="panel panel-success">\
-                            <div class="panel-heading"><a href="serverInfo.html?ip='+ data[0]["ipv4"] + "\">" + data[0]["ipv4"] + "</a></div>" +
+                    $('#serverip')[0].innerHTML = data[0]["ipv4"]
+                    dom += '<div id="statuspanel" class="panel panel-success">\
+                            <div class="panel-heading">概况</div>' +
                         '<div class="panel-body"><table class="table"><tbody><tr><td><p>ID</p></td><td>' + data[0]["ID"] + '</td></tr>\
                             <tr><td><p>Ipv6</p></td><td>' + data[0]["ipv6"] + '</td></tr>\
                             <tr><td><p>Hostname</p></td><td>' + data[0]["hostname"] + '</td></tr>\
@@ -166,6 +104,7 @@
   <div id="disk" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: '+ statusdata["Percent"]["Disk"] + '%;">\
     '+ parseInt(statusdata["Percent"]["Disk"]) + '%\
 </div></div></td></tr>'
+
                     var keyl = []
                     var i = 0
                     for (var key in statusdata["Network"]) {
@@ -177,14 +116,26 @@
   <div class="panel-heading">'+ keyl[iq] + '</div>\
   <div class="panel-body">\
    <p>'+ statusdata["Network"][keyl[iq]]["Addrs"][0] + '</p>\
-   <p id="netdown"><i class="fas fa-cloud-download-alt"></i> '+ (statusdata["Network"][keyl[iq]]["ByteRecv"] / 1000000).toFixed(2) + ' Mb</p>\
-   <p id="netup"><i class="fas fa-cloud-upload-alt"></i> '+ (statusdata["Network"][keyl[iq]]["ByteSent"] / 1000000).toFixed(2) + ' Mb</p>\
+   <p class="netdown"><i class="fas fa-cloud-download-alt"></i> '+ (statusdata["Network"][keyl[iq]]["ByteRecv"] / 1000000).toFixed(2) + ' Mb <i class="fas fa-cloud-upload-alt"></i> ' + (statusdata["Network"][keyl[iq]]["ByteSent"] / 1000000).toFixed(2) + ' Mb</p>\
   </div>\
 </div></div>'
 
                     }
+                    var dom3 = ""
+                    for (let index = 0; index < statusdata["CPU"].length; index++) {
+                        dom3 += '<div class="col-md-6"><div class="panel panel-default">\
+  <div class="panel-body">\
+   <p>'+ statusdata["CPU"][index].ModelName + '</p>\
+  </div>\
+</div></div>'
+
+                    }
+                    $('#cpuinfo')[0].innerHTML = dom3
                     $('#netinfo')[0].innerHTML = dom2
                     $('#serverinfo')[0].innerHTML = dom
+                },
+                error: function () {
+                    $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '
                 }
             });
         }
@@ -227,13 +178,13 @@
                             i++
                         }
                         for (var iq = 0; iq < keyl.length; iq++) {
-                            $('#netdown')[iq].innerHTML = '<i class="fas fa-cloud-download-alt"></i> ' + (statusdata["Network"][keyl[iq]]["ByteRecv"] / 1000000).toFixed(2) + ' Mb'
-                            $('#netup')[iq].innerHTML = '<i class="fas fa-cloud-upload-alt"></i> ' + (statusdata["Network"][keyl[iq]]["ByteSent"] / 1000000).toFixed(2) + ' Mb'
+                            $('.netdown')[iq].innerHTML = '<i class="fas fa-cloud-download-alt"></i> ' + (statusdata["Network"][keyl[iq]]["ByteRecv"] / 1000000).toFixed(2) + ' Mb ' + '<i class="fas fa-cloud-upload-alt"></i> ' + (statusdata["Network"][keyl[iq]]["ByteSent"] / 1000000).toFixed(2) + ' Mb'
                         }
                     }
                 }
             })
         }
+        update()
 
         const timeId = setInterval(() => {
             if (true) {

@@ -1,0 +1,87 @@
+<div class="jumbotron"
+    style="margin-bottom:0px;padding-top:0px;padding-bottom:0px;margin-bottom:0px;background-color: white">
+    <div class="container">
+        <center><img src="/img/logo.PNG" style="padding: 32px;"></center>
+    </div>
+</div>
+
+<nav class="navbar navbar-default navbar-main" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#primary-nav">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="primary-nav">
+
+            <ul class="nav navbar-nav">
+                <li id="Primary_Navbar-Home">
+                    <a href="/">
+                        首页
+                    </a>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">监控 <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/status/domain.html">域名监控</a></li>
+                        <li><a href="/status/server.html">服务器监控</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">站点 <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/site/add.html">添加站点</a></li>
+                        <li><a href="/site/manage.html">站点管理</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">证书中心 <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/certificate/add.html">添加证书</a></li>
+                        <li><a href="/certificate">证书管理</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li menuitemname="Account" class="dropdown" id="nologin_Navbar-Account">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        账户
+                        &nbsp;<b class="caret"></b> </a>
+                    <ul class="dropdown-menu">
+                        <li menuitemname="Login" id="Secondary_Navbar-Account-Login">
+                            <a href="/login.html">
+                                登录
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li menuitemname="Account" class="dropdown" id="login_Navbar-Account" style="display: none">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false" id="username"><b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li menuitemname="Login" id="Secondary_Navbar-Account-Login">
+                            <a>
+                                设置
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li menuitemname="Login" id="Secondary_Navbar-Account-Login">
+                            <a id="logout">
+                                注销
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

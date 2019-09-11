@@ -22,9 +22,33 @@ type Server struct {
 	ID       int64  `gorm:"AUTO_INCREMENT"`
 }
 
+type Site struct {
+	ID     int64  `gorm:"AUTO_INCREMENT"`
+	Name   string `json:"name" xml:"name" form:"name" query:"name"`
+	Server int64  `json:"server" xml:"server" form:"server" query:"server"`
+	Status int64  `json:"status" xml:"status" form:"status" query:"status"`
+	Config string `json:"config" xml:"config" form:"config" query:"config"`
+	Cer    int64  `json:"cer" xml:"cer" form:"cer" query:"cer"`
+}
+
+type Certificate struct {
+	ID                    int64  `gorm:"AUTO_INCREMENT" json:"id" xml:"id" form:"id" query:"id"`
+	Name                  string `json:"name" xml:"name" form:"name" query:"name"`
+	Fullchain             string `json:"fullchain" xml:"fullchain" form:"fullchain" query:"fullchain"`
+	Key                   string `json:"key" xml:"key" form:"key" query:"key"`
+	DNSNames              string `json:"DNSNames" xml:"DNSNames" form:"DNSNames" query:"DNSNames"`
+	Issuer                string `json:"Issuer" xml:"Issuer" form:"Issuer" query:"Issuer"`
+	IssuingCertificateURL string `json:"IssuingCertificateURL" xml:"IssuingCertificateURL" form:"IssuingCertificateURL" query:"IssuingCertificateURL"`
+	NotAfter              int64  `json:"NotAfter" xml:"NotAfter" form:"NotAfter" query:"NotAfter"`
+	NotBefore             int64  `json:"NotBefore" xml:"NotBefore" form:"NotBefore" query:"NotBefore"`
+	OCSPServer            string `json:"OCSPServer" xml:"OCSPServer" form:"OCSPServer" query:"OCSPServer"`
+	Subject               string `json:"Subject" xml:"Subject" form:"Subject" query:"Subject"`
+}
+
 type Service struct {
-	ID   int64 `gorm:"AUTO_INCREMENT"`
-	Name string
+	ID     int64 `gorm:"AUTO_INCREMENT"`
+	Server int64
+	Site   int64
 }
 
 type Domain struct {
@@ -67,5 +91,10 @@ func main() {
 	r.PUT("web/DomainInfo", updateDomainInfo)
 	r.PUT("web/ServerInfo", updateServerInfo)
 	r.GET("web/UserInfo", getUserInfo)
+	r.PUT("web/SiteInfo", addSiteInfo)
+	r.GET("web/SiteInfo", getSiteInfo)
+	r.PUT("web/Certificate", addCertificateInfo)
+	r.GET("web/Certificate", getCertificateInfo)
+	r.POST("web/Certificate", updateCertificateInfo)
 	e.Logger.Fatal(e.Start(":1323"))
 }

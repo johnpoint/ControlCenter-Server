@@ -1,3 +1,34 @@
-i.fas.fa-4x {
+i.fa-4x {
     color: rgba(0, 0, 0, 0.5);
+}
+
+#nav {
+    height: 172px;
+}
+
+section#footer {
+    margin: 0;
+    padding: 20px 10px;
+    background-color: #f8f8f8;
+    border-top: 1px solid #ddd;
+    color: #666;
+    font-size: .9em;
+}
+
+body, html {
+    height: 100%;
+    background-color: #f8f8f8;
+}
+
+section#main-body {
+    min-height: 60%;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.navbar-header {
+    z-index: 99;
+}
+
+.navbar {
+    z-index: 999;
 }

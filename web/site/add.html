@@ -1,0 +1,149 @@
+<html>
+
+<head>
+    <meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600|Raleway:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/all.min.css">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <title>DNMP</title>
+</head>
+
+
+<body>
+    <style>
+        section#header .logo-text {
+            font-family: Raleway;
+            font-weight: 400;
+            font-size: 2.6em;
+            white-space: nowrap;
+        }
+    </style>
+    <section id="nav"></section>
+    <section id="main-body">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 main-content">
+                    <div class="page-header">
+                        <h1>Site <small>add</small></h1>
+                    </div>
+                    <div class="providerLinkingFeedback"></div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <form method="post" action="https://my.bootvm.com/dologin.php" class="login-form"
+                                role="form" data-op-form-id="0">
+                                <input type="hidden" name="token" value="ae1665febf501fa432f3fcc3323436795c33d8e3">
+                                <div class="form-group">
+                                    <label>域名</label>
+                                    <input type="email" class="form-control" id="inputName" placeholder="輸入域名"
+                                        autofocus="" data-op-id="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>TLS 证书</label>
+                                    <div class="form-group">
+                                        <select name="" id="tls" class="form-control">
+                                            <option value="">NULL</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label>配置文件</label><br>
+                                    <a id="gconfig" type="button" class="btn btn-default" style="width: 100%">生成配置</a>
+                                    <textarea id="inputconfig" class="form-control" placeholder="配置文件"
+                                        rows="19"></textarea>
+                                </div>
+
+                                <div class="text-center margin-bottom">
+                                </div>
+                                <div align="center">
+                                    <a id="savebtn" type="button" class="btn btn-default">保存</a>
+                                </div>
+                            </form>
+
+                        </div>
+                        <div class="col-sm-5 hidden">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="footer"></section>
+    <script>
+        $("#nav").load('/part/nav.html');
+        $("#footer").load('/part/footer.html');
+    </script>
+    <script src="/js/checkPower.js"></script>
+    <script src="/js/gconfig.js"></script>
+    <script>
+
+        $('#savebtn').click(function () {
+            if ($('#inputName')[0].value != "") {
+                $.ajax({
+                    "url": "http://127.0.0.1:1323/web/SiteInfo",
+                    "method": "PUT",
+                    "timeout": 0,
+                    "headers": {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Authorization": "Bearer " + userjwt
+                    },
+                    "data": {
+                        name: $('#inputName')[0].value,
+                        status: 3,
+                        config: $('#inputconfig')[0].value,
+                        cer: $('#tls')[0].value
+                    }
+                });
+            }
+        })
+
+        $.ajax({
+            "url": "http://127.0.0.1:1323/web/Certificate",
+            "method": "GET",
+            "timeout": 0,
+            "headers": {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer " + userjwt
+            },
+            "data": {
+                name: "*"
+            },
+            success: function (data) {
+                var dom = ""
+                for (let index = 0; index < data.length; index++) {
+                    dom += '<option value=' + data[index]["id"] + '>' + data[index]["name"] + '</option>'
+                }
+                $('#tls')[0].innerHTML += dom
+            }
+        });
+
+        $('#logout').click(function () {
+            clearCookie("jwt")
+            window.location.pathname = "/login.html"
+        })
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + "; " + expires;
+        }
+        function clearCookie(name) {
+            setCookie(name, "", -1);
+        }
+    </script>
+
+</body>
+
+</html>
