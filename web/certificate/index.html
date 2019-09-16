@@ -72,7 +72,7 @@
             success: function (data) {
                 var dom = ""
                 for (let index = 0; index < data.length; index++) {
-                    dom += '<tr><td>' + data[index]["id"] + '</td><td><strong>' + data[index]["name"] + '</strong></td><td><i onclick="window.location=\'info.html?name=' + data[index]["name"] + '\'" class="far fa-edit"></i></td></tr>'
+                    dom += '<tr><td>' + data[index]["id"] + '</td><td><strong>' + data[index]["name"] + '</strong></td><td><i onclick="window.location=\'info.html?id=' + data[index]["id"] + '\'" class="far fa-edit"></i></td></tr>'
                 }
                 $('#cerinfo')[0].innerHTML = dom
                 for (let index = 0; index < data.length; index++) {

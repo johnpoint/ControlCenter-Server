@@ -32,7 +32,7 @@ type Site struct {
 }
 
 type Certificate struct {
-	ID                    int64  `gorm:"AUTO_INCREMENT" json:"id" xml:"id" form:"id" query:"id"`
+	ID                    int64  `json:"id" xml:"id" form:"id" query:"id" gorm:"AUTO_INCREMENT"`
 	Name                  string `json:"name" xml:"name" form:"name" query:"name"`
 	Fullchain             string `json:"fullchain" xml:"fullchain" form:"fullchain" query:"fullchain"`
 	Key                   string `json:"key" xml:"key" form:"key" query:"key"`
@@ -96,5 +96,6 @@ func main() {
 	r.PUT("web/Certificate", addCertificateInfo)
 	r.GET("web/Certificate", getCertificateInfo)
 	r.POST("web/Certificate", updateCertificateInfo)
+	r.POST("web/rmCertificate", deleteCertificateInfo)
 	e.Logger.Fatal(e.Start(":1323"))
 }

@@ -99,6 +99,21 @@ func addCertificateInfo(c echo.Context) error {
 	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 }
 
+func deleteCertificateInfo(c echo.Context) error {
+	user := checkAuth(c).(jwt.MapClaims)
+	cer := Certificate{}
+	if err := c.Bind(&cer); err != nil {
+		panic(err)
+	}
+	if user["level"].(float64) == 1 {
+		if delCer(cer) {
+			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+		}
+		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
+	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
+}
+
 func updateCertificateInfo(c echo.Context) error {
 	user := checkAuth(c).(jwt.MapClaims)
 	if user["level"].(float64) == 1 {

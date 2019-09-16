@@ -81,6 +81,14 @@ func addCer(certificate Certificate) bool {
 	return false
 }
 
+func delCer(certificate Certificate) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Certificate{})
+	db.Where("id LIKE ?", certificate.ID).Delete(Certificate{})
+	return true
+}
+
 func updateCer(where Certificate, certificate Certificate) bool {
 	db := initDatabase("test.db")
 	defer db.Close()
