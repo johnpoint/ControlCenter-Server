@@ -32,9 +32,19 @@
         <div class="container">
             <div id="error"></div>
             <div class="page-header">
-                <h1>Site <small>Manage</small></h1>
+                <h1>Site <small id="domain"></small></h1>
             </div>
-            <div class="row" id="siteinfo">
+            <div class="row">
+                <div class="panel panel-default">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Domain</td>
+                                <td id="domainame"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
@@ -56,6 +66,8 @@
             data: { name: window.location.search.replace('?name=', '') },
             success: function (data) {
                 console.log(data)
+                $('#domain')[0].innerHTML = window.location.search.replace('?name=', '')
+                $('#domainame')[0].innerHTML = window.location.search.replace('?name=', '')
                 var i = new Number(data[0].cer)
                 $.ajax({
                     "url": "http://127.0.0.1:1323/web/Certificate",

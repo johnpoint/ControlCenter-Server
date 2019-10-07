@@ -72,6 +72,7 @@ func addSiteInfo(c echo.Context) error {
 func addCertificateInfo(c echo.Context) error {
 	certificate := Certificate{}
 	if err := c.Bind(&certificate); err != nil {
+		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
 		panic(err)
 	}
 	var certPEMBlock []byte = []byte(certificate.Fullchain)
@@ -84,7 +85,8 @@ func addCertificateInfo(c echo.Context) error {
 	}
 	x509Cert, err := x509.ParseCertificate(certDERBlock.Bytes)
 	if err != nil {
-		panic(err)
+		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
+		panic(c)
 	}
 	certificate.DNSNames = x509Cert.DNSNames[0]
 	certificate.Issuer = x509Cert.Issuer.String()

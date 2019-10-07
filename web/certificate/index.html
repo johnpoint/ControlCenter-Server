@@ -77,7 +77,7 @@
                 $('#cerinfo')[0].innerHTML = dom
                 for (let index = 0; index < data.length; index++) {
                     var timestamp1 = Date.parse(new Date());
-                    if (parseInt(((timestamp1 / 1000 - data[index]["NotBefore"]) / (data[index]["NotAfter"] - data[index]["NotBefore"])) * 100) >= 100) {
+                    if (parseInt(((timestamp1 / 1000 - data[index]["NotBefore"]) / (data[index]["NotAfter"] - data[index]["NotBefore"])) * 100) >= 80) {
                         $('td')[index * 3].innerHTML = '<i class="fas fa-exclamation-triangle" style="color: red"></i>'
                     }
                 }

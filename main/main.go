@@ -22,6 +22,12 @@ type Server struct {
 	ID       int64  `gorm:"AUTO_INCREMENT"`
 }
 
+type ServerKey struct {
+	ID      int64  `json:"id" xml:"id" form:"id" query:"id" gorm:"AUTO_INCREMENT"`
+	Public  string `json:"public" xml:"public" form:"public" query:"public"`
+	Private string `json:"private" xml:"private" form:"private" query:"private"`
+}
+
 type Site struct {
 	ID     int64  `gorm:"AUTO_INCREMENT"`
 	Name   string `json:"name" xml:"name" form:"name" query:"name"`
