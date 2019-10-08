@@ -16,3 +16,7 @@ func serverUpdate(c echo.Context) error {
 	}
 	return c.JSON(http.StatusBadRequest, Callback{Code: 0, Info: "ERROR"})
 }
+
+func serverGetCertificate(c echo.Context) error {
+	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+}
