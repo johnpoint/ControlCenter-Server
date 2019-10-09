@@ -1,0 +1,21 @@
+{
+    "Base": {
+        "ServerIpv4": "192.168.15.104",
+        "ServerIpv6": "",
+        "HostName": "ubuntu",
+        "Token": "233333"
+    },
+    "Site": {
+        "test.lvcshu.io": {
+            "Enable": false,
+            "CerId": 23
+        }
+    },
+    "Certificate": {
+        "lvcshu.info": {
+            "Id": 23,
+            "FullChain": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n",
+            "Key": "-----BEGIN RSA PRIVATE KEY-----\n-----END RSA PRIVATE KEY-----\n"
+        }
+    }
+}
