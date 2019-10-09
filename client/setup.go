@@ -17,6 +17,12 @@ import (
 	"github.com/shirou/gopsutil/net"
 )
 
+type Configuration struct {
+	PollAddress  string
+	ServerToken  string
+	DataFilePath string
+}
+
 type StatusServer struct {
 	Percent  StatusPercent
 	CPU      []CPUInfo
@@ -60,9 +66,15 @@ func main() {
 	}
 	if os.Args[1] == "install" {
 		setup()
+		return
 	}
 	if os.Args[1] == "poll" {
 		statuspoll()
+		return
+	}
+	if os.Args[1] == "config" {
+		fmt.Println(loadConfig())
+		return
 	}
 	fmt.Println("未知的参数")
 }
@@ -93,8 +105,9 @@ func setup() {
 }
 
 func statuspoll() {
+	conf := loadConfig()
 	for true {
-		url := "http://127.0.0.1:1323/server/update"
+		url := conf.PollAddress + "/server/update"
 		method := "POST"
 
 		payload := strings.NewReader("ipv4=192.168.15.104&token=23333333&status=" + infoMiniJSON())
@@ -170,4 +183,16 @@ func infoMiniJSON() string {
 	} else {
 		return string(b)
 	}
+}
+
+func loadConfig() Configuration {
+	file, _ := os.Open("config.json")
+	defer file.Close()
+	decoder := json.NewDecoder(file)
+	conf := Configuration{}
+	err := decoder.Decode(&conf)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	return conf
 }

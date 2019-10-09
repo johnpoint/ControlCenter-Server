@@ -91,8 +91,8 @@ func main() {
 
 	s := e.Group("/server")
 	s.POST("/setup", setupServer)
-	s.POST("/update", serverUpdate)
-	s.GET("/Certificate/:domain", serverGetCertificate)
+	s.POST("/update/:token", serverUpdate)
+	s.GET("/Certificate/:token/:id", serverGetCertificate)
 
 	e.GET("/", accessible)
 

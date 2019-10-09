@@ -1,0 +1,5 @@
+{
+    "PollAddress": "http://127.0.0.1:1323",
+    "ServerToken": "23333333",
+    "DataFilePath": "./data.json"
+}
