@@ -16,7 +16,6 @@
 │       ├── database.go
 │       ├── Domain.go
 │       ├── main.go
-│       ├── run.sh
 │       ├── ServerApi.go
 │       ├── Server.go
 │       ├── Site.go
@@ -68,3 +67,7 @@
 
 - jwt
 - token for each server
+
+## Install 安装
+
+### Client
