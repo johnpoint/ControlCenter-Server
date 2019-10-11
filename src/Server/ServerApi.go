@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -16,6 +17,7 @@ func serverUpdate(c echo.Context) error {
 	if err := c.Bind(&server); err != nil {
 		panic(err)
 	}
+	fmt.Println("⇨ Get Server update From :" + server.Ipv4)
 	if updateServer(Server{Ipv4: server.Ipv4, Token: server.Token}, server) {
 		return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 	}
