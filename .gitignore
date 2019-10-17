@@ -1,1 +1,3 @@
-./src/Server/test.db
+src/Server/test.db
+src/Server/Server
+src/Client/Client

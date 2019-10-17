@@ -2,8 +2,8 @@ package main
 
 import "testing"
 
-func TestLoadConfig(t *testing.T) {
-	t.Log(loadConfig())
+func TestLoadData(t *testing.T) {
+	t.Log(getData())
 }
 
 func TestGetData(t *testing.T) {
@@ -24,4 +24,12 @@ func TestAddService(t *testing.T) {
 
 func TestDelCer(t *testing.T) {
 	t.Log(delCer(12))
+}
+
+func TestAddSite(t *testing.T) {
+	t.Log(addSite("lvcshu.com", true, 23))
+}
+
+func TestDelSite(t *testing.T) {
+	t.Log(delSite("lvcshu.com"))
 }
