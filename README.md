@@ -71,3 +71,7 @@
 ## Install 安装
 
 ### Client
+
+```
+./Client install http://127.0.0.1:1323 `hostname` `curl ip.sb`
+```
