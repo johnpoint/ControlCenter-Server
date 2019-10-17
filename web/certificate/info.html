@@ -183,6 +183,9 @@
                     fullchain: $('#fullchain')[0].value,
                     key: $('#privatekey')[0].value
                 },
+                error: function () {
+                    alert('请确定证书格式正确')
+                },
                 success: function (data) {
                     $.ajax({
                         "url": "http://127.0.0.1:1323/web/Certificate",
