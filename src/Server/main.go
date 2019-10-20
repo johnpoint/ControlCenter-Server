@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -11,11 +14,23 @@ type Callback struct {
 }
 
 func main() {
+	if len(os.Args) <= 2 {
+		if os.Args[1] == "init" {
+			initServer()
+		} else if os.Args[1] == "start" {
+			start()
+		}
+	}
+	fmt.Println("参数错误")
+}
+
+func start() {
 	e := echo.New()
 	e.Debug = true
 	e.HideBanner = true
+	conf := loadConfig()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://lvcshu.test.io"},
+		AllowOrigins: conf.AllowAddress,
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
 	}))
 
@@ -44,5 +59,5 @@ func main() {
 	w.GET("/Certificate", getCertificateInfo)
 	w.POST("/Certificate", updateCertificateInfo)
 	w.POST("/rmCertificate", deleteCertificateInfo)
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":" + conf.ListenPort))
 }

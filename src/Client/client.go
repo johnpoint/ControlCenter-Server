@@ -18,12 +18,6 @@ import (
 	"github.com/shirou/gopsutil/net"
 )
 
-type Configuration struct {
-	PollAddress  string
-	ServerToken  string
-	DataFilePath string
-}
-
 type Data struct {
 	Base         DataBase
 	Sites        []DataSite
@@ -106,7 +100,10 @@ func main() {
 		return
 	}
 	if os.Args[1] == "install" {
-		//install `hostname` `curl ip.sb`
+		if len(os.Args) != 4 {
+			fmt.Println("参数数量错误错误")
+			return
+		}
 		setup(os.Args)
 		statuspoll()
 		return
@@ -369,18 +366,6 @@ func infoMiniJSON() string {
 	} else {
 		return string(b)
 	}
-}
-
-func loadConfig() Configuration {
-	file, _ := os.Open("config.json")
-	defer file.Close()
-	decoder := json.NewDecoder(file)
-	conf := Configuration{}
-	err := decoder.Decode(&conf)
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
-	return conf
 }
 
 func getData() Data {
