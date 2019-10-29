@@ -59,5 +59,6 @@ func start() {
 	w.GET("/Certificate", getCertificateInfo)
 	w.POST("/Certificate", updateCertificateInfo)
 	w.POST("/rmCertificate", deleteCertificateInfo)
+	w.GET("/Service", getService)
 	e.Logger.Fatal(e.Start(":" + conf.ListenPort))
 }
