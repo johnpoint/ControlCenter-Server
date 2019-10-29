@@ -34,7 +34,7 @@
             <div class="page-header">
                 <h1>Site <small>Manage</small></h1>
             </div>
-            <div class="row" id="siteinfo">
+            <div id="siteinfo">
             </div>
         </div>
     </section>
@@ -44,9 +44,10 @@
         $("#footer").load('/part/footer.html');
     </script>
     <script src="/js/checkPower.js"></script>
+    <script src="/js/config.js"></script>
     <script>
         $.ajax({
-            "url": "http://127.0.0.1:1323/web/SiteInfo",
+            "url": apiaddress + "/web/SiteInfo",
             "method": "GET",
             "timeout": 0,
             "headers": {
@@ -58,9 +59,9 @@
                 console.log(data)
                 var dom = ""
                 for (let index = 0; index < data.length; index++) {
-                    dom += '<div class="col-md-4"><div class="panel panel-success" onclick="window.location=\'siteInfo.html?name=' + data[index]["name"] + "'\">\
-                            <div class=\"panel-heading\">" + data[index]["name"] +
-                        '</div><div class="panel-body"><p>Status: ' + data[index]["status"] + '</p></div ></div></div> '
+                    dom += '<div class="row"><div class="panel panel-default panel-index" onclick="window.location=\'siteInfo.html?name=' + data[index]["name"] + "'\">\
+                            <div class=\"panel-body\">" + data[index]["name"] +
+                        '</div></div></div> '
                 }
                 $('#siteinfo')[0].innerHTML = dom
             },

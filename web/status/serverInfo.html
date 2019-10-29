@@ -70,10 +70,11 @@
         $("#footer").load('/part/footer.html');
     </script>
     <script src="/js/checkPower.js"></script>
+    <script src="/js/config.js"></script>
     <script>
         function getinfo() {
             $.ajax({
-                "url": "http://127.0.0.1:1323/web/ServerInfo",
+                "url": apiaddress + "/web/ServerInfo",
                 "method": "GET",
                 "timeout": 0,
                 "headers": {
@@ -143,7 +144,7 @@
         var uptime = 0
         function update() {
             $.ajax({
-                "url": "http://127.0.0.1:1323/web/ServerInfo",
+                "url": apiaddress + "/web/ServerInfo",
                 "method": "GET",
                 "timeout": 0,
                 "headers": {

@@ -120,10 +120,11 @@
         $("#footer").load('/part/footer.html');
     </script>
     <script src="/js/checkPower.js"></script>
+    <script src="/js/config.js"></script>
     <script>
 
         $.ajax({
-            "url": "http://127.0.0.1:1323/web/Certificate",
+            "url": apiaddress + "/web/Certificate",
             "method": "GET",
             "timeout": 0,
             "headers": {
@@ -153,7 +154,7 @@
 
         $('#rmrm').click(function () {
             $.ajax({
-                "url": "http://127.0.0.1:1323/web/rmCertificate",
+                "url": apiaddress + "/web/rmCertificate",
                 "method": "POST",
                 "timeout": 0,
                 "headers": {
@@ -171,7 +172,7 @@
 
         $('#savebtn').click(function () {
             $.ajax({
-                "url": "http://127.0.0.1:1323/web/Certificate",
+                "url": apiaddress + "/web/Certificate",
                 "method": "POST",
                 "timeout": 0,
                 "headers": {
@@ -188,7 +189,7 @@
                 },
                 success: function (data) {
                     $.ajax({
-                        "url": "http://127.0.0.1:1323/web/Certificate",
+                        "url": apiaddress + "/web/Certificate",
                         "method": "GET",
                         "timeout": 0,
                         "headers": {
