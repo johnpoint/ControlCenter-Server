@@ -282,6 +282,9 @@ func delCer(id int64) bool {
 func statuspoll() {
 	data := getData()
 	fmt.Println("[ Poll start ] To " + data.Base.PollAddress)
+	defer func() {
+		fmt.Println("状态推送失败! 请检查服务端状态")
+	}()
 	for true {
 		url := data.Base.PollAddress + "/server/update/" + data.Base.Token
 		method := "POST"
@@ -294,23 +297,15 @@ func statuspoll() {
 			},
 		}
 		req, err := http.NewRequest(method, url, payload)
-
-		if err != nil {
-			fmt.Println("状态推送失败! 请检查服务端状态")
-			fmt.Println(err)
-		}
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
 		res, err := client.Do(req)
+		if res != nil {
+			fmt.Println("⇨ Poll Update To " + data.Base.PollAddress)
+		}
 		if err != nil {
 			fmt.Println("状态推送失败! 请检查服务端状态")
 			fmt.Println(err)
 		}
-		if res.Status != "200 OK" {
-			fmt.Println("状态推送失败! 请检查配置")
-			break
-		}
-		defer res.Body.Close()
 		time.Sleep(time.Duration(2) * time.Second)
 	}
 }

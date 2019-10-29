@@ -60,7 +60,7 @@
                 var dom = ""
                 for (let index = 0; index < data.length; index++) {
                     var status = JSON.parse(data[index]["status"])
-                    dom += '<div class="row"><div class="panel panel-default panel-index" onclick="window.location=\'serverInfo.html?ip=' + data[index]["ipv4"] + "'\">"
+                    dom += '<div class="row"><div style="margin-bottom:5px" class="panel panel-default panel-index" onclick="window.location=\'serverInfo.html?ip=' + data[index]["ipv4"] + "'\">"
                         + '<div class="panel-body"><div class="container"><div class="row"><div class="col-md-3">' + data[index]["ipv4"] +
                         ' ( ' + data[index]["ipv6"] + ' )' +
                         '</div><div class="col-md-3">' + data[index]["hostname"] +
@@ -94,14 +94,14 @@
                         } else {
                             $('.panel-index')[index].style.color = "green"
                         }
-                        if (statusdata["Uptime"] >= 60 * 60 * 24) {
-                            day = statusdata["Uptime"] / 60 * 60 * 24;
+                        if (statusdata["Uptime"] >= (60 * 60 * 24)) {
+                            day = statusdata["Uptime"] / (60 * 60 * 24);
                             day = parseInt(day)
                             statusdata["Uptime"] -= day * (60 * 60 * 24)
                             day += " d "
                         }
-                        if (statusdata["Uptime"] >= 60 * 60) {
-                            hr = statusdata["Uptime"] / 60 * 60;
+                        if (statusdata["Uptime"] >= (60 * 60)) {
+                            hr = statusdata["Uptime"] / (60 * 60);
                             hr = parseInt(hr)
                             statusdata["Uptime"] -= hr * (60 * 60)
                             hr += " hr "
