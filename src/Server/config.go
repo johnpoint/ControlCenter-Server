@@ -9,9 +9,9 @@ import (
 type Config struct {
 	AllowAddress []string
 	ListenPort   string
-	HostAddress  string
-	CachePath    string
 	TLS          bool
+	CERTPath     string
+	KEYPath      string
 }
 
 func loadConfig() Config {
