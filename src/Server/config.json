@@ -3,5 +3,8 @@
         "http://lvcshu.test.io",
         "http://127.0.0.1"
     ],
-    "ListenPort": "1323"
+    "ListenPort": "1323",
+    "HostAddress": "",
+    "CachePath": "",
+    "TLS": false
 }

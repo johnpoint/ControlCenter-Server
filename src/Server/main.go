@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 type Callback struct {
@@ -25,10 +26,18 @@ func main() {
 }
 
 func start() {
+	conf := loadConfig()
 	e := echo.New()
+
+	if conf.TLS {
+		e.AutoTLSManager.HostPolicy = autocert.HostWhitelist(conf.HostAddress)
+		e.AutoTLSManager.Cache = autocert.DirCache(conf.CachePath)
+		e.Use(middleware.Recover())
+		e.Use(middleware.Logger())
+	}
+
 	e.Debug = true
 	e.HideBanner = true
-	conf := loadConfig()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: conf.AllowAddress,
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
@@ -60,5 +69,10 @@ func start() {
 	w.POST("/Certificate", updateCertificateInfo)
 	w.POST("/rmCertificate", deleteCertificateInfo)
 	w.GET("/Service", getService)
-	e.Logger.Fatal(e.Start(":" + conf.ListenPort))
+
+	if conf.TLS {
+		e.Logger.Fatal(e.StartAutoTLS(":" + conf.ListenPort))
+	} else {
+		e.Logger.Fatal(e.Start(":" + conf.ListenPort))
+	}
 }
