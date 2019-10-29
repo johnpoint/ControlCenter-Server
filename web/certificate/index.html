@@ -61,7 +61,7 @@
             success: function (data) {
                 var dom = ""
                 for (let index = 0; index < data.length; index++) {
-                    dom += '<div class="row"><div class="panel panel-default panel-index" onclick="window.location=\'info.html?id=' + data[index]["id"] + "'" + '"><div class="panel-body">' + data[index]["name"] + '</div></div></div>'
+                    dom += '<div class="row"><div style="margin-bottom:5px" class="panel panel-default panel-index" onclick="window.location=\'info.html?id=' + data[index]["id"] + "'" + '"><div class="panel-body">' + data[index]["name"] + '</div></div></div>'
                 }
                 $('#cerlist')[0].innerHTML = dom
                 for (let index = 0; index < data.length; index++) {
