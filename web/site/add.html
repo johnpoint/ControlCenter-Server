@@ -87,12 +87,13 @@
     </script>
     <script src="/js/checkPower.js"></script>
     <script src="/js/gconfig.js"></script>
+    <script src="/js/config.js"></script>
     <script>
 
         $('#savebtn').click(function () {
             if ($('#inputName')[0].value != "") {
                 $.ajax({
-                    "url": "http://127.0.0.1:1323/web/SiteInfo",
+                    "url": apiaddress + "/web/SiteInfo",
                     "method": "PUT",
                     "timeout": 0,
                     "headers": {
@@ -110,7 +111,7 @@
         })
 
         $.ajax({
-            "url": "http://127.0.0.1:1323/web/Certificate",
+            "url": apiaddress + "/web/Certificate",
             "method": "GET",
             "timeout": 0,
             "headers": {

@@ -34,8 +34,7 @@
             <div class="page-header">
                 <h1>Server <small>Overview</small></h1>
             </div>
-            <div class="row" id="serverinfo">
-
+            <div id="serverinfo">
             </div>
         </div>
     </section>
@@ -45,10 +44,11 @@
         $("#footer").load('/part/footer.html');
     </script>
     <script src="/js/checkPower.js"></script>
+    <script src="/js/config.js"></script>
     <script>
 
         $.ajax({
-            "url": "http://127.0.0.1:1323/web/ServerInfo",
+            "url": apiaddress + "/web/ServerInfo",
             "method": "GET",
             "timeout": 0,
             "headers": {
@@ -59,9 +59,13 @@
             success: function (data) {
                 var dom = ""
                 for (let index = 0; index < data.length; index++) {
-                    dom += '<div class="col-md-4"><div class="panel panel-success" onclick="window.location=\'serverInfo.html?ip=' + data[index]["ipv4"] + "'\">\
-                            <div class=\"panel-heading\">" + data[index]["ipv4"] +
-                        '</div><div class="panel-body"><p>ID: ' + data[index]["ID"] + '</p><p>Ipv6: ' + data[index]["ipv6"] + '</p><p>Hostname: ' + data[index]["hostname"] + '</p></div ></div></div> '
+                    var status = JSON.parse(data[index]["status"])
+                    dom += '<div class="row"><div class="panel panel-default panel-index" onclick="window.location=\'serverInfo.html?ip=' + data[index]["ipv4"] + "'\">"
+                        + '<div class="panel-body"><div class="container"><div class="row"><div class="col-md-3">' + data[index]["ipv4"] +
+                        ' ( ' + data[index]["ipv6"] + ' )' +
+                        '</div><div class="col-md-3">' + data[index]["hostname"] +
+                        '</div><div class="col-md-3" id="uptime">Uptime: </div><div class="col-md-3" id="load">Load: ' + status["Load"]["load1"].toFixed(2) + "  " + status["Load"]["load5"].toFixed(2) + "  " +
+                        status["Load"]["load15"].toFixed(2) + '</div></div></div></div></div></div>'
                 }
                 $('#serverinfo')[0].innerHTML = dom
                 update()
@@ -73,7 +77,7 @@
 
         function update() {
             $.ajax({
-                "url": "http://127.0.0.1:1323/web/ServerInfo",
+                "url": apiaddress + "/web/ServerInfo",
                 "method": "GET",
                 "timeout": 0,
                 "headers": {
@@ -82,13 +86,34 @@
                 },
                 data: { hostname: "*" },
                 success: function (data) {
+                    var day = "", hr = "", min = "";
                     for (let index = 0; index < data.length; index++) {
                         statusdata = JSON.parse(data[index]["status"])
                         if ((Date.parse(new Date()) / 1000) - statusdata["BootTime"] - statusdata["Uptime"] > 5) {
-                            document.getElementsByClassName("panel")[index].className = "panel panel-danger"
+                            $('.panel-index')[index].style.color = "red"
                         } else {
-                            document.getElementsByClassName("panel")[index].className = "panel panel-success"
+                            $('.panel-index')[index].style.color = "green"
                         }
+                        if (statusdata["Uptime"] >= 60 * 60 * 24) {
+                            day = statusdata["Uptime"] / 60 * 60 * 24;
+                            day = parseInt(day)
+                            statusdata["Uptime"] -= day * (60 * 60 * 24)
+                            day += " d "
+                        }
+                        if (statusdata["Uptime"] >= 60 * 60) {
+                            hr = statusdata["Uptime"] / 60 * 60;
+                            hr = parseInt(hr)
+                            statusdata["Uptime"] -= hr * (60 * 60)
+                            hr += " hr "
+                        }
+                        if (statusdata["Uptime"] >= 60) {
+                            min = statusdata["Uptime"] / 60;
+                            min = parseInt(min)
+                            statusdata["Uptime"] -= min * 60
+                            min += " min "
+                        }
+                        $('#uptime')[index].innerHTML = "Uptime: " + day + hr + min + statusdata["Uptime"] + " s"
+                        $('#load')[index].innerHTML = 'Load: ' + statusdata["Load"]["load1"].toFixed(2) + "  " + statusdata["Load"]["load5"].toFixed(2) + "  " + statusdata["Load"]["load15"].toFixed(2)
                     }
                 }
             })

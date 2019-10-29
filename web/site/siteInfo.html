@@ -35,15 +35,27 @@
                 <h1>Site <small id="domain"></small></h1>
             </div>
             <div class="row">
-                <div class="panel panel-default">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td>Domain</td>
-                                <td id="domainame"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="container">
+                    <div class="col-md-2">
+                        <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                            <button type="button" class="btn btn-default">Certificate</button>
+                            <button type="button" class="btn btn-default">Config</button>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="panel panel-default">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>Domain</td>
+                                        <td id="domainame"></td>
+                                        <td>Status</td>
+                                        <td id="sitestatus">enable</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,9 +66,10 @@
         $("#footer").load('/part/footer.html');
     </script>
     <script src="/js/checkPower.js"></script>
+    <script src="/js/config.js"></script>
     <script>
         $.ajax({
-            "url": "http://127.0.0.1:1323/web/SiteInfo",
+            "url": apiaddress + "/web/SiteInfo",
             "method": "GET",
             "timeout": 0,
             "headers": {
@@ -67,10 +80,10 @@
             success: function (data) {
                 console.log(data)
                 $('#domain')[0].innerHTML = window.location.search.replace('?name=', '')
-                $('#domainame')[0].innerHTML = window.location.search.replace('?name=', '')
+                $('#domainame')[0].innerHTML = '<a href="http://' + window.location.search.replace('?name=', '') + '">' + window.location.search.replace('?name=', '') + '</a>'
                 var i = new Number(data[0].cer)
                 $.ajax({
-                    "url": "http://127.0.0.1:1323/web/Certificate",
+                    "url": apiaddress + "/web/Certificate",
                     "method": "GET",
                     "timeout": 0,
                     "headers": {
