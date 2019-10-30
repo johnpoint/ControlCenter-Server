@@ -64,7 +64,7 @@
                         + '<div class="panel-body"><div class="container"><div class="row"><div class="col-md-3">' + data[index]["ipv4"] +
                         ' ( ' + data[index]["ipv6"] + ' )' +
                         '</div><div class="col-md-3">' + data[index]["hostname"] +
-                        '</div><div class="col-md-3 uptime">Uptime: </div><div class="col-md-3" id="load">Load: ' + status["Load"]["load1"].toFixed(2) + "  " + status["Load"]["load5"].toFixed(2) + "  " +
+                        '</div><div class="col-md-3 uptime">Uptime: </div><div class="col-md-3 load">Load: ' + status["Load"]["load1"].toFixed(2) + "  " + status["Load"]["load5"].toFixed(2) + "  " +
                         status["Load"]["load15"].toFixed(2) + '</div></div></div></div></div></div>'
                 }
                 $('#serverinfo')[0].innerHTML = dom
@@ -86,7 +86,7 @@
                 },
                 data: { hostname: "*" },
                 success: function (data) {
-                    var day = "", hr = "", min = "";
+                    var yr = "", mon = "", day = "", hr = "", min = "";
                     for (let index = 0; index < data.length; index++) {
                         statusdata = JSON.parse(data[index]["status"])
                         if ((Date.parse(new Date()) / 1000) - statusdata["BootTime"] - statusdata["Uptime"] > 5) {
@@ -94,11 +94,23 @@
                         } else {
                             $('.panel-index')[index].style.color = "green"
                         }
+                        if (statusdata["Uptime"] >= (60 * 60 * 24 * 30 * 12)) {
+                            yr = statusdata["Uptime"] / (60 * 60 * 24 * 30 * 12);
+                            yr = parseInt(yr)
+                            statusdata["Uptime"] -= yr * (60 * 60 * 24 * 30 * 12)
+                            yr += " yr "
+                        }
+                        if (statusdata["Uptime"] >= (60 * 60 * 24 * 30)) {
+                            mon = statusdata["Uptime"] / (60 * 60 * 24 * 30);
+                            mon = parseInt(mon)
+                            statusdata["Uptime"] -= mon * (60 * 60 * 24 * 30)
+                            mon += " mon "
+                        }
                         if (statusdata["Uptime"] >= (60 * 60 * 24)) {
                             day = statusdata["Uptime"] / (60 * 60 * 24);
                             day = parseInt(day)
                             statusdata["Uptime"] -= day * (60 * 60 * 24)
-                            day += " d "
+                            day += " day "
                         }
                         if (statusdata["Uptime"] >= (60 * 60)) {
                             hr = statusdata["Uptime"] / (60 * 60);
@@ -112,8 +124,8 @@
                             statusdata["Uptime"] -= min * 60
                             min += " min "
                         }
-                        $('.uptime')[index].innerHTML = "Uptime: " + day + hr + min + statusdata["Uptime"] + " s"
-                        $('#load')[index].innerHTML = 'Load: ' + statusdata["Load"]["load1"].toFixed(2) + "  " + statusdata["Load"]["load5"].toFixed(2) + "  " + statusdata["Load"]["load15"].toFixed(2)
+                        $('.uptime')[index].innerHTML = "Uptime: " + yr + mon + day + hr + min + statusdata["Uptime"] + " s"
+                        $('.load')[index].innerHTML = 'Load: ' + statusdata["Load"]["load1"].toFixed(2) + "  " + statusdata["Load"]["load5"].toFixed(2) + "  " + statusdata["Load"]["load15"].toFixed(2)
                     }
                 }
             })
