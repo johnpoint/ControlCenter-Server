@@ -100,7 +100,7 @@ func main() {
 		return
 	}
 	if os.Args[1] == "install" {
-		if len(os.Args) != 4 {
+		if len(os.Args) != 5 {
 			fmt.Println("参数数量错误错误")
 			return
 		}
