@@ -73,5 +73,5 @@
 ### Client
 
 ```
-./Client install http://127.0.0.1:1323 `hostname` `curl ip.sb`
+./Client install https://127.0.0.1:1323 `hostname` `curl ip.sb -4` `curl ip.sb -6`
 ```
