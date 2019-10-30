@@ -16,7 +16,7 @@ function checkuser() {
         }
     }
     $.ajax({
-        "url": "http://127.0.0.1:1323/web/UserInfo",
+        "url": apiaddress + "/web/UserInfo",
         "method": "GET",
         "timeout": 0,
         "headers": {
