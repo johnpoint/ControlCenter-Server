@@ -35,6 +35,17 @@ func addUser(user User) bool {
 	return false
 }
 
+func updateUser(where User, user User) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&User{})
+	db.Model(&user).Where(where).Update(user)
+	if len(getUser(user)) != 0 {
+		return true
+	}
+	return false
+}
+
 func addDomain(domain Domain) bool {
 	db := initDatabase("test.db")
 	defer db.Close()

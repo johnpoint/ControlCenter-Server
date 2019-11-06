@@ -27,7 +27,7 @@ func main() {
 func start() {
 	conf := loadConfig()
 	e := echo.New()
-	e.Debug = true
+	e.Debug = false
 	e.HideBanner = true
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: conf.AllowAddress,
@@ -53,6 +53,7 @@ func start() {
 	w.PUT("/DomainInfo", updateDomainInfo)
 	w.PUT("/ServerInfo", updateServerInfo)
 	w.GET("/UserInfo", getUserInfo)
+	w.PUT("/UserInfo", updateUserInfo)
 	w.PUT("/SiteInfo", addSiteInfo)
 	w.GET("/SiteInfo", getSiteInfo)
 	w.PUT("/Certificate", addCertificateInfo)
