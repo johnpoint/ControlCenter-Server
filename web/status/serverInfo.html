@@ -34,16 +34,104 @@
             <div class="page-header">
                 <h1>ServerInfo <small id="serverip"></small></h1>
             </div>
-            <div class="row">
-                <div class="col-md-6" id="serverinfo">
-                </div>
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">CPU</h3>
-                        </div>
+
+            <div id="serverinfo">
+                <div class="row">
+                    <div style="margin-bottom:5px" class="panel panel-default panel-index">
                         <div class="panel-body">
-                            <div class="container-fluid" id="cpuinfo">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-2">IP</div>
+                                    <div class="col-md-4" id="ipv4">
+                                        data[0]["ipv4"] </div>
+                                    <div class="col-md-4" id="ipv6"> data[0]["ipv6"] </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="margin-bottom:5px" class="panel panel-default panel-index">
+                        <div class="panel-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-2">Hostname</div>
+                                    <div class="col-md-8" id="hostname">
+                                        data[0]["hostname"] </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="margin-bottom:5px" class="panel panel-default panel-index">
+                        <div class="panel-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-2">Loads</div>
+                                    <div class="col-md-3" id="load1">
+                                        statusdata["Load"]["load1"].toFixed(2) </div>
+                                    <div class="col-md-3" id="load5"> statusdata["Load"]["load5"].toFixed(2) </div>
+                                    <div class="col-md-3" id="load15"> statusdata["Load"]["load15"].toFixed(2) </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="margin-bottom:5px" class="panel panel-default panel-index">
+                        <div class="panel-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-2">Mem</div>
+                                    <div class="col-md-9">
+                                        <div class="progress" style="margin-bottom:0px">
+                                            <div id="mem" class="progress-bar progress-bar-info" role="progressbar"
+                                                aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                                                parseInt(statusdata["Percent"]["Mem"]) %</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="margin-bottom:5px" class="panel panel-default panel-index">
+                        <div class="panel-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-2">CPU</div>
+                                    <div class="col-md-9">
+                                        <div class="progress" style="margin-bottom:0px">
+                                            <div id="cpu" class="progress-bar progress-bar-info" role="progressbar"
+                                                aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                                                parseInt(statusdata["Percent"]["Mem"]) %</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <div id="cpuinfo">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="margin-bottom:5px" class="panel panel-default panel-index">
+                        <div class="panel-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-2">Disk</div>
+                                    <div class="col-md-9">
+                                        <div class="progress" style="margin-bottom:0px">
+                                            <div id="disk" class="progress-bar progress-bar-info" role="progressbar"
+                                                aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                                                parseInt(statusdata["Percent"]["Mem"]) %</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -87,25 +175,9 @@
                     var dom2 = ""
                     var statusdata = JSON.parse(data[0]["status"])
                     $('#serverip')[0].innerHTML = data[0]["ipv4"]
-                    dom += '<div id="statuspanel" class="panel panel-success">\
-                            <div class="panel-heading">概况</div>' +
-                        '<div class="panel-body"><table class="table"><tbody><tr><td><p>ID</p></td><td>' + data[0]["ID"] + '</td></tr>\
-                            <tr><td><p>Ipv6</p></td><td>' + data[0]["ipv6"] + '</td></tr>\
-                            <tr><td><p>Hostname</p></td><td>' + data[0]["hostname"] + '</td></tr>\
-                            <tr><td><p>Load</p></td><td id="load">'+ statusdata["Load"]["load1"].toFixed(2) + '&nbsp;&nbsp;&nbsp;' + statusdata["Load"]["load5"].toFixed(2) + '&nbsp;&nbsp;&nbsp;' + statusdata["Load"]["load15"].toFixed(2) + '</td></tr>' +
-                        '<tr><td><p>Mem</p></p></td><td><div class="progress">\
-  <div id="mem" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: '+ statusdata["Percent"]["Mem"] + '%;">\
-    '+ parseInt(statusdata["Percent"]["Mem"]) + '%\
-</div></div></td></tr>'+
-                        '<tr><td><p>CPU</p></p></td><td><div class="progress">\
-  <div id="cpu" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: '+ statusdata["Percent"]["CPU"] + '%;">\
-    '+ parseInt(statusdata["Percent"]["CPU"]) + '%\
-</div></div></td></tr>'+
-                        '<tr><td><p>Disk</p></p></td><td><div class="progress">\
-  <div id="disk" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: '+ statusdata["Percent"]["Disk"] + '%;">\
-    '+ parseInt(statusdata["Percent"]["Disk"]) + '%\
-</div></div></td></tr>'
-
+                    $('#ipv4')[0].innerHTML = data[0]["ipv4"]
+                    $('#ipv6')[0].innerHTML = data[0]["ipv6"]
+                    $('#hostname')[0].innerHTML = data[0]["hostname"]
                     var keyl = []
                     var i = 0
                     for (var key in statusdata["Network"]) {
@@ -122,18 +194,9 @@
 </div></div>'
 
                     }
-                    var dom3 = ""
-                    for (let index = 0; index < statusdata["CPU"].length; index++) {
-                        dom3 += '<div class="col-md-6"><div class="panel panel-default">\
-  <div class="panel-body">\
-   <p>'+ statusdata["CPU"][index].ModelName + '</p>\
-  </div>\
-</div></div>'
-
-                    }
-                    $('#cpuinfo')[0].innerHTML = dom3
+                    $('#cpuinfo')[0].innerHTML = statusdata["CPU"][0].ModelName + ' * ' + statusdata["CPU"].length
                     $('#netinfo')[0].innerHTML = dom2
-                    $('#serverinfo')[0].innerHTML = dom
+                    //$('#serverinfo')[0].innerHTML = dom
                 },
                 error: function () {
                     $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '
@@ -156,7 +219,13 @@
                     var dom = ""
                     var statusdata = JSON.parse(data[0]["status"])
                     if ((Date.parse(new Date()) / 1000) - statusdata["BootTime"] - statusdata["Uptime"] > 5) {
-                        document.getElementById("statuspanel").className = "panel panel-danger"
+                        //document.getElementById("statuspanel").className = "panel panel-danger"
+                        document.getElementsByClassName("progress-bar")[0].className = "progress-bar progress-bar-danger"
+                        document.getElementsByClassName("progress-bar")[1].className = "progress-bar progress-bar-danger"
+                        document.getElementsByClassName("progress-bar")[2].className = "progress-bar progress-bar-danger"
+                        $('#load1')[0].innerHTML = statusdata["Load"]["load1"].toFixed(2)
+                        $('#load5')[0].innerHTML = statusdata["Load"]["load5"].toFixed(2)
+                        $('#load15')[0].innerHTML = statusdata["Load"]["load15"].toFixed(2)
                         $('#mem')[0].style.width = 100 + '%'
                         $('#mem')[0].innerHTML = ""
                         $('#cpu')[0].style.width = 100 + '%'
@@ -164,8 +233,13 @@
                         $('#disk')[0].style.width = 100 + '%'
                         $('#disk')[0].innerHTML = ""
                     } else {
-                        document.getElementById("statuspanel").className = "panel panel-success"
-                        $('#load')[0].innerHTML = statusdata["Load"]["load1"].toFixed(2) + '&nbsp;&nbsp;&nbsp;' + statusdata["Load"]["load5"].toFixed(2) + '&nbsp;&nbsp;&nbsp;' + statusdata["Load"]["load15"].toFixed(2)
+                        //document.getElementById("statuspanel").className = "panel panel-success"
+                        document.getElementsByClassName("progress-bar")[0].className = "progress-bar progress-bar-info"
+                        document.getElementsByClassName("progress-bar")[1].className = "progress-bar progress-bar-info"
+                        document.getElementsByClassName("progress-bar")[2].className = "progress-bar progress-bar-info"
+                        $('#load1')[0].innerHTML = statusdata["Load"]["load1"].toFixed(2)
+                        $('#load5')[0].innerHTML = statusdata["Load"]["load5"].toFixed(2)
+                        $('#load15')[0].innerHTML = statusdata["Load"]["load15"].toFixed(2)
                         $('#mem')[0].style.width = statusdata["Percent"]["Mem"] + '%'
                         $('#mem')[0].innerHTML = parseInt(statusdata["Percent"]["Mem"]) + '%'
                         $('#cpu')[0].style.width = statusdata["Percent"]["CPU"] + '%'
