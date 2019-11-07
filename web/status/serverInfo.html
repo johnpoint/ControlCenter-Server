@@ -159,15 +159,7 @@
                     $('#ipv4')[0].innerHTML = data[0]["ipv4"]
                     $('#ipv6')[0].innerHTML = data[0]["ipv6"]
                     $('#hostname')[0].innerHTML = data[0]["hostname"]
-                    /*var keyl = []
-                    var i = 0
-                    for (var key in statusdata["Network"]) {
-                        keyl[i] = key;
-                        i++
-                    }*/
                     $('#cpuinfo')[0].innerHTML = statusdata["CPU"][0].ModelName + ' * ' + statusdata["CPU"].length
-                    //$('#netinfo')[0].innerHTML = dom2
-                    //$('#serverinfo')[0].innerHTML = dom
                 },
                 error: function () {
                     $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '
@@ -190,7 +182,6 @@
                     var dom = ""
                     var statusdata = JSON.parse(data[0]["status"])
                     if ((Date.parse(new Date()) / 1000) - statusdata["BootTime"] - statusdata["Uptime"] > 5) {
-                        //document.getElementById("statuspanel").className = "panel panel-danger"
                         document.getElementsByClassName("progress-bar")[0].className = "progress-bar progress-bar-danger"
                         document.getElementsByClassName("progress-bar")[1].className = "progress-bar progress-bar-danger"
                         document.getElementsByClassName("progress-bar")[2].className = "progress-bar progress-bar-danger"
@@ -204,7 +195,6 @@
                         $('#disk')[0].style.width = 100 + '%'
                         $('#disk')[0].innerHTML = ""
                     } else {
-                        //document.getElementById("statuspanel").className = "panel panel-success"
                         document.getElementsByClassName("progress-bar")[0].className = "progress-bar progress-bar-info"
                         document.getElementsByClassName("progress-bar")[1].className = "progress-bar progress-bar-info"
                         document.getElementsByClassName("progress-bar")[2].className = "progress-bar progress-bar-info"
