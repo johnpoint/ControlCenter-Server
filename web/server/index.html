@@ -35,6 +35,7 @@
                 <h1>Server <small>Overview</small></h1>
             </div>
             <div id="serverinfo">
+                <p>loading</p>
             </div>
         </div>
     </section>
@@ -60,7 +61,7 @@
                 var dom = ""
                 for (let index = 0; index < data.length; index++) {
                     var status = JSON.parse(data[index]["status"])
-                    dom += '<div class="row"><div style="margin-bottom:5px" class="panel panel-default panel-index" onclick="window.location=\'serverInfo.html?ip=' + data[index]["ipv4"] + "'\">"
+                    dom += '<div class="row"><div style="margin-bottom:5px" class="panel panel-default panel-index" onclick="window.location=\'server.html?ip=' + data[index]["ipv4"] + "'\">"
                         + '<div class="panel-body"><div class="container"><div class="row"><div class="col-md-4">' + data[index]["ipv4"] +
                         ' ( ' + data[index]["ipv6"] + ' )' +
                         '</div><div class="col-md-2">' + data[index]["hostname"] +

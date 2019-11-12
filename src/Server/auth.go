@@ -10,8 +10,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-const salt = "NFUCA"
-
 type jwtCustomClaims struct {
 	Name  string `json:"name"`
 	Mail  string `json:"mail"`
@@ -20,6 +18,8 @@ type jwtCustomClaims struct {
 }
 
 func oaLogin(c echo.Context) error {
+	conf := loadConfig()
+	salt := conf.Salt
 	u := User{}
 	if err := c.Bind(&u); err != nil {
 		return err
@@ -43,7 +43,7 @@ func oaLogin(c echo.Context) error {
 			},
 		}
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-		t, err := token.SignedString([]byte("NFUCA"))
+		t, err := token.SignedString([]byte(salt))
 		if err != nil {
 			return err
 		}
@@ -57,6 +57,8 @@ func oaLogin(c echo.Context) error {
 }
 
 func oaRegister(c echo.Context) error {
+	conf := loadConfig()
+	salt := conf.Salt
 	u := User{}
 	var re Callback
 	if err := c.Bind(&u); err != nil {
@@ -78,14 +80,6 @@ func oaRegister(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, re)
-}
-
-func oaGetJwt(user User) string {
-	return ""
-}
-
-func accessible(c echo.Context) error {
-	return c.String(http.StatusOK, "Accessible")
 }
 
 func checkAuth(c echo.Context) jwt.Claims {

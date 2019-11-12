@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/labstack/echo"
@@ -45,6 +46,9 @@ func start() {
 
 	e.GET("/", accessible)
 
+	sys := e.Group("/system")
+	sys.POST("/restart", sysRestart)
+
 	w := e.Group("/web")
 	w.Use(middleware.JWT([]byte("NFUCA")))
 	w.POST("debug/check", checkPower)
@@ -53,7 +57,7 @@ func start() {
 	w.PUT("/DomainInfo", updateDomainInfo)
 	w.PUT("/ServerInfo", updateServerInfo)
 	w.GET("/UserInfo", getUserInfo)
-	w.PUT("/UserInfo", updateUserInfo)
+	w.PUT("/UserInfo/:mail/:key/:value", updateUserInfo)
 	w.PUT("/SiteInfo", addSiteInfo)
 	w.GET("/SiteInfo", getSiteInfo)
 	w.PUT("/Certificate", addCertificateInfo)
@@ -67,4 +71,8 @@ func start() {
 	} else {
 		e.Logger.Fatal(e.Start(":" + conf.ListenPort))
 	}
+}
+
+func accessible(c echo.Context) error {
+	return c.HTML(http.StatusOK, "<h1>CenterDash</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.1.0 preview")
 }
