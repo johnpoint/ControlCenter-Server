@@ -12,6 +12,7 @@ type Config struct {
 	TLS          bool
 	CERTPath     string
 	KEYPath      string
+	Salt         string
 }
 
 func loadConfig() Config {

@@ -5,6 +5,7 @@
     ],
     "ListenPort": "1323",
     "CERTPath": "",
-    "KEYPath":"",
-    "TLS": false
+    "KEYPath": "",
+    "TLS": false,
+    "Salt": "NFUCA"
 }

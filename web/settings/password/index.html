@@ -14,9 +14,8 @@
     <link rel="shortcut icon" href="/favicon.ico">
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-    <title>DNMP</title>
+    <title>Settings-DNMP</title>
 </head>
-
 
 <body>
     <style>
@@ -31,7 +30,26 @@
     <section id="main-body">
         <div class="container">
             <div id="error"></div>
-            <div class="row">
+            <div class="page-header">
+                <h1>Settings <small>Overview</small></h1>
+            </div>
+            <ul class="nav nav-pills">
+                <li role="presentation"><a href="/settings">Profile</a></li>
+                <li role="presentation" class="active"><a href="/settings/password/">Password</a></li>
+            </ul>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p>Old Password</p>
+                        <input type="password" class="form-control" placeholder="Your current password" aria-describedby="basic-addon1">
+                    <hr>
+                    <p>New Password</p>
+                        <input type="password" class="form-control" placeholder="Your new password" aria-describedby="basic-addon1">
+                    <hr>
+                    <p>Confirm Password</p>
+                        <input type="password" class="form-control" placeholder="Re-enter a new password" aria-describedby="basic-addon1">
+                    <hr>
+                    <button class="btn btn-default" type="button">update</button>
+                </div>
             </div>
         </div>
     </section>
@@ -42,33 +60,6 @@
     </script>
     <script src="/js/config.js"></script>
     <script src="/js/checkPower.js"></script>
-    <script>
-
-        $.ajax({
-            "url": apiaddress + "/web/DomainInfo",
-            "method": "GET",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": "Bearer " + userjwt
-            }
-        });
-
-        $('#logout').click(function () {
-            clearCookie("jwt")
-            window.location.pathname = "/login.html"
-        })
-        function setCookie(cname, cvalue, exdays) {
-            var d = new Date();
-            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-            var expires = "expires=" + d.toUTCString();
-            document.cookie = cname + "=" + cvalue + "; " + expires;
-        }
-        function clearCookie(name) {
-            setCookie(name, "", -1);
-        }
-    </script>
-
 </body>
 
 </html>
