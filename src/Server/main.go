@@ -50,7 +50,7 @@ func start() {
 	sys.POST("/restart", sysRestart)
 
 	w := e.Group("/web")
-	w.Use(middleware.JWT([]byte("NFUCA")))
+	w.Use(middleware.JWT([]byte(conf.Salt)))
 	w.POST("debug/check", checkPower)
 	w.GET("/ServerInfo", getServerInfo)
 	w.DELETE("/Server", removeServer)
@@ -75,5 +75,5 @@ func start() {
 }
 
 func accessible(c echo.Context) error {
-	return c.HTML(http.StatusOK, "<h1>CenterDash</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.1.0 preview")
+	return c.HTML(http.StatusOK, "<h1>CenterDash</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.1.1 preview")
 }
