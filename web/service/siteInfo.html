@@ -32,10 +32,31 @@
         <div class="container">
             <div id="error"></div>
             <div class="page-header">
-                <h1>Site <small>Manage</small></h1>
+                <h1>Site <small id="domain"></small></h1>
             </div>
-            <div id="siteinfo">
-                <p>Loading...</p>
+            <div class="row">
+                <div class="container">
+                    <div class="col-md-2">
+                        <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                            <button type="button" class="btn btn-default">Certificate</button>
+                            <button type="button" class="btn btn-default">Config</button>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="panel panel-default">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>Domain</td>
+                                        <td id="domainame"></td>
+                                        <td>Status</td>
+                                        <td id="sitestatus">enable</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -55,16 +76,25 @@
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer " + userjwt
             },
-            data: { name: "*" },
+            data: { name: window.location.search.replace('?name=', '') },
             success: function (data) {
                 console.log(data)
-                var dom = ""
-                for (let index = 0; index < data.length; index++) {
-                    dom += '<div class="row"><div class="panel panel-default panel-index" style="margin-bottom:5px" onclick="window.location=\'siteInfo.html?name=' + data[index]["name"] + "'\">\
-                            <div class=\"panel-body\">" + data[index]["name"] +
-                        '</div></div></div> '
-                }
-                $('#siteinfo')[0].innerHTML = dom
+                $('#domain')[0].innerHTML = window.location.search.replace('?name=', '')
+                $('#domainame')[0].innerHTML = '<a href="http://' + window.location.search.replace('?name=', '') + '">' + window.location.search.replace('?name=', '') + '</a>'
+                var i = new Number(data[0].cer)
+                $.ajax({
+                    "url": apiaddress + "/web/Certificate",
+                    "method": "GET",
+                    "timeout": 0,
+                    "headers": {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Authorization": "Bearer " + userjwt
+                    },
+                    data: { id: i },
+                    success: function (data) {
+                        console.log(data)
+                    }
+                })
             },
             error: function () {
                 $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '

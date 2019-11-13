@@ -53,6 +53,7 @@ func start() {
 	w.Use(middleware.JWT([]byte("NFUCA")))
 	w.POST("debug/check", checkPower)
 	w.GET("/ServerInfo", getServerInfo)
+	w.DELETE("/Server", removeServer)
 	w.GET("/DomainInfo", getDomainInfo)
 	w.PUT("/DomainInfo", updateDomainInfo)
 	w.PUT("/ServerInfo", updateServerInfo)

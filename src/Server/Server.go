@@ -101,3 +101,12 @@ func serverGetCertificate(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, getCer(Certificate{ID: id64}))
 }
+
+func removeServer(c echo.Context) error {
+	//TODO
+	token := c.Param("token")
+	if (len(getServer(Server{Token: token})) == 0) {
+		return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
+	}
+	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+}
