@@ -103,10 +103,13 @@ func serverGetCertificate(c echo.Context) error {
 }
 
 func removeServer(c echo.Context) error {
-	//TODO
-	token := c.Param("token")
-	if (len(getServer(Server{Token: token})) == 0) {
-		return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
+	user := checkAuth(c).(jwt.MapClaims)
+	ip := c.Param("ip")
+	if user["level"].(float64) == 1 {
+		if delServer(ip) {
+			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+		}
+		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 	}
-	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }

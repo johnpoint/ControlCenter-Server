@@ -53,7 +53,7 @@ func start() {
 	w.Use(middleware.JWT([]byte(conf.Salt)))
 	w.POST("debug/check", checkPower)
 	w.GET("/ServerInfo", getServerInfo)
-	w.DELETE("/Server", removeServer)
+	w.DELETE("/Server/:ip", removeServer)
 	w.GET("/DomainInfo", getDomainInfo)
 	w.PUT("/DomainInfo", updateDomainInfo)
 	w.PUT("/ServerInfo", updateServerInfo)

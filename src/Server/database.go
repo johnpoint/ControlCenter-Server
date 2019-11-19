@@ -24,6 +24,14 @@ func addServer(server Server) bool {
 	return false
 }
 
+func delServer(ip string) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Server{})
+	db.Where("ipv4 LIKE ?", ip).Delete(Server{})
+	return true
+}
+
 func addUser(user User) bool {
 	db := initDatabase("test.db")
 	defer db.Close()
