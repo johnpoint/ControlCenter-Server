@@ -101,7 +101,7 @@ func main() {
 	}
 	if os.Args[1] == "install" {
 		if len(os.Args) != 6 {
-			fmt.Println("参数数量错误错误")
+			fmt.Println("参数数量错误")
 			return
 		}
 		setup(os.Args)
