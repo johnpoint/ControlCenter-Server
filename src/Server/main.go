@@ -15,7 +15,7 @@ type Callback struct {
 }
 
 func main() {
-	if len(os.Args) <= 2 {
+	if len(os.Args) == 2 {
 		if os.Args[1] == "init" {
 			initServer()
 		} else if os.Args[1] == "start" {
@@ -66,6 +66,9 @@ func start() {
 	w.POST("/Certificate", updateCertificateInfo)
 	w.POST("/rmCertificate", deleteCertificateInfo)
 	w.GET("/Service", getService)
+	w.POST("/backup", setBackupFile)
+
+	e.GET("/web/backup/:token", getBackupFile)
 
 	if conf.TLS {
 		e.Logger.Fatal(e.StartTLS(":"+conf.ListenPort, conf.CERTPath, conf.KEYPath))

@@ -34,33 +34,21 @@
                 <h1>Settings <small>Overview</small></h1>
             </div>
             <ul class="nav nav-pills">
-                <li role="presentation" class="active"><a href="/settings">Profile</a></li>
+                <li role="presentation"><a href="/settings">Profile</a></li>
                 <li role="presentation"><a href="/settings/password/">Password</a></li>
-                <li role="presentation"><a href="/settings/backup">Backup</a></li>
+                <li role="presentation" class="active"><a href="/settings/backup">Backup</a></li>
             </ul>
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <p>Username</p>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">@</span>
-                        <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">EDIT</button>
-                        </span>
-                    </div>
+                    <p>Download Database</p>
+                    <a id="download" type="button" class="btn btn-success" onclick="">Download</a>
                     <hr>
-                    <p>Email</p>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Email" aria-describedby="basic-addon2">
-                        <span class="input-group-addon" id="basic-addon2">@</span>
-                        <input type="text" class="form-control" placeholder="example.com"
-                            aria-describedby="basic-addon2">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" disabled>EDIT</button>
-                        </span>
-                    </div>
-                    <hr>
-                    <button class="btn btn-default" type="button" disabled>update</button>
+                    <p>Upload Database</p>
+
+                    <input type="file" id="file" name="file">
+                    <button id="upload" class="btn btn-success">Upload</button>
+
+
                 </div>
             </div>
         </div>
@@ -72,6 +60,28 @@
     </script>
     <script src="/js/config.js"></script>
     <script src="/js/checkPower.js"></script>
+    <script>
+        $('#upload').click(function () {
+            var files = $('#file').prop('files');
+            var data = new FormData();
+            data.append('file', files[0]);
+            $.ajax({
+                type: 'POST',
+                headers: {
+                    "Authorization": "Bearer " + userjwt
+                },
+                url: apiaddress + "/web/backup",
+                data: data,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function (ret) {
+                    alert(JSON.stringify(ret))
+                }
+            });
+        })
+        $("#download").attr('onclick', "window.open('" + apiaddress + "/web/backup/" + userjwt + "')");
+    </script>
 </body>
 
 </html>

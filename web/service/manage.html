@@ -32,7 +32,7 @@
         <div class="container">
             <div id="error"></div>
             <div class="page-header">
-                <h1>Site <small>Manage</small></h1>
+                <h1>Service <small>Manage</small></h1>
             </div>
             <div id="siteinfo">
                 <p>Loading...</p>
@@ -47,43 +47,6 @@
     <script src="/js/config.js"></script>
     <script src="/js/checkPower.js"></script>
     <script>
-        $.ajax({
-            "url": apiaddress + "/web/SiteInfo",
-            "method": "GET",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": "Bearer " + userjwt
-            },
-            data: { name: "*" },
-            success: function (data) {
-                console.log(data)
-                var dom = ""
-                for (let index = 0; index < data.length; index++) {
-                    dom += '<div class="row"><div class="panel panel-default panel-index" style="margin-bottom:5px" onclick="window.location=\'siteInfo.html?name=' + data[index]["name"] + "'\">\
-                            <div class=\"panel-body\">" + data[index]["name"] +
-                        '</div></div></div> '
-                }
-                $('#siteinfo')[0].innerHTML = dom
-            },
-            error: function () {
-                $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '
-            }
-        });
-
-        $('#logout').click(function () {
-            clearCookie("jwt")
-            window.location.pathname = "/login.html"
-        })
-        function setCookie(cname, cvalue, exdays) {
-            var d = new Date();
-            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-            var expires = "expires=" + d.toUTCString();
-            document.cookie = cname + "=" + cvalue + "; " + expires;
-        }
-        function clearCookie(name) {
-            setCookie(name, "", -1);
-        }
     </script>
 
 </body>
