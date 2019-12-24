@@ -65,7 +65,6 @@ func start() {
 	w.GET("/Certificate", getCertificateInfo)
 	w.POST("/Certificate", updateCertificateInfo)
 	w.POST("/rmCertificate", deleteCertificateInfo)
-	w.GET("/Service", getService)
 	w.POST("/backup", setBackupFile)
 
 	e.GET("/web/:mail/:pass/backup", getBackupFile)

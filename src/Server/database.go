@@ -13,12 +13,49 @@ func initDatabase(path string) *gorm.DB {
 	return db
 }
 
+//Service
+func getService(service Service) []Service {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Service{})
+	services := []Service{}
+	if service.Id == -1 {
+		db.Find(&service)
+	} else {
+		db.Where(service).Find(&service)
+	}
+	return services
+}
+
+func addService(service Service) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Service{})
+	db.Create(&service)
+	if !(db.NewRecord(service)) {
+		return true
+	}
+	return false
+}
+
+//Server
 func addServer(server Server) bool {
 	db := initDatabase("test.db")
 	defer db.Close()
 	db.AutoMigrate(&Server{})
 	db.Create(&server)
 	if !(db.NewRecord(server)) {
+		return true
+	}
+	return false
+}
+
+func updateServer(where Server, server Server) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Server{})
+	db.Model(&server).Where(where).Update(server)
+	if len(getServer(server)) != 0 {
 		return true
 	}
 	return false
@@ -32,6 +69,7 @@ func delServer(ip string) bool {
 	return true
 }
 
+//User
 func addUser(user User) bool {
 	db := initDatabase("test.db")
 	defer db.Close()
@@ -53,7 +91,29 @@ func updateUser(where User, user User) bool {
 	}
 	return false
 }
+func getUser(user User) []User {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&User{})
+	users := []User{}
+	db.Where(user).Find(&users)
+	return users
+}
 
+func getServer(server Server) []Server {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Server{})
+	servers := []Server{}
+	if server.Hostname == "*" {
+		db.Find(&servers)
+	} else {
+		db.Where(server).Find(&servers)
+	}
+	return servers
+}
+
+//Domain
 func addDomain(domain Domain) bool {
 	db := initDatabase("test.db")
 	defer db.Close()
@@ -65,6 +125,27 @@ func addDomain(domain Domain) bool {
 	return false
 }
 
+func getDomain(domain Domain) []Domain {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Domain{})
+	domains := []Domain{}
+	db.Where(domain).Find(&domains)
+	return domains
+}
+
+func updateDomain(where Domain, domain Domain) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Domain{})
+	db.Model(&domain).Where(where).Update(domain)
+	if len(getDomain(domain)) != 0 {
+		return true
+	}
+	return false
+}
+
+//Site
 func addSite(site Site) bool {
 	db := initDatabase("test.db")
 	defer db.Close()
@@ -89,6 +170,7 @@ func getSite(site Site) []Site {
 	return sites
 }
 
+//Cer
 func addCer(certificate Certificate) bool {
 	db := initDatabase("test.db")
 	defer db.Close()
@@ -130,57 +212,4 @@ func getCer(certificate Certificate) []Certificate {
 	}
 	db.Where(certificate).Find(&certificates)
 	return certificates
-}
-
-func getUser(user User) []User {
-	db := initDatabase("test.db")
-	defer db.Close()
-	db.AutoMigrate(&User{})
-	users := []User{}
-	db.Where(user).Find(&users)
-	return users
-}
-
-func getServer(server Server) []Server {
-	db := initDatabase("test.db")
-	defer db.Close()
-	db.AutoMigrate(&Server{})
-	servers := []Server{}
-	if server.Hostname == "*" {
-		db.Find(&servers)
-	} else {
-		db.Where(server).Find(&servers)
-	}
-	return servers
-}
-
-func getDomain(domain Domain) []Domain {
-	db := initDatabase("test.db")
-	defer db.Close()
-	db.AutoMigrate(&Domain{})
-	domains := []Domain{}
-	db.Where(domain).Find(&domains)
-	return domains
-}
-
-func updateDomain(where Domain, domain Domain) bool {
-	db := initDatabase("test.db")
-	defer db.Close()
-	db.AutoMigrate(&Domain{})
-	db.Model(&domain).Where(where).Update(domain)
-	if len(getDomain(domain)) != 0 {
-		return true
-	}
-	return false
-}
-
-func updateServer(where Server, server Server) bool {
-	db := initDatabase("test.db")
-	defer db.Close()
-	db.AutoMigrate(&Server{})
-	db.Model(&server).Where(where).Update(server)
-	if len(getServer(server)) != 0 {
-		return true
-	}
-	return false
 }
