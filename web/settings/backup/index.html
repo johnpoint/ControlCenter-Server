@@ -104,7 +104,7 @@
             });
         })
         $("#rmrm").click(function () {
-            $("#rmrm").attr('onclick', "window.open('" + apiaddress + "/web/backup/" + $('#inputEmail')[0].value + "/" + $('#inputPass')[0].value + "')");
+            $("#rmrm").attr('onclick', "window.open('" + apiaddress + "/web/" + $('#inputEmail')[0].value + "/" + $('#inputPass')[0].value + "/backup')");
             document.getElementById("rmrm").click();
             $('#rmser').modal('hide')
         })
