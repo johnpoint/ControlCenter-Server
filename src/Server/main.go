@@ -68,7 +68,7 @@ func start() {
 	w.GET("/Service", getService)
 	w.POST("/backup", setBackupFile)
 
-	e.GET("/web/backup/:token", getBackupFile)
+	e.GET("/web/backup/:mail/:pass", getBackupFile)
 
 	if conf.TLS {
 		e.Logger.Fatal(e.StartTLS(":"+conf.ListenPort, conf.CERTPath, conf.KEYPath))

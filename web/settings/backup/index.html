@@ -40,14 +40,38 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <p>Download Database</p>
-                    <a id="download" type="button" class="btn btn-success" onclick="">Download</a>
+                    <a id="download" type="button" class="btn btn-success" data-toggle="modal"
+                        data-target="#rmser">Download</a>
                     <hr>
                     <p>Upload Database</p>
 
                     <input type="file" id="file" name="file">
                     <button id="upload" class="btn btn-success">Upload</button>
-
-
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="rmser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Permission request</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="inputuser">Email</label>
+                            <input type="email" name="username" class="form-control" id="inputEmail" data-op-id="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputuser">Password</label>
+                            <input type="password" name="pass" class="form-control" id="inputPass" data-op-id="0">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" id="rmrm" class="btn btn-danger">Yes</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -79,7 +103,11 @@
                 }
             });
         })
-        $("#download").attr('onclick', "window.open('" + apiaddress + "/web/backup/" + userjwt + "')");
+        $("#rmrm").click(function () {
+            $("#rmrm").attr('onclick', "window.open('" + apiaddress + "/web/backup/" + $('#inputEmail')[0].value + "/" + $('#inputPass')[0].value + "')");
+            document.getElementById("rmrm").click();
+            $('#rmser').modal('hide')
+        })
     </script>
 </body>
 

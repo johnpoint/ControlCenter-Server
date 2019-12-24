@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/md5"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -43,9 +45,18 @@ func setBackupFile(c echo.Context) error {
 }
 
 func getBackupFile(c echo.Context) error {
-	token := c.Param("token")
-	if token == "" {
-		return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
+	conf := loadConfig()
+	salt := conf.Salt
+	mail := c.Param("mail")
+	pass := c.Param("pass")
+	data := []byte(mail + salt + pass)
+	has := md5.Sum(data)
+	md5str1 := fmt.Sprintf("%x", has)
+	getuser := User{Mail: mail, Password: md5str1}
+	userInfo := getUser(getuser)
+	if len(userInfo) == 0 {
+		re := Callback{Code: 0, Info: "account or password incorrect"}
+		return c.JSON(http.StatusUnauthorized, re)
 	}
 	return c.File("test.db")
 }
