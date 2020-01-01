@@ -1,7 +1,8 @@
 package main
 
+// Service TODO
 type Service struct {
-	Id       int64 `gorm:"AUTO_INCREMENT"`
+	ID       int64 `gorm:"AUTO_INCREMENT"`
 	Name     string
 	Enable   string
 	Disable  string

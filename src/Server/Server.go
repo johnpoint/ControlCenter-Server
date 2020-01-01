@@ -10,6 +10,7 @@ import (
 	"github.com/labstack/echo"
 )
 
+// Server model of server
 type Server struct {
 	Token    string
 	Status   string `json:"status" xml:"status" form:"status" query:"status"`
@@ -19,6 +20,7 @@ type Server struct {
 	ID       int64  `gorm:"AUTO_INCREMENT"`
 }
 
+// ServerKey TODO
 type ServerKey struct {
 	ID      int64  `json:"id" xml:"id" form:"id" query:"id" gorm:"AUTO_INCREMENT"`
 	Public  string `json:"public" xml:"public" form:"public" query:"public"`

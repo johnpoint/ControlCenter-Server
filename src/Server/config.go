@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// Config model of config
 type Config struct {
 	AllowAddress []string
 	ListenPort   string

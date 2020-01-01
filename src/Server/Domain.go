@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo"
 )
 
+// Domain model of domain
 type Domain struct {
 	ID     int64  `gorm:"AUTO_INCREMENT"`
 	Name   string `json:"name" xml:"name" form:"name" query:"name"`

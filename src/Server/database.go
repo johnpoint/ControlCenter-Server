@@ -19,7 +19,7 @@ func getService(service Service) []Service {
 	defer db.Close()
 	db.AutoMigrate(&Service{})
 	services := []Service{}
-	if service.Id == -1 {
+	if service.ID == -1 {
 		db.Find(&service)
 	} else {
 		db.Where(service).Find(&service)

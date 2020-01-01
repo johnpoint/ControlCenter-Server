@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo"
 )
 
+// User model of user
 type User struct {
 	ID       int64  `gorm:"AUTO_INCREMENT"`
 	Username string `json:"name" xml:"name" form:"name" query:"name"`

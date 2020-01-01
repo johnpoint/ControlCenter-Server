@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
+// Callback send some info to client
 type Callback struct {
 	Code int64
 	Info string
