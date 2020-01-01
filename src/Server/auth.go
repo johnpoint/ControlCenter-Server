@@ -82,9 +82,9 @@ func oaRegister(c echo.Context) error {
 	return c.JSON(http.StatusOK, re)
 }
 
-func checkAuth(c echo.Context) jwt.Claims {
+func checkAuth(c echo.Context) *jwtCustomClaims {
 	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims
+	claims := user.Claims.(*jwtCustomClaims)
 	return claims
 }
 

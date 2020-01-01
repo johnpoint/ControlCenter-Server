@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
 
@@ -17,7 +16,7 @@ type Site struct {
 }
 
 func getSiteInfo(c echo.Context) error {
-	user := checkAuth(c).(jwt.MapClaims)
+	user := checkAuth(c)
 	if user != nil {
 		site := Site{}
 		if err := c.Bind(&site); err != nil {

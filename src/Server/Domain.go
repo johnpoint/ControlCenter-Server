@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
 
@@ -16,16 +15,16 @@ type Domain struct {
 }
 
 func getDomainInfo(c echo.Context) error {
-	user := checkAuth(c).(jwt.MapClaims)
-	if user["level"].(float64) == 1 {
+	user := checkAuth(c)
+	if user.Level == 1 {
 		return c.JSON(http.StatusOK, getDomain(Domain{}))
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }
 
 func updateDomainInfo(c echo.Context) error {
-	user := checkAuth(c).(jwt.MapClaims)
-	if user["level"].(float64) == 1 {
+	user := checkAuth(c)
+	if user.Level == 1 {
 		domain := Domain{}
 		if err := c.Bind(&domain); err != nil {
 			panic(err)

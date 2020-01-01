@@ -6,7 +6,6 @@ import (
 	"encoding/pem"
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
 
@@ -57,12 +56,12 @@ func addCertificateInfo(c echo.Context) error {
 }
 
 func deleteCertificateInfo(c echo.Context) error {
-	user := checkAuth(c).(jwt.MapClaims)
+	user := checkAuth(c)
 	cer := Certificate{}
 	if err := c.Bind(&cer); err != nil {
 		panic(err)
 	}
-	if user["level"].(float64) == 1 {
+	if user.Level == 1 {
 		if delCer(cer) {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
@@ -72,8 +71,8 @@ func deleteCertificateInfo(c echo.Context) error {
 }
 
 func updateCertificateInfo(c echo.Context) error {
-	user := checkAuth(c).(jwt.MapClaims)
-	if user["level"].(float64) == 1 {
+	user := checkAuth(c)
+	if user.Level == 1 {
 		certificate := Certificate{}
 		if err := c.Bind(&certificate); err != nil {
 			panic(err)
@@ -106,12 +105,12 @@ func updateCertificateInfo(c echo.Context) error {
 }
 
 func getCertificateInfo(c echo.Context) error {
-	user := checkAuth(c).(jwt.MapClaims)
+	user := checkAuth(c)
 	cer := Certificate{}
 	if err := c.Bind(&cer); err != nil {
 		panic(err)
 	}
-	if user["level"].(float64) == 1 {
+	if user.Level == 1 {
 		return c.JSON(http.StatusOK, getCer(cer))
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})

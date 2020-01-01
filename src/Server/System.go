@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
 
@@ -16,7 +15,7 @@ func sysRestart(c echo.Context) error {
 }
 
 func setBackupFile(c echo.Context) error {
-	user := checkAuth(c).(jwt.MapClaims)
+	user := checkAuth(c)
 	if user != nil {
 		file, err := c.FormFile("file")
 		if err != nil {

@@ -48,9 +48,12 @@ func start() {
 
 	sys := e.Group("/system")
 	sys.POST("/restart", sysRestart)
-
+	jwtConfig := middleware.JWTConfig{
+		Claims:     &jwtCustomClaims{},
+		SigningKey: []byte(conf.Salt),
+	}
 	w := e.Group("/web")
-	w.Use(middleware.JWT([]byte(conf.Salt)))
+	w.Use(middleware.JWTWithConfig(jwtConfig))
 	w.POST("debug/check", checkPower)
 	w.GET("/ServerInfo", getServerInfo)
 	w.DELETE("/Server/:ip", removeServer)
@@ -66,6 +69,7 @@ func start() {
 	w.POST("/Certificate", updateCertificateInfo)
 	w.POST("/rmCertificate", deleteCertificateInfo)
 	w.POST("/backup", setBackupFile)
+	w.GET("/Password/:oldpass/:newpass", reSetPassword)
 
 	e.GET("/web/:mail/:pass/backup", getBackupFile)
 

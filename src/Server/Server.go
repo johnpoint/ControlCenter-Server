@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
 
@@ -47,20 +46,20 @@ func setupServer(c echo.Context) error {
 }
 
 func getServerInfo(c echo.Context) error {
-	user := checkAuth(c).(jwt.MapClaims)
+	user := checkAuth(c)
 	server := Server{}
 	if err := c.Bind(&server); err != nil {
 		panic(err)
 	}
-	if user["level"].(float64) == 1 {
+	if user.Level == 1 {
 		return c.JSON(http.StatusOK, getServer(server))
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }
 
 func updateServerInfo(c echo.Context) error {
-	user := checkAuth(c).(jwt.MapClaims)
-	if user["level"].(float64) == 1 {
+	user := checkAuth(c)
+	if user.Level == 1 {
 		server := Server{}
 		if err := c.Bind(&server); err != nil {
 			panic(err)
@@ -103,9 +102,9 @@ func serverGetCertificate(c echo.Context) error {
 }
 
 func removeServer(c echo.Context) error {
-	user := checkAuth(c).(jwt.MapClaims)
+	user := checkAuth(c)
 	ip := c.Param("ip")
-	if user["level"].(float64) == 1 {
+	if user.Level == 1 {
 		if delServer(ip) {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
