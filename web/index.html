@@ -148,9 +148,6 @@
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer " + userjwt
             },
-            "data": {
-                name: "*"
-            },
             success: function (data) {
                 $('#lencer')[0].innerHTML = data.length
             }
@@ -163,7 +160,6 @@
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer " + userjwt
             },
-            data: { name: "*" },
             success: function (data) {
                 $('#lensite')[0].innerHTML = data.length
             },
