@@ -10,23 +10,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-// Server model of server
-type Server struct {
-	Token    string
-	Status   string `json:"status" xml:"status" form:"status" query:"status"`
-	Hostname string `json:"hostname" xml:"hostname" form:"hostname" query:"hostname"`
-	Ipv4     string `json:"ipv4" xml:"ipv4" form:"ipv4" query:"ipv4"`
-	Ipv6     string `json:"ipv6" xml:"ipv6" form:"ipv6" query:"ipv6"`
-	ID       int64  `gorm:"AUTO_INCREMENT"`
-}
-
-// ServerKey TODO
-type ServerKey struct {
-	ID      int64  `json:"id" xml:"id" form:"id" query:"id" gorm:"AUTO_INCREMENT"`
-	Public  string `json:"public" xml:"public" form:"public" query:"public"`
-	Private string `json:"private" xml:"private" form:"private" query:"private"`
-}
-
 func setupServer(c echo.Context) error {
 	server := Server{}
 	if err := c.Bind(&server); err != nil {
@@ -54,6 +37,7 @@ func getServerInfo(c echo.Context) error {
 		panic(err)
 	}
 	if user.Level == 1 {
+		server.UID = getUser(User{Mail: user.Mail})[0].ID
 		return c.JSON(http.StatusOK, getServer(server))
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
@@ -75,8 +59,8 @@ func updateServerInfo(c echo.Context) error {
 }
 
 func serverUpdate(c echo.Context) error {
-	token := c.Param("token")
-	if (len(getServer(Server{Token: token})) == 0) {
+	Token := c.Param("Token")
+	if (len(getServer(Server{Token: Token})) == 0) {
 		return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 	}
 	server := Server{}
@@ -91,8 +75,8 @@ func serverUpdate(c echo.Context) error {
 }
 
 func serverGetCertificate(c echo.Context) error {
-	token := c.Param("token")
-	if (len(getServer(Server{Token: token})) == 0) {
+	Token := c.Param("Token")
+	if (len(getServer(Server{Token: Token})) == 0) {
 		return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 	}
 	id := c.Param("id")
@@ -107,7 +91,7 @@ func removeServer(c echo.Context) error {
 	user := checkAuth(c)
 	ip := c.Param("ip")
 	if user.Level == 1 {
-		if delServer(ip) {
+		if delServer(ip, getUser(User{Mail: user.Mail})[0].ID) {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})

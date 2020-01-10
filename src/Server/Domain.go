@@ -6,15 +6,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-// Domain model of domain
-type Domain struct {
-	ID     int64  `gorm:"AUTO_INCREMENT"`
-	Name   string `json:"name" xml:"name" form:"name" query:"name"`
-	Status string `json:"status" xml:"status" form:"status" query:"status"`
-	Cer    string `json:"cer" xml:"cer" form:"cer" query:"cer"`
-	Key    string `json:"key" xml:"key" form:"key" query:"key"`
-}
-
 func getDomainInfo(c echo.Context) error {
 	user := checkAuth(c)
 	if user.Level == 1 {

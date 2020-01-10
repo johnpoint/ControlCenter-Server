@@ -9,49 +9,39 @@ import (
 	"github.com/labstack/echo"
 )
 
-// Certificate model of Certificate
-type Certificate struct {
-	ID                    int64  `json:"id" xml:"id" form:"id" query:"id" gorm:"AUTO_INCREMENT"`
-	Name                  string `json:"name" xml:"name" form:"name" query:"name"`
-	Fullchain             string `json:"fullchain" xml:"fullchain" form:"fullchain" query:"fullchain"`
-	Key                   string `json:"key" xml:"key" form:"key" query:"key"`
-	DNSNames              string `json:"DNSNames" xml:"DNSNames" form:"DNSNames" query:"DNSNames"`
-	Issuer                string `json:"Issuer" xml:"Issuer" form:"Issuer" query:"Issuer"`
-	IssuingCertificateURL string `json:"IssuingCertificateURL" xml:"IssuingCertificateURL" form:"IssuingCertificateURL" query:"IssuingCertificateURL"`
-	NotAfter              int64  `json:"NotAfter" xml:"NotAfter" form:"NotAfter" query:"NotAfter"`
-	NotBefore             int64  `json:"NotBefore" xml:"NotBefore" form:"NotBefore" query:"NotBefore"`
-	OCSPServer            string `json:"OCSPServer" xml:"OCSPServer" form:"OCSPServer" query:"OCSPServer"`
-	Subject               string `json:"Subject" xml:"Subject" form:"Subject" query:"Subject"`
-}
-
 func addCertificateInfo(c echo.Context) error {
-	certificate := Certificate{}
-	if err := c.Bind(&certificate); err != nil {
-		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
+	user := checkAuth(c)
+	if user.Level == 1 {
+		certificate := Certificate{}
+		if err := c.Bind(&certificate); err != nil {
+			return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
+		}
+		var certPEMBlock []byte = []byte(certificate.Fullchain)
+		var cert tls.Certificate
+		certDERBlock, restPEMBlock := pem.Decode(certPEMBlock)
+		cert.Certificate = append(cert.Certificate, certDERBlock.Bytes)
+		certDERBlockChain, _ := pem.Decode(restPEMBlock)
+		if certDERBlockChain != nil {
+			cert.Certificate = append(cert.Certificate, certDERBlockChain.Bytes)
+		}
+		x509Cert, err := x509.ParseCertificate(certDERBlock.Bytes)
+		if err != nil {
+			return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
+		}
+		certificate.DNSNames = x509Cert.DNSNames[0]
+		certificate.Issuer = x509Cert.Issuer.String()
+		certificate.IssuingCertificateURL = x509Cert.IssuingCertificateURL[0]
+		certificate.NotAfter = x509Cert.NotAfter.Unix()
+		certificate.NotBefore = x509Cert.NotBefore.Unix()
+		certificate.OCSPServer = x509Cert.OCSPServer[0]
+		certificate.Subject = x509Cert.Subject.String()
+		certificate.UID = getUser(User{Mail: user.Mail})[0].ID
+		if !addCer(certificate) {
+			return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
+		}
+		return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 	}
-	var certPEMBlock []byte = []byte(certificate.Fullchain)
-	var cert tls.Certificate
-	certDERBlock, restPEMBlock := pem.Decode(certPEMBlock)
-	cert.Certificate = append(cert.Certificate, certDERBlock.Bytes)
-	certDERBlockChain, _ := pem.Decode(restPEMBlock)
-	if certDERBlockChain != nil {
-		cert.Certificate = append(cert.Certificate, certDERBlockChain.Bytes)
-	}
-	x509Cert, err := x509.ParseCertificate(certDERBlock.Bytes)
-	if err != nil {
-		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
-	}
-	certificate.DNSNames = x509Cert.DNSNames[0]
-	certificate.Issuer = x509Cert.Issuer.String()
-	certificate.IssuingCertificateURL = x509Cert.IssuingCertificateURL[0]
-	certificate.NotAfter = x509Cert.NotAfter.Unix()
-	certificate.NotBefore = x509Cert.NotBefore.Unix()
-	certificate.OCSPServer = x509Cert.OCSPServer[0]
-	certificate.Subject = x509Cert.Subject.String()
-	if !addCer(certificate) {
-		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
-	}
-	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }
 
 func deleteCertificateInfo(c echo.Context) error {
@@ -61,6 +51,7 @@ func deleteCertificateInfo(c echo.Context) error {
 		panic(err)
 	}
 	if user.Level == 1 {
+		cer.UID = getUser(User{Mail: user.Mail})[0].ID
 		if delCer(cer) {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
@@ -95,7 +86,7 @@ func updateCertificateInfo(c echo.Context) error {
 		certificate.NotBefore = x509Cert.NotBefore.Unix()
 		certificate.OCSPServer = x509Cert.OCSPServer[0]
 		certificate.Subject = x509Cert.Subject.String()
-		if updateCer(Certificate{ID: certificate.ID}, certificate) {
+		if updateCer(Certificate{ID: certificate.ID, UID: getUser(User{Mail: user.Mail})[0].ID}, certificate) {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusBadRequest, Callback{Code: 0, Info: "ERROR"})

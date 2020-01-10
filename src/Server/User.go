@@ -8,15 +8,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-// User model of user
-type User struct {
-	ID       int64  `gorm:"AUTO_INCREMENT"`
-	Username string `json:"name" xml:"name" form:"name" query:"name"`
-	Mail     string `json:"email" xml:"email" form:"email" query:"email"`
-	Password string `json:"password" xml:"password" form:"password" query:"password"`
-	Level    int64
-}
-
 func getUserInfo(c echo.Context) error {
 	user := checkAuth(c)
 	if user != nil {

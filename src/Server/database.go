@@ -61,11 +61,21 @@ func updateServer(where Server, server Server) bool {
 	return false
 }
 
-func delServer(ip string) bool {
+func getServer(server Server) []Server {
 	db := initDatabase("test.db")
 	defer db.Close()
 	db.AutoMigrate(&Server{})
-	db.Where("ipv4 LIKE ?", ip).Delete(Server{})
+	servers := []Server{}
+	db.Where(server).Find(&servers)
+	return servers
+}
+
+func delServer(ip string, uid int64) bool {
+	db := initDatabase("test.db")
+	defer db.Close()
+	db.AutoMigrate(&Server{})
+	server := Server{Ipv4: ip, UID: uid}
+	db.Where(server).Delete(Server{})
 	return true
 }
 
@@ -98,19 +108,6 @@ func getUser(user User) []User {
 	users := []User{}
 	db.Where(user).Find(&users)
 	return users
-}
-
-func getServer(server Server) []Server {
-	db := initDatabase("test.db")
-	defer db.Close()
-	db.AutoMigrate(&Server{})
-	servers := []Server{}
-	if server.Hostname == "*" {
-		db.Find(&servers)
-	} else {
-		db.Where(server).Find(&servers)
-	}
-	return servers
 }
 
 //Domain
@@ -186,7 +183,7 @@ func delCer(certificate Certificate) bool {
 	db := initDatabase("test.db")
 	defer db.Close()
 	db.AutoMigrate(&Certificate{})
-	db.Where("id LIKE ?", certificate.ID).Delete(Certificate{})
+	db.Where(certificate).Delete(Certificate{})
 	return true
 }
 

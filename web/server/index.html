@@ -55,7 +55,6 @@
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": "Bearer " + userjwt
             },
-            data: { hostname: "*" },
             success: function (data) {
                 var dom = ""
                 for (let index = 0; index < data.length; index++) {
@@ -84,7 +83,6 @@
                     "Content-Type": "application/x-www-form-urlencoded",
                     "Authorization": "Bearer " + userjwt
                 },
-                data: { hostname: "*" },
                 success: function (data) {
                     var yr = "", mon = "", day = "", hr = "", min = "";
                     for (let index = 0; index < data.length; index++) {

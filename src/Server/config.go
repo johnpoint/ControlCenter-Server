@@ -6,16 +6,6 @@ import (
 	"os"
 )
 
-// Config model of config
-type Config struct {
-	AllowAddress []string
-	ListenPort   string
-	TLS          bool
-	CERTPath     string
-	KEYPath      string
-	Salt         string
-}
-
 func loadConfig() Config {
 	file, _ := os.Open("config.json")
 	defer file.Close()
