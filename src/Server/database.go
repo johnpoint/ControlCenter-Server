@@ -203,10 +203,6 @@ func getCer(certificate Certificate) []Certificate {
 	defer db.Close()
 	db.AutoMigrate(&Certificate{})
 	certificates := []Certificate{}
-	if certificate.Name == "*" {
-		db.Find(&certificates)
-		return certificates
-	}
 	db.Where(certificate).Find(&certificates)
 	return certificates
 }

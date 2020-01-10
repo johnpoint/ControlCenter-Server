@@ -101,6 +101,7 @@ func getCertificateInfo(c echo.Context) error {
 		panic(err)
 	}
 	if user.Level == 1 {
+		cer.UID = getUser(User{Mail: user.Mail})[0].ID
 		return c.JSON(http.StatusOK, getCer(cer))
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
