@@ -61,7 +61,6 @@ func start() {
 	w.GET("/DomainInfo", getDomainInfo)
 	w.PUT("/DomainInfo", updateDomainInfo)
 	w.PUT("/ServerInfo", updateServerInfo)
-	w.GET("/UserInfo", getUserInfo)
 	w.PUT("/UserInfo/:mail/:key/:value", updateUserInfo)
 	w.PUT("/SiteInfo", addSiteInfo)
 	w.GET("/SiteInfo", getSiteInfo)
@@ -70,9 +69,10 @@ func start() {
 	w.POST("/Certificate", updateCertificateInfo)
 	w.POST("/rmCertificate", deleteCertificateInfo)
 	w.POST("/backup", setBackupFile)
-	w.GET("/Password/:oldpass/:newpass", reSetPassword)
-
 	e.GET("/web/:mail/:pass/backup", getBackupFile)
+	user := w.Group("/UserInfo")
+	user.GET("/Password/:oldpass/:newpass", reSetPassword)
+	user.GET("", getUserInfo)
 
 	if conf.TLS {
 		e.Logger.Fatal(e.StartTLS(":"+conf.ListenPort, conf.CERTPath, conf.KEYPath))
