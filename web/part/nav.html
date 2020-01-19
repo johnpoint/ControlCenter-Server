@@ -31,13 +31,13 @@
                     </ul>
                 </li>
                 <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                            aria-expanded="false">Service <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/service/add.html">Add Service</a></li>
-                            <li><a href="/service/manage.html">Service Manage</a></li>
-                        </ul>
-                    </li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">Service <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/service/add.html">Add Service</a></li>
+                        <li><a href="/service/manage.html">Service Manage</a></li>
+                    </ul>
+                </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                         aria-expanded="false">Certificate <span class="caret"></span></a>
@@ -48,8 +48,8 @@
                 </li>
             </ul>
 
-            <ul class="nav navbar-nav navbar-right">
-                <li menuitemname="Account" class="dropdown" id="nologin_Navbar-Account">
+            <ul id="username" class="nav navbar-nav navbar-right">
+                <li v-if="nologin" menuitemname="Account" class="dropdown" id="nologin_Navbar-Account">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
                         账户
                         &nbsp;<b class="caret"></b> </a>
@@ -61,8 +61,8 @@
                         </li>
                     </ul>
                 </li>
-                <li menuitemname="Account" class="dropdown" id="login_Navbar-Account" style="display: none">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false" id="username"><b
+                <li v-if="login" menuitemname="Account" class="dropdown" id="login_Navbar-Account">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">{{ name }}<b
                             class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li menuitemname="Login" id="Secondary_Navbar-Account-Login">
@@ -71,7 +71,8 @@
                             </a>
                         </li>
                         <li role="separator" class="divider"></li>
-                        <li menuitemname="Login" id="Secondary_Navbar-Account-Login" onclick="document.location.href='/?logout'">
+                        <li menuitemname="Login" id="Secondary_Navbar-Account-Login"
+                            onclick="document.location.href='/?logout'">
                             <a id="logout">
                                 Log out
                             </a>
@@ -83,9 +84,17 @@
     </div>
 </nav>
 <script>
-    if(document.location.search=="?logout"){
+    var userNav = new Vue({
+        el: '#username',
+        data: {
+            name: "",
+            nologin: true,
+            login: false
+        }
+    })
+    if (document.location.search == "?logout") {
         clearCookie('jwt')
-        document.location.href='/'
+        document.location.href = '/'
     }
     function setCookie(cname, cvalue, exdays) {
         var d = new Date();
@@ -95,5 +104,10 @@
     }
     function clearCookie(name) {
         setCookie(name, "", -1);
-    }  
+    }
+
+    $('#logout').click(function () {
+        clearCookie("jwt")
+        window.location.pathname = "/login.html"
+    })
 </script>
