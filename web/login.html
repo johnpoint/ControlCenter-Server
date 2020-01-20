@@ -11,9 +11,6 @@
     <link rel="stylesheet" href="/css/custom.css">
     <link rel="stylesheet" href="/css/all.min.css">
     <link rel="shortcut icon" href="/favicon.ico">
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
-    <!--<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>-->
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <title>Login-DNMP</title>
@@ -32,6 +29,7 @@
     <section id="nav"></section>
     <section id="main-body">
         <div class="container">
+            <div id="loginerror"></div>
             <div class="row">
 
                 <!-- Container for main page display content -->
@@ -59,7 +57,6 @@
                                         <label for="inputPassword">密码</label>
                                         <input type="password" name="password" class="form-control" id="inputPassword"
                                             placeholder="密碼" autocomplete="off">
-                                        <p v-if="value" id="loginerror">帐号或密码错误</p>
                                     </div>
 
                                     <div class="checkbox">
@@ -70,8 +67,7 @@
                                     <div class="text-center margin-bottom">
                                     </div>
                                     <div align="center">
-                                        <a id="loginbtn" @click="send()" type="button"
-                                            class="btn btn-default">{{msg}}</a>
+                                        <a id="loginbtn" type="button" class="btn btn-default">登入</a>
                                     </div>
                                 </form>
 
@@ -96,40 +92,29 @@
     <script src="/js/config.js"></script>
     <script src="/js/checkPower.js"></script>
     <script>
-        var tips = new Vue({
-            el: "#loginerror",
-            data: {
-                value: false
-            }
-        })
 
-        var login = new Vue({
-            el: '#loginbtn',
-            data: {
-                msg: '登录'
-            },
-            methods: {
-                send: function () {
-                    this.msg = "登录中";
-                    this.$http.post(apiaddress + "/user/auth/login", {
-                        email: $('#inputEmail')[0].value,
-                        password: $('#inputPassword')[0].value
-                    }, {
-                        emulateJSON: true,
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        }
-                    }).then(function (res) {
-                        if (res.body.token != null) {
-                            document.cookie = "jwt=" + res.body.token
-                            window.location.pathname = "/"
-                        }
-                    }, function (res) {
-                        this.msg = "登录";
-                        tips.value = true;
-                    });
+        $('#loginbtn').click(function login() {
+            $.ajax({
+                "url": apiaddress + "/user/auth/login",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                "data": {
+                    "email": $('#inputEmail')[0].value,
+                    "password": $('#inputPassword')[0].value
+                },
+                success: function (data) {
+                    if (data["token"] != null) {
+                        document.cookie = "jwt=" + data["token"]
+                        window.location.pathname = "/"
+                    }
+                },
+                error: function () {
+                    $('#loginerror')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> oh~ 帐号或密码错误!</div > '
                 }
-            }
+            })
         })
     </script>
 

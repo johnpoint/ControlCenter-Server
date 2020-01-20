@@ -11,9 +11,6 @@
     <link rel="stylesheet" href="/css/custom.css">
     <link rel="stylesheet" href="/css/all.min.css">
     <link rel="shortcut icon" href="/favicon.ico">
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
-    <!--<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>-->
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <title>Settings-DNMP</title>
@@ -54,7 +51,7 @@
                     <input type="password" class="form-control" id='newpass' placeholder="Re-enter a new password"
                         aria-describedby="basic-addon1">
                     <hr>
-                    <button @click="update()" class="btn btn-default" type="button" id="updatePass">update</button>
+                    <button class="btn btn-default" type="button" id="updatePass">update</button>
                 </div>
             </div>
         </div>
@@ -67,22 +64,21 @@
     <script src="/js/config.js"></script>
     <script src="/js/checkPower.js"></script>
     <script>
-        var updatePassword = new Vue({
-            el: '#updatePass',
-            methods: {
-                update: function () {
-                    this.$http.get(
-                        apiaddress + '/web/UserInfo/Password/' + $('#oldpass')[0].value + '/' + $('#newpass')[0].value,
-                        {
-                            headers: {
-                                "Authorization": "Bearer " + userjwt
-                            }
-                        }).then(function (res) {
-                            console.log(res);
-                        })
-                }
-            }
+        $('#updatePass').click(function () {
+            $.ajax({
+                url: apiaddress + '/web/UserInfo/Password/' + $('#oldpass')[0].value + '/' + $('#newpass')[0].value,
+                method: 'GET',
+                headers: {
+                    "Authorization": "Bearer " + userjwt
+                },
+                success: function (data) {
+                    alert(data.Info)
+                    if (data.Info == 'OK') {
+                        document.location.href = '/?logout'
+                    }
 
+                }
+            })
         })
     </script>
 </body>
