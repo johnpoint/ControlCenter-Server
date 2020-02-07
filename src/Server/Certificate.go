@@ -121,6 +121,7 @@ func linkServerCer(c echo.Context) error {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
+	} else {
+		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "already linked"})
 	}
-	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 }
