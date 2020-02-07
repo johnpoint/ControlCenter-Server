@@ -43,7 +43,7 @@ func getServerUpdate(c echo.Context) error {
 			CerData := []DataCertificate{}
 			for i := 0; i < len(getCerID); i++ {
 				cer := getCer(Certificate{ID: getCerID[i].CertificateID})[0]
-				CerData = append(CerData, DataCertificate{ID: cer.ID, Domain: cer.DNSNames, FullChain: cer.Fullchain, Key: cer.Key})
+				CerData = append(CerData, DataCertificate{ID: cer.ID, Domain: cer.Name, FullChain: cer.Fullchain, Key: cer.Key})
 			}
 			data.Code = 200
 			data.Certificates = CerData
