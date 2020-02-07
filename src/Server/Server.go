@@ -33,7 +33,7 @@ func setupServer(c echo.Context) error {
 func getServerUpdate(c echo.Context) error {
 	token := c.Param("token")
 	if (len(getServer(Server{Token: token})) == 0) {
-		return c.JSON(http.StatusOK, Callback{Code: 0, Info: token})
+		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "Unauthorized"})
 	}
 	data := UpdateInfo{}
 	check := getServer(Server{Token: token})
