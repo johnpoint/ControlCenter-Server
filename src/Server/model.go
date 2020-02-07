@@ -65,6 +65,7 @@ type Config struct {
 	CERTPath     string
 	KEYPath      string
 	Salt         string
+	Database     string
 }
 
 // Domain model of domain
@@ -74,4 +75,42 @@ type Domain struct {
 	Status string `json:"status" xml:"status" form:"status" query:"status"`
 	Cer    string `json:"cer" xml:"cer" form:"cer" query:"cer"`
 	Key    string `json:"key" xml:"key" form:"key" query:"key"`
+}
+
+// ServerCertificate model
+type ServerCertificate struct {
+	ID            int64 `gorm:"AUTO_INCREMENT"`
+	CertificateID int64
+	ServerID      int64
+}
+
+// UpdateInfo model
+type UpdateInfo struct {
+	Code         int64
+	Sites        []DataSite
+	Certificates []DataCertificate
+	Services     []DataService
+}
+
+// DataSite model
+type DataSite struct {
+	Domain string
+	Enable bool
+	CerID  int64
+}
+
+// DataService model
+type DataService struct {
+	Name    string
+	Enable  string
+	Disable string
+	Status  string
+}
+
+// DataCertificate model
+type DataCertificate struct {
+	ID        int64
+	Domain    string
+	FullChain string
+	Key       string
 }

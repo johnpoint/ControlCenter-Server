@@ -30,6 +30,28 @@ func setupServer(c echo.Context) error {
 	return c.JSON(http.StatusOK, Callback{Code: 200, Info: md5str1})
 }
 
+func getServerUpdate(c echo.Context) error {
+	token := c.Param("token")
+	if (len(getServer(Server{Token: token})) == 0) {
+		return c.JSON(http.StatusOK, Callback{Code: 0, Info: token})
+	}
+	data := UpdateInfo{}
+	check := getServer(Server{Token: token})
+	if len(check) == 1 {
+		getCerID := getLinkCer(ServerCertificate{ServerID: check[0].ID})
+		if len(getCerID) != 0 {
+			CerData := []DataCertificate{}
+			for i := 0; i < len(getCerID); i++ {
+				cer := getCer(Certificate{ID: getCerID[i].CertificateID})[0]
+				CerData = append(CerData, DataCertificate{ID: cer.ID, Domain: cer.DNSNames, FullChain: cer.Fullchain, Key: cer.Key})
+			}
+			data.Code = 200
+			data.Certificates = CerData
+		}
+	}
+	return c.JSON(http.StatusOK, data)
+}
+
 func getServerInfo(c echo.Context) error {
 	user := checkAuth(c)
 	server := Server{}

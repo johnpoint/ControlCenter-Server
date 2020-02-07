@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo"
 )
@@ -105,4 +106,21 @@ func getCertificateInfo(c echo.Context) error {
 		return c.JSON(http.StatusOK, getCer(cer))
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
+}
+
+func linkServerCer(c echo.Context) error {
+	//user := checkAuth(c)
+	sid := c.Param("ServerID")
+	cid := c.Param("CerID")
+	Isid, _ := strconv.ParseInt(sid, 10, 64)
+	Icid, _ := strconv.ParseInt(cid, 10, 64)
+	payload := ServerCertificate{ServerID: Isid, CertificateID: Icid}
+	data := getLinkCer(payload)
+	if len(data) == 0 {
+		if (LinkCer(ServerCertificate{ServerID: Isid, CertificateID: Icid})) {
+			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+		}
+		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
+	}
+	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 }

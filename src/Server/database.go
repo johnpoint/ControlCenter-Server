@@ -5,8 +5,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-func initDatabase(path string) *gorm.DB {
-	db, err := gorm.Open("sqlite3", path)
+func initDatabase() *gorm.DB {
+	conf := loadConfig()
+	db, err := gorm.Open("sqlite3", conf.Database)
 	if err != nil {
 		panic("连接数据库失败")
 	}
@@ -15,7 +16,7 @@ func initDatabase(path string) *gorm.DB {
 
 //Service
 func getService(service Service) []Service {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Service{})
 	services := []Service{}
@@ -28,7 +29,7 @@ func getService(service Service) []Service {
 }
 
 func addService(service Service) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Service{})
 	db.Create(&service)
@@ -40,7 +41,7 @@ func addService(service Service) bool {
 
 //Server
 func addServer(server Server) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Server{})
 	db.Create(&server)
@@ -51,7 +52,7 @@ func addServer(server Server) bool {
 }
 
 func updateServer(where Server, server Server) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Server{})
 	db.Model(&server).Where(where).Update(server)
@@ -62,7 +63,7 @@ func updateServer(where Server, server Server) bool {
 }
 
 func getServer(server Server) []Server {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Server{})
 	servers := []Server{}
@@ -71,7 +72,7 @@ func getServer(server Server) []Server {
 }
 
 func delServer(ip string, uid int64) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Server{})
 	server := Server{Ipv4: ip, UID: uid}
@@ -81,7 +82,7 @@ func delServer(ip string, uid int64) bool {
 
 //User
 func addUser(user User) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&User{})
 	db.Create(&user)
@@ -92,7 +93,7 @@ func addUser(user User) bool {
 }
 
 func updateUser(where User, user User) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&User{})
 	db.Model(&user).Where(where).Update(user)
@@ -102,7 +103,7 @@ func updateUser(where User, user User) bool {
 	return false
 }
 func getUser(user User) []User {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&User{})
 	users := []User{}
@@ -112,7 +113,7 @@ func getUser(user User) []User {
 
 //Domain
 func addDomain(domain Domain) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Domain{})
 	db.Create(&domain)
@@ -123,7 +124,7 @@ func addDomain(domain Domain) bool {
 }
 
 func getDomain(domain Domain) []Domain {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Domain{})
 	domains := []Domain{}
@@ -132,7 +133,7 @@ func getDomain(domain Domain) []Domain {
 }
 
 func updateDomain(where Domain, domain Domain) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Domain{})
 	db.Model(&domain).Where(where).Update(domain)
@@ -144,7 +145,7 @@ func updateDomain(where Domain, domain Domain) bool {
 
 //Site
 func addSite(site Site) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Site{})
 	db.Create(&site)
@@ -155,7 +156,7 @@ func addSite(site Site) bool {
 }
 
 func getSite(site Site) []Site {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Site{})
 	sites := []Site{}
@@ -169,7 +170,7 @@ func getSite(site Site) []Site {
 
 //Cer
 func addCer(certificate Certificate) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Certificate{})
 	db.Create(&certificate)
@@ -179,8 +180,38 @@ func addCer(certificate Certificate) bool {
 	return false
 }
 
+// LinkCer link
+func LinkCer(serverCertificate ServerCertificate) bool {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&ServerCertificate{})
+	db.Create(&serverCertificate)
+	if !(db.NewRecord(serverCertificate)) {
+		return true
+	}
+	return false
+}
+
+func getLinkCer(serverCertificate ServerCertificate) []ServerCertificate {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&ServerCertificate{})
+	serverCertificates := []ServerCertificate{}
+	db.Where(serverCertificate).Find(&serverCertificates)
+	return serverCertificates
+}
+
+func UnCer(certificate Certificate, server Server) bool {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&ServerCertificate{})
+	serverCertificate := ServerCertificate{CertificateID: certificate.ID, ServerID: server.ID}
+	db.Where(serverCertificate).Delete(ServerCertificate{})
+	return true
+}
+
 func delCer(certificate Certificate) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Certificate{})
 	db.Where(certificate).Delete(Certificate{})
@@ -188,7 +219,7 @@ func delCer(certificate Certificate) bool {
 }
 
 func updateCer(where Certificate, certificate Certificate) bool {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Certificate{})
 	db.Model(&certificate).Where(where).Update(certificate)
@@ -199,7 +230,7 @@ func updateCer(where Certificate, certificate Certificate) bool {
 }
 
 func getCer(certificate Certificate) []Certificate {
-	db := initDatabase("test.db")
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Certificate{})
 	certificates := []Certificate{}

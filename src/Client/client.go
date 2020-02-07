@@ -18,82 +18,6 @@ import (
 	"github.com/shirou/gopsutil/net"
 )
 
-type Data struct {
-	Base         DataBase
-	Sites        []DataSite
-	Certificates []DataCertificate
-	Services     []DataService
-}
-
-type DataBase struct {
-	ServerIpv4  string
-	ServerIpv6  string
-	HostName    string
-	Token       string
-	PollAddress string
-}
-
-type DataSite struct {
-	Domain string
-	Enable bool
-	CerID  int64
-}
-
-type DataService struct {
-	Name    string
-	Enable  string
-	Disable string
-	Status  string
-}
-
-type DataCertificate struct {
-	ID        int64
-	Domain    string
-	FullChain string
-	Key       string
-}
-
-type StatusServer struct {
-	Percent  StatusPercent
-	CPU      []CPUInfo
-	Mem      MemInfo
-	Swap     SwapInfo
-	Load     *load.AvgStat
-	Network  map[string]InterfaceInfo
-	BootTime uint64
-	Uptime   uint64
-}
-type StatusPercent struct {
-	CPU  float64
-	Disk float64
-	Mem  float64
-	Swap float64
-}
-type CPUInfo struct {
-	ModelName string
-	Cores     int32
-}
-type MemInfo struct {
-	Total     uint64
-	Used      uint64
-	Available uint64
-}
-type SwapInfo struct {
-	Total     uint64
-	Used      uint64
-	Available uint64
-}
-type InterfaceInfo struct {
-	Addrs    []string
-	ByteSent uint64
-	ByteRecv uint64
-}
-
-type Webreq struct {
-	Code int64  `json:Code`
-	Info string `json:Info`
-}
-
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("请输入参数")
@@ -279,6 +203,30 @@ func delCer(id int64) bool {
 	return false
 }
 
+func getUpdate() {
+	data := getData()
+	defer func() {
+		fmt.Println("状态获取失败! 请检查服务端状态")
+	}()
+	url := data.Base.PollAddress + "/server/update/" + data.Base.Token
+	method := "GET"
+	client := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	req, err := http.NewRequest(method, url, nil)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	res, err := client.Do(req)
+	if res != nil {
+		fmt.Println(":: Get update from " + data.Base.PollAddress)
+	}
+	if err != nil {
+		fmt.Println("状态获取失败! 请检查服务端状态")
+		fmt.Println(err)
+	}
+}
+
 func statuspoll() {
 	data := getData()
 	fmt.Println("[ Poll start ] To " + data.Base.PollAddress)
@@ -300,7 +248,7 @@ func statuspoll() {
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 		res, err := client.Do(req)
 		if res != nil {
-			fmt.Println("⇨ Poll Update To " + data.Base.PollAddress)
+			fmt.Println(":: Poll Update To " + data.Base.PollAddress)
 		}
 		if err != nil {
 			fmt.Println("状态推送失败! 请检查服务端状态")

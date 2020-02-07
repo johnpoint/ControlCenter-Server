@@ -43,6 +43,7 @@ func start() {
 	s := e.Group("/server")
 	s.POST("/setup", setupServer)
 	s.POST("/update/:token", serverUpdate)
+	s.GET("/update/:token", getServerUpdate)
 	s.GET("/Certificate/:token/:id", serverGetCertificate)
 
 	e.GET("/", accessible)
@@ -67,6 +68,7 @@ func start() {
 	w.PUT("/Certificate", addCertificateInfo)
 	w.GET("/Certificate", getCertificateInfo)
 	w.POST("/Certificate", updateCertificateInfo)
+	w.POST("/link/:ServerID/:CerID", linkServerCer)
 	w.POST("/rmCertificate", deleteCertificateInfo)
 	w.POST("/backup", setBackupFile)
 	e.GET("/web/:mail/:pass/backup", getBackupFile)
