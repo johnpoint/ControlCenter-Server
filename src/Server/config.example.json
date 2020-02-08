@@ -1,0 +1,11 @@
+{
+    "AllowAddress": [
+        "http://127.0.0.1"
+    ],
+    "ListenPort": "1323",
+    "CERTPath": "",
+    "KEYPath": "",
+    "TLS": false,
+    "Salt": "",
+    "Database": "xvadata.db"
+}
