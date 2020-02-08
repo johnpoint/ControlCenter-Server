@@ -109,7 +109,6 @@ func getCertificateInfo(c echo.Context) error {
 }
 
 func linkServerCer(c echo.Context) error {
-	//user := checkAuth(c)
 	sid := c.Param("ServerID")
 	cid := c.Param("CerID")
 	Isid, _ := strconv.ParseInt(sid, 10, 64)
@@ -124,4 +123,19 @@ func linkServerCer(c echo.Context) error {
 	} else {
 		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "already linked"})
 	}
+}
+
+func unLinkServerCer(c echo.Context) error {
+	sid := c.Param("ServerID")
+	cid := c.Param("CerID")
+	Isid, _ := strconv.ParseInt(sid, 10, 64)
+	Icid, _ := strconv.ParseInt(cid, 10, 64)
+	payload := ServerCertificate{ServerID: Isid, CertificateID: Icid}
+	data := UnLinkCer(payload)
+	if data {
+		if len(getLinkCer(payload)) == 0 {
+			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+		}
+	}
+	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 }

@@ -68,8 +68,9 @@ func start() {
 	w.PUT("/Certificate", addCertificateInfo)
 	w.GET("/Certificate", getCertificateInfo)
 	w.POST("/Certificate", updateCertificateInfo)
-	w.POST("/link/:ServerID/:CerID", linkServerCer)
-	w.POST("/rmCertificate", deleteCertificateInfo)
+	w.DELETE("/Certificate", deleteCertificateInfo)
+	w.PUT("/link/Certificate/:ServerID/:CerID", linkServerCer)
+	w.DELETE("/link/Certificate/:ServerID/:CerID", unLinkServerCer)
 	w.POST("/backup", setBackupFile)
 	e.GET("/web/:mail/:pass/backup", getBackupFile)
 	user := w.Group("/UserInfo")
@@ -84,5 +85,5 @@ func start() {
 }
 
 func accessible(c echo.Context) error {
-	return c.HTML(http.StatusOK, "<h1>CenterDash</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.4.0 preview")
+	return c.HTML(http.StatusOK, "<h1>CenterDash</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.5.0")
 }

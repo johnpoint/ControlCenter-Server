@@ -201,11 +201,10 @@ func getLinkCer(serverCertificate ServerCertificate) []ServerCertificate {
 	return serverCertificates
 }
 
-func UnCer(certificate Certificate, server Server) bool {
+func UnLinkCer(serverCertificate ServerCertificate) bool {
 	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&ServerCertificate{})
-	serverCertificate := ServerCertificate{CertificateID: certificate.ID, ServerID: server.ID}
 	db.Where(serverCertificate).Delete(ServerCertificate{})
 	return true
 }
