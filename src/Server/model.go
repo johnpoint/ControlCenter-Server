@@ -39,6 +39,7 @@ type User struct {
 	Mail     string `json:"email" xml:"email" form:"email" query:"email"`
 	Password string `json:"password" xml:"password" form:"password" query:"password"`
 	Level    int64
+	Token    string
 }
 
 // Certificate model of Certificate

@@ -134,6 +134,8 @@
                         <div class="panel-body">
                             <div class="container">
                                 <div class="row">
+                                    <a type="button" class="btn btn-default" data-toggle="modal" data-target="#cerman"
+                                        onclick="loadcerlist()">Certificate Manager</a>
                                     <a type="button" class="btn btn-danger" data-toggle="modal"
                                         data-target="#rmser">Detele</a>
                                 </div>
@@ -156,6 +158,23 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         <button type="button" id="rmrm" class="btn btn-danger">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="cerman" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Certificate Manager</h4>
+                    </div>
+                    <div class="modal-body" id="cerlist">
+                        <p>Loading...</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
                     </div>
                 </div>
             </div>
@@ -282,6 +301,47 @@
         }
         function clearCookie(name) {
             setCookie(name, "", -1);
+        }
+
+        function loadcerlist() {
+            $.ajax({
+                "url": apiaddress + "/web/Certificate",
+                "method": "GET",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": "Bearer " + userjwt
+                },
+                success: function (data) {
+                    var dom = ""
+                    for (let index = 0; index < data.length; index++) {
+                        dom += '<p><button type="button" class="btn btn-default cername">' + data[index].name + '[' + data[index].DNSNames + ']</button><button type="button" id="' + data[index].id + 'add" class="btn btn-info">add</button><button type="button" id="' + data[index].id + 'remove" class="btn btn-danger disabled">remove</button></p>';
+                    }
+                    $('#cerlist')[0].innerHTML = dom;
+                    for (let index = 0; index < data.length; index++) {
+                        var timestamp1 = Date.parse(new Date());
+                        if (parseInt(((timestamp1 / 1000 - data[index]["NotBefore"]) / (data[index]["NotAfter"] - data[index]["NotBefore"])) * 100) >= 80) {
+                            $('.cername')[index].style.color = "red";
+                        }
+                    }
+                }
+            });
+            $.ajax({
+                "url": apiaddress + "/web/ServerInfo/Certificate",
+                "method": "GET",
+                "headers": {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": "Bearer " + userjwt
+                },
+                data: { ipv4: window.location.search.replace('?ip=', '') },
+                success: function (data) {
+                    for (let index = 0; index < data.length; index++) {
+                        $('#'+data[index].CertificateID+'add').addClass("disabled");
+                        $('#'+data[index].CertificateID+'remove').removeClass("disabled");
+                    }
+                }
+            })
+
         }
     </script>
 

@@ -16,7 +16,7 @@ func main() {
 		return
 	}
 	if os.Args[1] == "install" {
-		if len(os.Args) != 6 {
+		if len(os.Args) != 7 {
 			fmt.Println("参数数量错误")
 			return
 		}
@@ -45,7 +45,7 @@ func main() {
 
 func setup(args []string) {
 	data := Data{}
-	url := args[2] + "/server/setup"
+	url := args[2] + "/server/setup/" + args[6]
 	method := "POST"
 
 	payload := strings.NewReader("hostname=" + args[3] + "&ipv4=" + args[4] + "&ipv6=" + args[5])

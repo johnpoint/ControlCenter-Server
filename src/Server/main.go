@@ -41,7 +41,7 @@ func start() {
 	u.POST("/auth/register", oaRegister)
 
 	s := e.Group("/server")
-	s.POST("/setup", setupServer)
+	s.POST("/setup/:token", setupServer)
 	s.POST("/update/:token", serverUpdate)
 	s.GET("/update/:token", getServerUpdate)
 	s.GET("/Certificate/:token/:id", serverGetCertificate)
@@ -58,10 +58,11 @@ func start() {
 	w.Use(middleware.JWTWithConfig(jwtConfig))
 	w.POST("debug/check", checkPower)
 	w.GET("/ServerInfo", getServerInfo)
+	w.PUT("/ServerInfo", updateServerInfo)
+	w.GET("/ServerInfo/Certificate", getCertificateLinked)
 	w.DELETE("/Server/:ip", removeServer)
 	w.GET("/DomainInfo", getDomainInfo)
 	w.PUT("/DomainInfo", updateDomainInfo)
-	w.PUT("/ServerInfo", updateServerInfo)
 	w.PUT("/UserInfo/:mail/:key/:value", updateUserInfo)
 	w.PUT("/SiteInfo", addSiteInfo)
 	w.GET("/SiteInfo", getSiteInfo)
@@ -85,5 +86,5 @@ func start() {
 }
 
 func accessible(c echo.Context) error {
-	return c.HTML(http.StatusOK, "<h1>CenterDash</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.5.0")
+	return c.HTML(http.StatusOK, "<h1>CenterDash</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.5.3")
 }

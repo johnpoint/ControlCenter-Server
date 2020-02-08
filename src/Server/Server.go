@@ -11,7 +11,12 @@ import (
 )
 
 func setupServer(c echo.Context) error {
-	server := Server{}
+	token := c.Param("token")
+	checkU := getUser(User{Token: token})
+	if len(checkU) != 1 {
+		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "User Not Found"})
+	}
+	server := Server{UID: checkU[0].ID}
 	if err := c.Bind(&server); err != nil {
 		panic(err)
 	}
@@ -61,6 +66,23 @@ func getServerInfo(c echo.Context) error {
 	if user.Level == 1 {
 		server.UID = getUser(User{Mail: user.Mail})[0].ID
 		return c.JSON(http.StatusOK, getServer(server))
+	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
+}
+
+func getCertificateLinked(c echo.Context) error {
+	user := checkAuth(c)
+	server := Server{}
+	if err := c.Bind(&server); err != nil {
+		panic(err)
+	}
+	if user.Level == 1 {
+		server.UID = getUser(User{Mail: user.Mail})[0].ID
+		data := getServer(server)
+		if len(data) != 0 {
+			return c.JSON(http.StatusOK, getLinkCer(ServerCertificate{ServerID: data[0].ID}))
+		}
+		return c.JSON(http.StatusOK, getLinkCer(ServerCertificate{ServerID: 0}))
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }
