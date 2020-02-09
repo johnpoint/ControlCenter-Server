@@ -274,9 +274,9 @@
                             keyl[i] = key;
                             i++
                         }
-                        for (var iq = 0; iq < keyl.length; iq++) {
+                        /*for (var iq = 0; iq < keyl.length; iq++) {
                             $('.netdown')[iq].innerHTML = '<i class="fas fa-cloud-download-alt"></i> ' + (statusdata["Network"][keyl[iq]]["ByteRecv"] / 1000000).toFixed(2) + ' Mb ' + '<i class="fas fa-cloud-upload-alt"></i> ' + (statusdata["Network"][keyl[iq]]["ByteSent"] / 1000000).toFixed(2) + ' Mb'
-                        }
+                        }*/
                     }
                 }
             })
@@ -302,7 +302,7 @@
         function clearCookie(name) {
             setCookie(name, "", -1);
         }
-
+        loadcerlist()
         function loadcerlist() {
             $.ajax({
                 "url": apiaddress + "/web/Certificate",
@@ -315,10 +315,12 @@
                 success: function (data) {
                     var dom = ""
                     for (let index = 0; index < data.length; index++) {
-                        dom += '<p><button type="button" class="btn btn-default cername">' + data[index].name + '[' + data[index].DNSNames + ']</button><button type="button" id="' + data[index].id + 'add" class="btn btn-info">add</button><button type="button" id="' + data[index].id + 'remove" class="btn btn-danger disabled">remove</button></p>';
+                        dom += '<p><button type="button" class="btn btn-default cername">' + data[index].name + '[' + data[index].DNSNames + ']</button><button type="button" id="' + data[index].id + 'add" class="btn btn-info" onclick="link(' + data[index].id + ')">add</button><button type="button" id="' + data[index].id + 'remove" class="btn btn-danger" onclick="unlink(' + data[index].id + ')">remove</button></p>';
                     }
                     $('#cerlist')[0].innerHTML = dom;
                     for (let index = 0; index < data.length; index++) {
+                        $('#' + data[index].id + 'add').show();
+                        $('#' + data[index].id + 'remove').hide();
                         var timestamp1 = Date.parse(new Date());
                         if (parseInt(((timestamp1 / 1000 - data[index]["NotBefore"]) / (data[index]["NotAfter"] - data[index]["NotBefore"])) * 100) >= 80) {
                             $('.cername')[index].style.color = "red";
@@ -336,12 +338,73 @@
                 data: { ipv4: window.location.search.replace('?ip=', '') },
                 success: function (data) {
                     for (let index = 0; index < data.length; index++) {
-                        $('#'+data[index].CertificateID+'add').addClass("disabled");
-                        $('#'+data[index].CertificateID+'remove').removeClass("disabled");
+                        $('#' + data[index].CertificateID + 'add').hide();
+                        $('#' + data[index].CertificateID + 'remove').show();
                     }
                 }
             })
 
+        }
+
+        function link(cer) {
+            $.ajax({
+                "url": apiaddress + "/web/ServerInfo",
+                "method": "GET",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": "Bearer " + userjwt
+                },
+                data: { ipv4: window.location.search.replace('?ip=', '') },
+                success: function (data) {
+                    var serverid = data[0]["ID"]
+                    $.ajax({
+                        url: apiaddress + "/web/link/Certificate/" + serverid + "/" + cer,
+                        method: "PUT",
+                        "headers": {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "Authorization": "Bearer " + userjwt
+                        },
+                        success: function () {
+                            $('#' + cer + 'add').hide();
+                            $('#' + cer + 'remove').show();
+                        }
+                    })
+                },
+                error: function () {
+                    $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '
+                }
+            });
+        }
+        function unlink(cer) {
+            $.ajax({
+                "url": apiaddress + "/web/ServerInfo",
+                "method": "GET",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": "Bearer " + userjwt
+                },
+                data: { ipv4: window.location.search.replace('?ip=', '') },
+                success: function (data) {
+                    var serverid = data[0]["ID"]
+                    $.ajax({
+                        url: apiaddress + "/web/link/Certificate/" + serverid + "/" + cer,
+                        method: "DELETE",
+                        "headers": {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "Authorization": "Bearer " + userjwt
+                        },
+                        success: function () {
+                            $('#' + cer + 'add').show();
+                            $('#' + cer + 'remove').hide();
+                        }
+                    })
+                },
+                error: function () {
+                    $('#error')[0].innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button ><strong>Warning!</strong> 服务器连接失败!</div > '
+                }
+            });
         }
     </script>
 

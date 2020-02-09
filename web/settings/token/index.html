@@ -34,25 +34,16 @@
             </div>
             <ul class="nav nav-pills">
                 <li role="presentation"><a href="/settings">Profile</a></li>
-                <li role="presentation" class="active"><a href="/settings/password/">Password</a></li>
+                <li role="presentation"><a href="/settings/password/">Password</a></li>
                 <li role="presentation"><a href="/settings/backup">Backup</a></li>
-                <li role="presentation"><a href="/settings/token">Token</a></li>
+                <li role="presentation" class="active"><a href="/settings/token">Token</a></li>
             </ul>
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <p>Old Password</p>
-                    <input type="password" id="oldpass" class="form-control" placeholder="Your current password"
-                        aria-describedby="basic-addon1">
+                    <p>Token</p>
+                    <code id="token"></code>
                     <hr>
-                    <p>New Password</p>
-                    <input type="password" class="form-control" placeholder="Your new password"
-                        aria-describedby="basic-addon1">
-                    <hr>
-                    <p>Confirm Password</p>
-                    <input type="password" class="form-control" id='newpass' placeholder="Re-enter a new password"
-                        aria-describedby="basic-addon1">
-                    <hr>
-                    <button class="btn btn-default" type="button" id="updatePass">update</button>
+                    <button class="btn btn-default" type="button" id="refrash" onclick="refrash()">refrash</button>
                 </div>
             </div>
         </div>
@@ -65,22 +56,45 @@
     <script src="/js/config.js"></script>
     <script src="/js/checkPower.js"></script>
     <script>
-        $('#updatePass').click(function () {
+        $.ajax({
+            "url": apiaddress + "/web/UserInfo/Token",
+            "method": "GET",
+            "timeout": 0,
+            "headers": {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Bearer " + userjwt
+            },
+            success: function (data) {
+                $('#token')[0].innerHTML = data.Info
+            }
+        });
+        function refrash() {
+            $('#refrash').innerHTML = "wait"
             $.ajax({
-                url: apiaddress + '/web/UserInfo/Password/' + $('#oldpass')[0].value + '/' + $('#newpass')[0].value,
-                method: 'GET',
-                headers: {
+                "url": apiaddress + "/web/UserInfo/Token",
+                "method": "PUT",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/x-www-form-urlencoded",
                     "Authorization": "Bearer " + userjwt
                 },
                 success: function (data) {
-                    alert(data.Info)
-                    if (data.Info == 'OK') {
-                        document.location.href = '/?logout'
-                    }
-
+                    $.ajax({
+                        "url": apiaddress + "/web/UserInfo/Token",
+                        "method": "GET",
+                        "timeout": 0,
+                        "headers": {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "Authorization": "Bearer " + userjwt
+                        },
+                        success: function (data) {
+                            $('#token')[0].innerHTML = data.Info
+                            $('#refrash').innerHTML = "refrash"
+                        }
+                    });
                 }
-            })
-        })
+            });
+        }
     </script>
 </body>
 

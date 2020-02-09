@@ -3,7 +3,10 @@ package main
 import (
 	"crypto/md5"
 	"fmt"
+	"io"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/labstack/echo"
 )
@@ -47,4 +50,25 @@ func reSetPassword(c echo.Context) error {
 		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
+}
+
+func getUserToken(c echo.Context) error {
+	user := checkAuth(c)
+	data := getUser(User{Mail: user.Mail})
+	if len(data) != 0 {
+		return c.JSON(http.StatusOK, Callback{Code: 200, Info: data[0].Token})
+	}
+	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "User Not Found"})
+}
+
+func getNewToken(c echo.Context) error {
+	user := checkAuth(c)
+	timeUnixNano := time.Now().UnixNano()
+	h := md5.New()
+	io.WriteString(h, strconv.FormatInt(timeUnixNano, 10))
+	newToken := fmt.Sprintf("%x", h.Sum(nil))
+	if (updateUser(User{Mail: user.Mail}, User{Token: newToken})) {
+		return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+	}
+	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 }

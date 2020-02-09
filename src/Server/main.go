@@ -76,6 +76,8 @@ func start() {
 	e.GET("/web/:mail/:pass/backup", getBackupFile)
 	user := w.Group("/UserInfo")
 	user.GET("/Password/:oldpass/:newpass", reSetPassword)
+	user.GET("/Token", getUserToken)
+	user.PUT("/Token", getNewToken)
 	user.GET("", getUserInfo)
 
 	if conf.TLS {
