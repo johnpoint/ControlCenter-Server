@@ -27,7 +27,7 @@ func addCer(id int64, domain string, fullchain string, key string) bool {
 	return true
 }
 
-func syncCer(name string) bool {
+func syncCer() bool {
 	sslPath := "/web/ssl/"
 	data := getData()
 	for i := 0; i < len(data.Certificates); i++ {

@@ -37,7 +37,7 @@ func main() {
 		return
 	}
 	if os.Args[1] == "sync" {
-		syncCer("")
+		syncCer()
 		return
 	}
 	fmt.Println("未知的参数")
