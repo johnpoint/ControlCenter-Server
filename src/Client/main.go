@@ -12,7 +12,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("请输入参数")
+		fmt.Println("请输入参数(help 可以调用帮助信息)")
 		return
 	}
 	if os.Args[1] == "install" {
@@ -24,12 +24,12 @@ func main() {
 		statuspoll()
 		return
 	}
-	if os.Args[1] == "poll" {
-		statuspoll()
+	if os.Args[1] == "help" {
+		showhelp()
 		return
 	}
-	if os.Args[1] == "debug" {
-		delSite("lvcshu.com")
+	if os.Args[1] == "poll" {
+		statuspoll()
 		return
 	}
 	if os.Args[1] == "update" {
@@ -41,6 +41,17 @@ func main() {
 		return
 	}
 	fmt.Println("未知的参数")
+}
+
+func showhelp() {
+	fmt.Println("XvA Server Slave Client v2.0.0")
+	fmt.Println("参数:")
+	fmt.Println("poll - 开始向控制中心服务器推送状态")
+	fmt.Println("update - 向控制中心服务器获取控制信息")
+	fmt.Println("sync - 应用控制信息")
+	fmt.Println("")
+	fmt.Println("注册:")
+	fmt.Println("install 控制中心服务器地址 `hostname` `curl ip.sb -4` `curl ip.sb` user_token")
 }
 
 func setup(args []string) {
