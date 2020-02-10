@@ -44,7 +44,7 @@ func main() {
 }
 
 func showhelp() {
-	fmt.Println("XvA Server Slave Client")
+	fmt.Println("ControlCenter - Server Slave Client")
 	fmt.Println("参数:")
 	fmt.Println("poll - 开始向控制中心服务器推送状态")
 	fmt.Println("update - 向控制中心服务器获取控制信息")
