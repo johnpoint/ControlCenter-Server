@@ -56,5 +56,5 @@ GET     /web/UserInfo
 ### Client
 
 ```
-./Client install https://127.0.0.1:1323 `hostname` `curl ip.sb -4` `curl ip.sb -6` user_token
+./Client install [ 后端地址 ] [ hostname 或 自定义名称 ] [ IPv4地址 ] [ IPv6地址，没有就填IPv4 ] [ user_token ]
 ```
