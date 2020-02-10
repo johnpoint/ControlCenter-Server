@@ -3,70 +3,54 @@
 ## 文件结构
 
 ```
-.
-├── README.md
-├── src
-│   ├── Client
-│   │   ├── config.json
-│   │   ├── data.json
-│   │   └── setup.go
-│   └── Server
-│       ├── auth.go
-│       ├── Certificate.go
-│       ├── database.go
-│       ├── Domain.go
-│       ├── main.go
-│       ├── ServerApi.go
-│       ├── Server.go
-│       ├── Site.go
-│       ├── test.db
-│       └── User.go
-└── web
-    ├── certificate
-    │   ├── add.html
-    │   ├── index.html
-    │   └── info.html
-    ├── css
-    │   ├── all.min.css
-    │   ├── bootstrap.min.css
-    │   └── custom.css
-    ├── img
-    │   └── logo.PNG
-    ├── index.html
-    ├── js
-    │   ├── bootstrap.min.js
-    │   ├── checkPower.js
-    │   ├── gconfig.js
-    │   └── jquery-3.4.1.min.js
-    ├── login.html
-    ├── part
-    │   ├── footer.html
-    │   └── nav.html
-    ├── site
-    │   ├── add.html
-    │   ├── manage.html
-    │   ├── site.conf
-    │   └── siteInfo.html
-    ├── status
-    │   ├── domain.html
-    │   ├── server.html
-    │   └── serverInfo.html
-    └── webfonts
+src/
+    Client - 子客户端
+    Server - 母服务端
+web/       - 前端
 ```
 
-## 接口
+## API 接口
 
-### 状态码
+```
+POST    /user/auth/login
+POST    /user/auth/register
 
-- 000 ERROR
-- 200 OK
-- 201 OK and MORE
-- 404 Not Found
 
-### 身份认证
+POST    /server/setup/:token
+POST    /update/:token POST
+GET     /server/update/:token
+GET     /server/Certificate/:token/:id
 
-- jwt
-- token for each server
+GET     /
+
+POST    /system/restart
+
+- - -
+auth 2.0 request
+- - -
+POST    /web/debug/check
+GET     /web/ServerInfo
+PUT     /web/ServerInfo
+GET     /web/ServerInfo/Certificate
+DELETE  /web/Server/:ip
+GET     /web/DomainInfo
+PUT     /web/DomainInfo
+PUT     /web/UserInfo/:mail/:key/:value
+PUT     /web/SiteInfo
+GET     /web/SiteInfo
+PUT     /web/Certificate
+GET     /web/Certificate
+POST    /web/Certificate
+DELETE  /web/Certificate
+PUT     /web/link/Certificate/:ServerID/:CerID
+DELETE  /web/link/Certificate/:ServerID/:CerID
+POST    /web/backup
+GET     /web/:mail/:pass/backup
+GET     /web/UserInfo/Password/:oldpass/:newpass
+GET     /web/UserInfo/Token
+PUT     /web/UserInfo/Token
+GET     /web/UserInfo
+```
 
 ## Install 安装
 

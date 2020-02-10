@@ -88,5 +88,5 @@ func start() {
 }
 
 func accessible(c echo.Context) error {
-	return c.HTML(http.StatusOK, "<h1>CenterDash</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.5.3")
+	return c.HTML(http.StatusOK, "<h1>CenterDash</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.5.4")
 }
