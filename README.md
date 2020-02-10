@@ -1,12 +1,11 @@
 # ControlCenter
 
-## 文件结构
+## 文件
 
 ```
 src/
     Client - 子客户端
     Server - 母服务端
-web/       - 前端
 ```
 
 ## API 接口
