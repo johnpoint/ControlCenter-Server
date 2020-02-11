@@ -44,6 +44,8 @@ POST    /web/Certificate
 DELETE  /web/Certificate
 PUT     /web/link/Certificate/:ServerID/:CerID
 DELETE  /web/link/Certificate/:ServerID/:CerID
+PUT     /web/link/Site/:ServerID/:SiteID
+DELETE  /web/link/Site/:ServerID/:SiteID
 POST    /web/backup
 GET     /web/:mail/:pass/backup
 GET     /web/UserInfo/Password/:oldpass/:newpass
