@@ -113,10 +113,10 @@ func linkServerCer(c echo.Context) error {
 	cid := c.Param("CerID")
 	Isid, _ := strconv.ParseInt(sid, 10, 64)
 	Icid, _ := strconv.ParseInt(cid, 10, 64)
-	payload := ServerCertificate{ServerID: Isid, CertificateID: Icid}
+	payload := ServerLink{ServerID: Isid, CertificateID: Icid}
 	data := getLinkCer(payload)
 	if len(data) == 0 {
-		if (LinkCer(ServerCertificate{ServerID: Isid, CertificateID: Icid})) {
+		if (LinkServer(ServerLink{ServerID: Isid, CertificateID: Icid})) {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
@@ -130,8 +130,8 @@ func unLinkServerCer(c echo.Context) error {
 	cid := c.Param("CerID")
 	Isid, _ := strconv.ParseInt(sid, 10, 64)
 	Icid, _ := strconv.ParseInt(cid, 10, 64)
-	payload := ServerCertificate{ServerID: Isid, CertificateID: Icid}
-	data := UnLinkCer(payload)
+	payload := ServerLink{ServerID: Isid, CertificateID: Icid}
+	data := UnLinkServer(payload)
 	if data {
 		if len(getLinkCer(payload)) == 0 {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})

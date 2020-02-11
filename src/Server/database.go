@@ -189,31 +189,42 @@ func addCer(certificate Certificate) bool {
 }
 
 // LinkCer link
-func LinkCer(serverCertificate ServerCertificate) bool {
+func LinkServer(serverLink ServerLink) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&ServerCertificate{})
-	db.Create(&serverCertificate)
-	if !(db.NewRecord(serverCertificate)) {
+	db.AutoMigrate(&ServerLink{})
+	db.Create(&serverLink)
+	if !(db.NewRecord(serverLink)) {
 		return true
 	}
 	return false
 }
 
-func getLinkCer(serverCertificate ServerCertificate) []ServerCertificate {
+func getLinkCer(serverLink ServerLink) []ServerLink {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&ServerCertificate{})
-	serverCertificates := []ServerCertificate{}
-	db.Where(serverCertificate).Find(&serverCertificates)
-	return serverCertificates
+	db.AutoMigrate(&ServerLink{})
+	ServerLinks := []ServerLink{}
+	serverLink.SiteID = 0
+	db.Where(serverLink).Find(&ServerLinks)
+	return ServerLinks
 }
 
-func UnLinkCer(serverCertificate ServerCertificate) bool {
+func getLinkSite(serverLink ServerLink) []ServerLink {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&ServerCertificate{})
-	db.Where(serverCertificate).Delete(ServerCertificate{})
+	db.AutoMigrate(&ServerLink{})
+	ServerLinks := []ServerLink{}
+	serverLink.CertificateID = 0
+	db.Where(serverLink).Find(&ServerLinks)
+	return ServerLinks
+}
+
+func UnLinkServer(serverLink ServerLink) bool {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&ServerLink{})
+	db.Where(serverLink).Delete(ServerLink{})
 	return true
 }
 

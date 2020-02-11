@@ -77,10 +77,11 @@ type Domain struct {
 }
 
 // ServerCertificate model
-type ServerCertificate struct {
+type ServerLink struct {
 	ID            int64 `gorm:"AUTO_INCREMENT"`
 	CertificateID int64
 	ServerID      int64
+	SiteID        int64
 }
 
 // UpdateInfo model
@@ -93,9 +94,10 @@ type UpdateInfo struct {
 
 // DataSite model
 type DataSite struct {
+	ID     int64
 	Domain string
-	Enable bool
 	CerID  int64
+	Config string
 }
 
 // DataService model

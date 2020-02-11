@@ -29,9 +29,10 @@ type UpdateInfo struct {
 
 // DataSite model
 type DataSite struct {
+	ID     int64
 	Domain string
-	Enable bool
 	CerID  int64
+	Config string
 }
 
 // DataService model

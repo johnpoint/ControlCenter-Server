@@ -43,15 +43,22 @@ func getServerUpdate(c echo.Context) error {
 	data := UpdateInfo{}
 	check := getServer(Server{Token: token})
 	if len(check) == 1 {
-		getCerID := getLinkCer(ServerCertificate{ServerID: check[0].ID})
+		getCerID := getLinkCer(ServerLink{ServerID: check[0].ID})
 		if len(getCerID) != 0 {
 			CerData := []DataCertificate{}
+			SiteData := []DataSite{}
 			for i := 0; i < len(getCerID); i++ {
-				cer := getCer(Certificate{ID: getCerID[i].CertificateID})[0]
-				CerData = append(CerData, DataCertificate{ID: cer.ID, Domain: cer.Name, FullChain: cer.Fullchain, Key: cer.Key})
+				if getCerID[i].SiteID != 0 {
+					site := getSite(Site{ID: getCerID[i].SiteID})[0]
+					SiteData = append(SiteData, DataSite{ID: site.ID, Config: site.Config, Domain: site.Name, CerID: site.Cer})
+				} else {
+					cer := getCer(Certificate{ID: getCerID[i].CertificateID})[0]
+					CerData = append(CerData, DataCertificate{ID: cer.ID, Domain: cer.Name, FullChain: cer.Fullchain, Key: cer.Key})
+				}
 			}
 			data.Code = 200
 			data.Certificates = CerData
+			data.Sites = SiteData
 		}
 	}
 	return c.JSON(http.StatusOK, data)
@@ -80,9 +87,26 @@ func getCertificateLinked(c echo.Context) error {
 		server.UID = getUser(User{Mail: user.Mail})[0].ID
 		data := getServer(server)
 		if len(data) != 0 {
-			return c.JSON(http.StatusOK, getLinkCer(ServerCertificate{ServerID: data[0].ID}))
+			return c.JSON(http.StatusOK, getLinkCer(ServerLink{ServerID: data[0].ID}))
 		}
-		return c.JSON(http.StatusOK, getLinkCer(ServerCertificate{ServerID: 0}))
+		return c.JSON(http.StatusOK, getLinkCer(ServerLink{ServerID: 0}))
+	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
+}
+
+func getSiteLinked(c echo.Context) error {
+	user := checkAuth(c)
+	server := Server{}
+	if err := c.Bind(&server); err != nil {
+		panic(err)
+	}
+	if user.Level == 1 {
+		server.UID = getUser(User{Mail: user.Mail})[0].ID
+		data := getServer(server)
+		if len(data) != 0 {
+			return c.JSON(http.StatusOK, getLinkSite(ServerLink{ServerID: data[0].ID}))
+		}
+		return c.JSON(http.StatusOK, getLinkSite(ServerLink{ServerID: 0}))
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }

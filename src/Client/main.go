@@ -94,7 +94,7 @@ func setup(args []string) {
 	fmt.Println("OK!")
 }
 
-func addSite(domain string, enable bool, cerid int64) bool {
+/*func addSite(domain string, enable bool, cerid int64) bool {
 	data := getData()
 	for index := 0; index < len(data.Sites); index++ {
 		if data.Sites[index].Domain == domain {
@@ -112,7 +112,7 @@ func addSite(domain string, enable bool, cerid int64) bool {
 	}
 	fmt.Println("OK!")
 	return true
-}
+}*/
 
 func delSite(domain string) bool {
 	data := getData()

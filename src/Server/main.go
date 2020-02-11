@@ -60,6 +60,7 @@ func start() {
 	w.GET("/ServerInfo", getServerInfo)
 	w.PUT("/ServerInfo", updateServerInfo)
 	w.GET("/ServerInfo/Certificate", getCertificateLinked)
+	w.GET("/ServerInfo/Site", getSiteLinked)
 	w.DELETE("/Server/:ip", removeServer)
 	w.GET("/DomainInfo", getDomainInfo)
 	w.PUT("/DomainInfo", updateDomainInfo)
@@ -73,6 +74,8 @@ func start() {
 	w.DELETE("/Certificate", deleteCertificateInfo)
 	w.PUT("/link/Certificate/:ServerID/:CerID", linkServerCer)
 	w.DELETE("/link/Certificate/:ServerID/:CerID", unLinkServerCer)
+	w.PUT("/link/Site/:ServerID/:SiteID", linkServerSite)
+	w.DELETE("/link/Site/:ServerID/:SiteID", unLinkServerSite)
 	w.POST("/backup", setBackupFile)
 	e.GET("/web/:mail/:pass/backup", getBackupFile)
 	user := w.Group("/UserInfo")
@@ -89,5 +92,5 @@ func start() {
 }
 
 func accessible(c echo.Context) error {
-	return c.HTML(http.StatusOK, "<h1>ControlCenter</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.5.5")
+	return c.HTML(http.StatusOK, "<h1>ControlCenter</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.6.0")
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo"
 )
@@ -38,4 +39,36 @@ func deleteSiteInfo(c echo.Context) error {
 		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
 	}
 	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+}
+
+func linkServerSite(c echo.Context) error {
+	sid := c.Param("ServerID")
+	cid := c.Param("SiteID")
+	Isid, _ := strconv.ParseInt(sid, 10, 64)
+	Icid, _ := strconv.ParseInt(cid, 10, 64)
+	payload := ServerLink{ServerID: Isid, SiteID: Icid}
+	data := getLinkSite(payload)
+	if len(data) == 0 {
+		if (LinkServer(ServerLink{ServerID: Isid, SiteID: Icid})) {
+			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+		}
+		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
+	} else {
+		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "already linked"})
+	}
+}
+
+func unLinkServerSite(c echo.Context) error {
+	sid := c.Param("ServerID")
+	cid := c.Param("SiteID")
+	Isid, _ := strconv.ParseInt(sid, 10, 64)
+	Icid, _ := strconv.ParseInt(cid, 10, 64)
+	payload := ServerLink{ServerID: Isid, SiteID: Icid}
+	data := UnLinkServer(payload)
+	if data {
+		if len(getLinkCer(payload)) == 0 {
+			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+		}
+	}
+	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 }
