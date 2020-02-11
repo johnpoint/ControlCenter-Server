@@ -66,6 +66,7 @@ func start() {
 	w.PUT("/UserInfo/:mail/:key/:value", updateUserInfo)
 	w.PUT("/SiteInfo", addSiteInfo)
 	w.GET("/SiteInfo", getSiteInfo)
+	w.DELETE("/SiteInfo", deleteSiteInfo)
 	w.PUT("/Certificate", addCertificateInfo)
 	w.GET("/Certificate", getCertificateInfo)
 	w.POST("/Certificate", updateCertificateInfo)

@@ -168,6 +168,14 @@ func getSite(site Site) []Site {
 	return sites
 }
 
+func delSite(site Site) bool {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&Site{})
+	db.Where(site).Delete(Site{})
+	return true
+}
+
 //Cer
 func addCer(certificate Certificate) bool {
 	db := initDatabase()

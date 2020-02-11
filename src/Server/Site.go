@@ -28,3 +28,14 @@ func addSiteInfo(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 }
+
+func deleteSiteInfo(c echo.Context) error {
+	site := Site{}
+	if err := c.Bind(&site); err != nil {
+		panic(err)
+	}
+	if !delSite(site) {
+		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
+	}
+	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+}
