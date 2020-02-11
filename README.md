@@ -37,6 +37,7 @@ PUT     /web/DomainInfo
 PUT     /web/UserInfo/:mail/:key/:value
 PUT     /web/SiteInfo
 GET     /web/SiteInfo
+DELETE  /web/SiteInfo
 PUT     /web/Certificate
 GET     /web/Certificate
 POST    /web/Certificate
