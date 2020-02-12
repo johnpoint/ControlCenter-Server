@@ -77,7 +77,7 @@ func start() {
 	w.PUT("/link/Site/:ServerID/:SiteID", linkServerSite)
 	w.DELETE("/link/Site/:ServerID/:SiteID", unLinkServerSite)
 	w.POST("/backup", setBackupFile)
-	e.GET("/web/:mail/:pass/backup", getBackupFile)
+	e.GET("/web/:token/backup", getBackupFile)
 	user := w.Group("/UserInfo")
 	user.GET("/Password/:oldpass/:newpass", reSetPassword)
 	user.GET("/Token", getUserToken)
@@ -92,5 +92,5 @@ func start() {
 }
 
 func accessible(c echo.Context) error {
-	return c.HTML(http.StatusOK, "<h1>ControlCenter</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.6.0")
+	return c.HTML(http.StatusOK, "<h1>ControlCenter</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.6.1")
 }
