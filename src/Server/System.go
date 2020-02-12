@@ -43,10 +43,9 @@ func setBackupFile(c echo.Context) error {
 }
 
 func getBackupFile(c echo.Context) error {
-	user := checkAuth(c)
 	conf := loadConfig()
 	token := c.Param("token")
-	getuser := User{Token: token, Mail: user.Mail}
+	getuser := User{Token: token}
 	userInfo := getUser(getuser)
 	if len(userInfo) == 0 {
 		re := Callback{Code: 0, Info: "account or token incorrect"}
