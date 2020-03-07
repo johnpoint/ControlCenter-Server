@@ -3,3 +3,4 @@ src/Client/data.json
 src/Client/Client
 src/Server/Server
 src/Server/config.json
+.idea/

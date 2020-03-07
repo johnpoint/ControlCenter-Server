@@ -53,3 +53,21 @@ func getBackupFile(c echo.Context) error {
 	}
 	return c.File(conf.Database)
 }
+
+func setSetting(c echo.Context) error {
+	user := checkAuth(c)
+	name := c.Param("name")
+	value := c.Param("value")
+	config := SysConfig{Name: name, Value: value, UID: getUser(User{Mail: user.Mail})[0].ID}
+	if setConfig(config) {
+		return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
+}
+
+func getSetting(c echo.Context) error {
+	user := checkAuth(c)
+	name := c.Param("name")
+	config := SysConfig{Name: name, UID: getUser(User{Mail: user.Mail})[0].ID}
+	return c.JSON(http.StatusOK, getConfig(config))
+}

@@ -135,7 +135,13 @@ func serverUpdate(c echo.Context) error {
 	if err := c.Bind(&server); err != nil {
 		panic(err)
 	}
-	fmt.Println("⇨ Get Server update From :" + server.Ipv4)
+	fmt.Println(":: Get Server update From :" + server.Ipv4)
+
+	if getServer(Server{Ipv4: server.Ipv4, Token: server.Token})[0].Online == 2 {
+		server.Online = 3
+	} else {
+		server.Online = 1
+	}
 	if updateServer(Server{Ipv4: server.Ipv4, Token: server.Token}, server) {
 		return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 	}
@@ -165,4 +171,21 @@ func removeServer(c echo.Context) error {
 		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
+}
+
+func checkOnline() {
+	for true {
+		updateServer(Server{Online: 1}, Server{Online: -1})
+		time.Sleep(time.Duration(6) * time.Second)
+		offlineServer := getServer(Server{Online: -1})
+		onlineServer := getServer(Server{Online: 3})
+		pushNotification(offlineServer, "offline")
+		updateServer(Server{Online: -1}, Server{Online: 2})
+		pushNotification(onlineServer, "online")
+		updateServer(Server{Online: 3}, Server{Online: 1})
+	}
+	// -1 默认 --> 推送
+	// 1 在线
+	// 2 等待上线
+	// 3 上线 --> 推送
 }

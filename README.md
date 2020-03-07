@@ -61,3 +61,10 @@ GET     /web/UserInfo
 ```
 ./Client install [ 后端地址 ] [ hostname 或 自定义名称 ] [ IPv4地址 ] [ IPv6地址，没有就填IPv4 ] [ user_token ]
 ```
+
+## 设置
+```
+TELEGRAM_BOT_TOKEN
+TELEGRAM_CHAT_ID
+TELEGRAM_NOTIFICATION "true"
+```

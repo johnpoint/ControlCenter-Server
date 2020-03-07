@@ -2,18 +2,11 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"os"
-
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"net/http"
+	"os"
 )
-
-// Callback send some info to client
-type Callback struct {
-	Code int64
-	Info string
-}
 
 func main() {
 	if len(os.Args) == 2 {
@@ -27,6 +20,7 @@ func main() {
 }
 
 func start() {
+	go checkOnline()
 	conf := loadConfig()
 	e := echo.New()
 	e.Debug = false
@@ -56,7 +50,7 @@ func start() {
 	}
 	w := e.Group("/web")
 	w.Use(middleware.JWTWithConfig(jwtConfig))
-	w.POST("debug/check", checkPower)
+	w.POST("/debug/check", checkPower)
 	w.GET("/ServerInfo", getServerInfo)
 	w.PUT("/ServerInfo", updateServerInfo)
 	w.GET("/ServerInfo/Certificate", getCertificateLinked)
@@ -77,6 +71,9 @@ func start() {
 	w.PUT("/link/Site/:ServerID/:SiteID", linkServerSite)
 	w.DELETE("/link/Site/:ServerID/:SiteID", unLinkServerSite)
 	w.POST("/backup", setBackupFile)
+	w.GET("/SiteInfo/check", getCertificatesInfo)
+	w.POST("/Setting/:name/:value", setSetting)
+	w.GET("/Setting/:name", getSetting)
 	e.GET("/web/:token/backup", getBackupFile)
 	user := w.Group("/UserInfo")
 	user.GET("/Password/:oldpass/:newpass", reSetPassword)

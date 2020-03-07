@@ -72,3 +72,20 @@ func unLinkServerSite(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 }
+
+func getCertificatesInfo(c echo.Context) error {
+	sid := c.Param("SiteID")
+	Isid, _ := strconv.ParseInt(sid, 10, 64)
+	SiteInfo := getSite(Site{ID: Isid})
+	if len(SiteInfo) != 0 {
+		SiteName := SiteInfo[0].Name
+		resp, _ := http.Get("https://" + SiteName)
+		defer resp.Body.Close()
+		if resp.StatusCode != http.StatusOK {
+			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "SSL error"})
+		} else {
+			return c.JSON(http.StatusOK, resp.TLS.PeerCertificates[0])
+		}
+	}
+	return c.JSON(http.StatusOK, Callback{Code: 200, Info: "ERROR"})
+}

@@ -94,26 +94,6 @@ func setup(args []string) {
 	fmt.Println("OK!")
 }
 
-/*func addSite(domain string, enable bool, cerid int64) bool {
-	data := getData()
-	for index := 0; index < len(data.Sites); index++ {
-		if data.Sites[index].Domain == domain {
-			fmt.Println("Site already exists")
-			return false
-		}
-	}
-	data.Sites = append(data.Sites, DataSite{Domain: domain, Enable: enable, CerID: cerid})
-	file, _ := os.Create("data.json")
-	defer file.Close()
-	databy, _ := json.Marshal(data)
-	_, err := io.WriteString(file, string(databy))
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("OK!")
-	return true
-}*/
-
 func delSite(domain string) bool {
 	data := getData()
 	for index := 0; index < len(data.Sites); index++ {

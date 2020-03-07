@@ -26,10 +26,6 @@ func TestDelCer(t *testing.T) {
 	t.Log(delCer(12))
 }
 
-func TestAddSite(t *testing.T) {
-	t.Log(addSite("lvcshu.com", true, 23))
-}
-
 func TestDelSite(t *testing.T) {
 	t.Log(delSite("lvcshu.com"))
 }

@@ -1,5 +1,11 @@
 package main
 
+// Callback send some info to client
+type Callback struct {
+	Code int64
+	Info string
+}
+
 // Server model of server
 type Server struct {
 	Status   string `json:"status" xml:"status" form:"status" query:"status"`
@@ -9,6 +15,7 @@ type Server struct {
 	ID       int64  `gorm:"AUTO_INCREMENT"`
 	UID      int64  `json:"uid" xml:"uid" form:"uid" query:"uid"`
 	Token    string
+	Online   int64 `gorm:"default:true"`
 }
 
 // Service TODO
@@ -65,6 +72,14 @@ type Config struct {
 	KEYPath      string
 	Salt         string
 	Database     string
+}
+
+// SysConfig model of config
+type SysConfig struct {
+	ID    int64 `gorm:"AUTO_INCREMENT"`
+	UID   int64
+	Name  string
+	Value string
 }
 
 // Domain model of domain

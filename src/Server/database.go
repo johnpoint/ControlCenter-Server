@@ -255,3 +255,38 @@ func getCer(certificate Certificate) []Certificate {
 	db.Where(certificate).Find(&certificates)
 	return certificates
 }
+
+//System Config
+func setConfig(config SysConfig) bool {
+	if len(getConfig(SysConfig{Name: config.Name})) == 0 {
+		return addConfig(config)
+	}
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&SysConfig{})
+	db.Model(&config).Where(SysConfig{Name: config.Name}).Update(config)
+	if len(getConfig(config)) == 0 {
+		return false
+	}
+	return true
+}
+
+func addConfig(config SysConfig) bool {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&SysConfig{})
+	db.Create(&config)
+	if len(getConfig(config)) == 0 {
+		return false
+	}
+	return true
+}
+
+func getConfig(config SysConfig) []SysConfig {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&SysConfig{})
+	configs := []SysConfig{}
+	db.Where(config).Find(&configs)
+	return configs
+}
