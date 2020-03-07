@@ -176,7 +176,7 @@ func removeServer(c echo.Context) error {
 func checkOnline() {
 	for true {
 		updateServer(Server{Online: 1}, Server{Online: -1})
-		time.Sleep(time.Duration(6) * time.Second)
+		time.Sleep(time.Duration(30) * time.Second)
 		offlineServer := getServer(Server{Online: -1})
 		onlineServer := getServer(Server{Online: 3})
 		pushNotification(offlineServer, "offline")
