@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-func pushNotification(servers []Server, status string) {
+func pushNotification(servers []Server, status string) bool {
 	for i := 0; i < len(servers); i++ {
 		Tconfig := SysConfig{UID: servers[i].UID, Name: "TELEGRAM_BOT_TOKEN"}
 		Iconfig := SysConfig{UID: servers[i].UID, Name: "TELEGRAM_CHAT_ID"}
@@ -27,4 +27,5 @@ func pushNotification(servers []Server, status string) {
 		text = url.QueryEscape(text)
 		http.Get("https://api.telegram.org/bot" + botToken + "/sendMessage?chat_id=" + userID + "&text=" + text)
 	}
+	return true
 }
