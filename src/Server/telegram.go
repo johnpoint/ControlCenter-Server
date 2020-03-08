@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 )
@@ -23,9 +24,12 @@ func pushNotification(servers []Server, status string) bool {
 		}
 		name := servers[i].Hostname
 		ip := servers[i].Ipv4
-		text := "[WARN] " + name + "(" + ip + ") " + status + ""
+		text := "[Server] " + name + " (" + ip + ") " + status + ""
 		text = url.QueryEscape(text)
-		http.Get("https://api.telegram.org/bot" + botToken + "/sendMessage?chat_id=" + userID + "&text=" + text)
+		_, err := http.Get("https://api.telegram.org/bot" + botToken + "/sendMessage?chat_id=" + userID + "&text=" + text)
+		if err != nil {
+			fmt.Print(err)
+		}
 	}
 	return true
 }

@@ -24,8 +24,8 @@ func setupServer(c echo.Context) error {
 	if len(check) != 0 {
 		return c.JSON(http.StatusBadRequest, Callback{Code: 0, Info: "Server already exists"})
 	}
-	time := time.Now().Unix()
-	data := []byte(strconv.FormatInt(time, 10))
+	NowTime := time.Now().Unix()
+	data := []byte(strconv.FormatInt(NowTime, 10))
 	has := md5.Sum(data)
 	md5str1 := fmt.Sprintf("%x", has)
 	server.Token = md5str1
@@ -136,8 +136,10 @@ func serverUpdate(c echo.Context) error {
 		panic(err)
 	}
 	fmt.Println(":: Get Server update From :" + server.Ipv4)
-
-	if getServer(Server{Ipv4: server.Ipv4, Token: server.Token})[0].Online == 2 {
+	status := getServer(Server{Ipv4: server.Ipv4, Token: server.Token})[0].Online
+	if status == 2 {
+		server.Online = 3
+	} else if status == 3 {
 		server.Online = 3
 	} else {
 		server.Online = 1
