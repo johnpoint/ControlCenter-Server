@@ -85,6 +85,9 @@ func oaRegister(c echo.Context) error {
 func checkAuth(c echo.Context) *jwtCustomClaims {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*jwtCustomClaims)
+	if len(getUser(User{Mail: claims.Mail, Level: claims.Level})) == 0 {
+		return nil
+	}
 	return claims
 }
 
