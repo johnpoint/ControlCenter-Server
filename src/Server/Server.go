@@ -70,7 +70,7 @@ func getServerInfo(c echo.Context) error {
 	if err := c.Bind(&server); err != nil {
 		panic(err)
 	}
-	if user.Level == 1 {
+	if user.Level <= 1 {
 		server.UID = getUser(User{Mail: user.Mail})[0].ID
 		return c.JSON(http.StatusOK, getServer(server))
 	}
@@ -83,7 +83,7 @@ func getCertificateLinked(c echo.Context) error {
 	if err := c.Bind(&server); err != nil {
 		panic(err)
 	}
-	if user.Level == 1 {
+	if user.Level <= 1 {
 		server.UID = getUser(User{Mail: user.Mail})[0].ID
 		data := getServer(server)
 		if len(data) != 0 {
@@ -100,7 +100,7 @@ func getSiteLinked(c echo.Context) error {
 	if err := c.Bind(&server); err != nil {
 		panic(err)
 	}
-	if user.Level == 1 {
+	if user.Level <= 1 {
 		server.UID = getUser(User{Mail: user.Mail})[0].ID
 		data := getServer(server)
 		if len(data) != 0 {
@@ -113,7 +113,7 @@ func getSiteLinked(c echo.Context) error {
 
 func updateServerInfo(c echo.Context) error {
 	user := checkAuth(c)
-	if user.Level == 1 {
+	if user.Level <= 1 {
 		server := Server{}
 		if err := c.Bind(&server); err != nil {
 			panic(err)
@@ -166,7 +166,7 @@ func serverGetCertificate(c echo.Context) error {
 func removeServer(c echo.Context) error {
 	user := checkAuth(c)
 	ip := c.Param("ip")
-	if user.Level == 1 {
+	if user.Level <= 1 {
 		if delServer(ip, getUser(User{Mail: user.Mail})[0].ID) {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
