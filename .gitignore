@@ -4,4 +4,4 @@ src/Client/Client
 src/Server/Server
 src/Server/config.json
 .idea/
-pkg/
+/pkg/
