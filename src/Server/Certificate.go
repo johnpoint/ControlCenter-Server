@@ -12,7 +12,7 @@ import (
 
 func addCertificateInfo(c echo.Context) error {
 	user := checkAuth(c)
-	if user.Level == 1 {
+	if user.Level <= 1 {
 		certificate := Certificate{}
 		if err := c.Bind(&certificate); err != nil {
 			return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
@@ -51,7 +51,7 @@ func deleteCertificateInfo(c echo.Context) error {
 	if err := c.Bind(&cer); err != nil {
 		panic(err)
 	}
-	if user.Level == 1 {
+	if user.Level <= 1 {
 		cer.UID = getUser(User{Mail: user.Mail})[0].ID
 		if delCer(cer) {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
@@ -63,7 +63,7 @@ func deleteCertificateInfo(c echo.Context) error {
 
 func updateCertificateInfo(c echo.Context) error {
 	user := checkAuth(c)
-	if user.Level == 1 {
+	if user.Level <= 1 {
 		certificate := Certificate{}
 		if err := c.Bind(&certificate); err != nil {
 			panic(err)
@@ -101,7 +101,7 @@ func getCertificateInfo(c echo.Context) error {
 	if err := c.Bind(&cer); err != nil {
 		panic(err)
 	}
-	if user.Level == 1 {
+	if user.Level <= 1 {
 		cer.UID = getUser(User{Mail: user.Mail})[0].ID
 		return c.JSON(http.StatusOK, getCer(cer))
 	}
