@@ -1,7 +1,5 @@
-src/Server/test.db
-src/Client/data.json
-src/Client/Client
-src/Server/Server
+src/Client/main
+src/Server/main
 src/Server/config.json
 .idea/
-/src/pkg/
+src/pkg/
