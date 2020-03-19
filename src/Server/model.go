@@ -43,7 +43,7 @@ type User struct {
 	Username string `json:"name" xml:"name" form:"name" query:"name"`
 	Mail     string `json:"email" xml:"email" form:"email" query:"email"`
 	Password string `json:"password" xml:"password" form:"password" query:"password"`
-	Level    int64
+	Level    int64  //用户等级 0 = 特权用户 1 = 普通用户 2 = 游客
 	Token    string
 }
 
