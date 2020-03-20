@@ -71,11 +71,11 @@ func getServer(server Server) []Server {
 	return servers
 }
 
-func delServer(ip string, uid int64) bool {
+func delServer(id int64, uid int64) bool {
 	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&Server{})
-	server := Server{Ipv4: ip, UID: uid}
+	server := Server{ID: id, UID: uid}
 	db.Where(server).Delete(Server{})
 	return true
 }

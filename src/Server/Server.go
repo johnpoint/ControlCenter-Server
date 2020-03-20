@@ -165,9 +165,10 @@ func serverGetCertificate(c echo.Context) error {
 
 func removeServer(c echo.Context) error {
 	user := checkAuth(c)
-	ip := c.Param("ip")
+	id := c.Param("id")
+	Iid, _ := strconv.ParseInt(id, 10, 64)
 	if user.Level <= 1 {
-		if delServer(ip, getUser(User{Mail: user.Mail})[0].ID) {
+		if delServer(Iid, getUser(User{Mail: user.Mail})[0].ID) {
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
