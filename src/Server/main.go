@@ -55,7 +55,7 @@ func start() {
 	w.PUT("/ServerInfo", updateServerInfo)
 	w.GET("/ServerInfo/Certificate", getCertificateLinked)
 	w.GET("/ServerInfo/Site", getSiteLinked)
-	w.DELETE("/Server/:ip", removeServer)
+	w.DELETE("/Server/:id", removeServer)
 	w.GET("/DomainInfo", getDomainInfo)
 	w.PUT("/DomainInfo", updateDomainInfo)
 	w.PUT("/UserInfo/:mail/:key/:value", updateUserInfo)
