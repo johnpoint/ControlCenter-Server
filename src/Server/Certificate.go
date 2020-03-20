@@ -47,14 +47,13 @@ func addCertificateInfo(c echo.Context) error {
 
 func deleteCertificateInfo(c echo.Context) error {
 	user := checkAuth(c)
-	cer := Certificate{}
-	if err := c.Bind(&cer); err != nil {
-		panic(err)
-	}
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	if user.Level <= 1 {
-		cer.UID = getUser(User{Mail: user.Mail})[0].ID
-		if delCer(cer) {
-			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+		uid := getUser(User{Mail: user.Mail})[0].ID
+		if delCer(Certificate{ID: id, UID: uid}) {
+			if UnLinkServer(ServerLink{CertificateID: id}) {
+				return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+			}
 		}
 		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 	}

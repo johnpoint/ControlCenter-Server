@@ -65,7 +65,7 @@ func start() {
 	w.PUT("/Certificate", addCertificateInfo)
 	w.GET("/Certificate", getCertificateInfo)
 	w.POST("/Certificate", updateCertificateInfo)
-	w.DELETE("/Certificate", deleteCertificateInfo)
+	w.DELETE("/Certificate/:id", deleteCertificateInfo)
 	w.PUT("/link/Certificate/:ServerID/:CerID", linkServerCer)
 	w.DELETE("/link/Certificate/:ServerID/:CerID", unLinkServerCer)
 	w.PUT("/link/Site/:ServerID/:SiteID", linkServerSite)
