@@ -176,16 +176,16 @@ func removeServer(c echo.Context) error {
 }
 
 func checkOnline() {
-	for true {
-		updateServer(Server{Online: 1}, Server{Online: -1})
-		time.Sleep(time.Duration(30) * time.Second)
-		offlineServer := getServer(Server{Online: -1})
-		onlineServer := getServer(Server{Online: 3})
-		pushNotification(offlineServer, "offline")
-		updateServer(Server{Online: -1}, Server{Online: 2})
-		pushNotification(onlineServer, "online")
-		updateServer(Server{Online: 3}, Server{Online: 1})
-	}
+
+	updateServer(Server{Online: 1}, Server{Online: -1})
+	time.Sleep(time.Duration(120) * time.Second)
+	offlineServer := getServer(Server{Online: -1})
+	onlineServer := getServer(Server{Online: 3})
+	pushNotification(offlineServer, "offline")
+	updateServer(Server{Online: -1}, Server{Online: 2})
+	pushNotification(onlineServer, "online")
+	updateServer(Server{Online: 3}, Server{Online: 1})
+	return
 	// -1 默认 --> 推送
 	// 1 在线
 	// 2 等待上线

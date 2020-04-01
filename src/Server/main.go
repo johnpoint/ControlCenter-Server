@@ -20,7 +20,7 @@ func main() {
 }
 
 func start() {
-	go checkOnline()
+	go checkOnlineI()
 	conf := loadConfig()
 	e := echo.New()
 	e.Debug = false
@@ -90,4 +90,10 @@ func start() {
 
 func accessible(c echo.Context) error {
 	return c.HTML(http.StatusOK, "<h1>ControlCenter</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.7.4")
+}
+
+func checkOnlineI() {
+	for true {
+		checkOnline()
+	}
 }
