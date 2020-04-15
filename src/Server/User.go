@@ -72,3 +72,41 @@ func getNewToken(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 }
+
+func changeLevel(c echo.Context) error {
+	user := checkAuth(c)
+	if user != nil {
+		if getUser(User{Mail: user.Mail})[0].Level <= 0 {
+			uid, _ := strconv.ParseInt(c.Param("uid"), 10, 64)
+			level, _ := strconv.ParseInt(c.Param("level"), 10, 64)
+			userTarget := getUser(User{ID: uid})
+			if len(userTarget) != 0 {
+				if userTarget[0].Level == 0 {
+					return c.JSON(http.StatusForbidden, Callback{Code: 0, Info: "No permission"})
+				}
+			}
+			if updateUser(User{ID: uid}, User{Level: level}) {
+				return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+			}
+			return c.JSON(http.StatusInternalServerError, Callback{Code: 0, Info: "ERROR"})
+		}
+		return c.JSON(http.StatusForbidden, Callback{Code: 0, Info: "No permission"})
+	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
+}
+
+func getUserList(c echo.Context) error {
+	user := checkAuth(c)
+	if user != nil {
+		if getUser(User{Mail: user.Mail})[0].Level <= 0 {
+			users := getUser(User{})
+			for i := 0; i < len(users); i++ {
+				users[i].Password = "*********"
+				users[i].Token = "*********"
+			}
+			return c.JSON(http.StatusOK, users)
+		}
+		return c.JSON(http.StatusForbidden, Callback{Code: 0, Info: "No permission"})
+	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
+}

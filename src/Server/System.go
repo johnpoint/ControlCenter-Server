@@ -16,7 +16,7 @@ func setBackupFile(c echo.Context) error {
 	user := checkAuth(c)
 	conf := loadConfig()
 	if user != nil {
-		if user.Level == 0 {
+		if user.Level <= 0 {
 			file, err := c.FormFile("file")
 			if err != nil {
 				return err
@@ -55,7 +55,7 @@ func getBackupFile(c echo.Context) error {
 		re := Callback{Code: 0, Info: "account or token incorrect"}
 		return c.JSON(http.StatusUnauthorized, re)
 	} else {
-		if userInfo[0].Level == 0 {
+		if userInfo[0].Level <= 0 {
 			return c.File(conf.Database)
 		} else {
 			return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})

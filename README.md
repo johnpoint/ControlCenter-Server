@@ -48,10 +48,12 @@ PUT     /web/link/Site/:ServerID/:SiteID
 DELETE  /web/link/Site/:ServerID/:SiteID
 POST    /web/backup
 GET     /web/:mail/:pass/backup
+PUT     /web/UserInfo/:uid/:level
 GET     /web/UserInfo/Password/:oldpass/:newpass
 GET     /web/UserInfo/Token
 PUT     /web/UserInfo/Token
 GET     /web/UserInfo
+GET     /web/UserInfo/
 ```
 
 ## Install 安装

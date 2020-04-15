@@ -76,10 +76,12 @@ func start() {
 	w.GET("/Setting/:name", getSetting)
 	e.GET("/web/:token/backup", getBackupFile)
 	user := w.Group("/UserInfo")
+	user.PUT("/level/:uid/:level", changeLevel)
 	user.GET("/Password/:oldpass/:newpass", reSetPassword)
 	user.GET("/Token", getUserToken)
 	user.PUT("/Token", getNewToken)
 	user.GET("", getUserInfo)
+	user.GET("/", getUserList)
 
 	if conf.TLS {
 		e.Logger.Fatal(e.StartTLS(":"+conf.ListenPort, conf.CERTPath, conf.KEYPath))
