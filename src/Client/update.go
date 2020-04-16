@@ -34,8 +34,8 @@ func getUpdate() bool {
 			fmt.Println("Error:", err)
 		}
 		data.Certificates = Getdata.Certificates
-		data.Services = Getdata.Services
 		data.Sites = Getdata.Sites
+		data.Docker = Getdata.Docker
 		file, _ := os.Create("data.json")
 		defer file.Close()
 		databy, _ := json.Marshal(data)

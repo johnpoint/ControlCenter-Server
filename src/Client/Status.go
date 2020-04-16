@@ -3,7 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/docker/distribution/context"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -90,6 +94,29 @@ func infoMiniJSON() string {
 			}
 			ss.Network[v.Name] = ii
 		}
+	}
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		panic(err)
+	}
+
+	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{All: true})
+	if err != nil {
+		panic(err)
+	}
+
+	for _, container := range containers {
+		var str string
+		for _, port := range container.Ports {
+			str += strconv.FormatInt(int64(port.PrivatePort), 10) + " --> " + strconv.FormatInt(int64(port.PublicPort), 10)
+		}
+
+		docker := DockerInfo{}
+		docker.Port = str
+		docker.Name = container.Names[0]
+		docker.Image = container.Image
+		docker.State = container.Status
+		ss.DockerInfo = append(ss.DockerInfo, docker)
 	}
 	b, err := json.Marshal(ss)
 	if err != nil {

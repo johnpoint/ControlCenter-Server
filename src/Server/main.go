@@ -23,7 +23,7 @@ func start() {
 	go checkOnlineI()
 	conf := loadConfig()
 	e := echo.New()
-	e.Debug = false
+	e.Debug = true
 	e.HideBanner = true
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: conf.AllowAddress,
@@ -74,6 +74,9 @@ func start() {
 	w.GET("/SiteInfo/check", getCertificatesInfo)
 	w.POST("/Setting/:name/:value", setSetting)
 	w.GET("/Setting/:name", getSetting)
+	w.GET("/DockerInfo/:id", getDockerInfo)
+	w.PUT("/DockerInfo", addDockerInfo)
+	w.PUT("/DockerInfo/:id", editDockerInfo)
 	e.GET("/web/:token/backup", getBackupFile)
 	user := w.Group("/UserInfo")
 	user.PUT("/level/:uid/:level", changeLevel)

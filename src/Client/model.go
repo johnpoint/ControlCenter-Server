@@ -8,7 +8,7 @@ type (
 		Base         DataBase
 		Sites        []DataSite
 		Certificates []DataCertificate
-		Services     []DataService
+		Docker       []DockerConfig
 	}
 
 	// DataBase model
@@ -25,7 +25,13 @@ type (
 		Code         int64
 		Sites        []DataSite
 		Certificates []DataCertificate
-		Services     []DataService
+		Docker       []DockerConfig
+	}
+
+	DockerConfig struct {
+		ID     int64
+		Config string
+		Status int64 //-1 关闭 | 1 开启
 	}
 
 	// DataSite model
@@ -36,12 +42,13 @@ type (
 		Config string
 	}
 
-	// DataService model
-	DataService struct {
-		Name    string
-		Enable  string
-		Disable string
-		Status  string
+	// DataDocker model
+	DockerInfo struct {
+		Name   string
+		Status int64
+		Port   string
+		State  string
+		Image  string
 	}
 
 	// DataCertificate model
@@ -54,14 +61,15 @@ type (
 
 	// StatusServer model
 	StatusServer struct {
-		Percent  StatusPercent
-		CPU      []CPUInfo
-		Mem      MemInfo
-		Swap     SwapInfo
-		Load     *load.AvgStat
-		Network  map[string]InterfaceInfo
-		BootTime uint64
-		Uptime   uint64
+		Percent    StatusPercent
+		CPU        []CPUInfo
+		Mem        MemInfo
+		Swap       SwapInfo
+		Load       *load.AvgStat
+		Network    map[string]InterfaceInfo
+		BootTime   uint64
+		Uptime     uint64
+		DockerInfo []DockerInfo
 	}
 
 	// StatusPercent model

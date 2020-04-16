@@ -14,31 +14,6 @@ func initDatabase() *gorm.DB {
 	return db
 }
 
-//Service
-func getService(service Service) []Service {
-	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&Service{})
-	services := []Service{}
-	if service.ID == -1 {
-		db.Find(&service)
-	} else {
-		db.Where(service).Find(&service)
-	}
-	return services
-}
-
-func addService(service Service) bool {
-	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&Service{})
-	db.Create(&service)
-	if !(db.NewRecord(service)) {
-		return true
-	}
-	return false
-}
-
 //Server
 func addServer(server Server) bool {
 	db := initDatabase()
@@ -289,4 +264,60 @@ func getConfig(config SysConfig) []SysConfig {
 	configs := []SysConfig{}
 	db.Where(config).Find(&configs)
 	return configs
+}
+
+// Docker
+// 要传入Userid
+func getDocker(docker Docker) []Docker {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&Docker{})
+	dockers := []Docker{}
+	db.Where(docker).Find(&dockers)
+	return dockers
+}
+
+// 要传入Userid
+func editDocker(docker Docker) bool {
+	if len(getDocker(Docker{ID: docker.ID})) != 0 {
+		db := initDatabase()
+		defer db.Close()
+		db.AutoMigrate(&Docker{})
+		db.Model(&docker).Where(Docker{ID: docker.ID, UID: docker.UID}).Update(docker)
+		if len(getDocker(docker)) == 0 {
+			return false
+		}
+		return true
+	}
+	return false
+}
+
+// 要传入Userid
+func delDocker(docker Docker) bool {
+	if len(getDocker(Docker{ID: docker.ID})) != 0 {
+		db := initDatabase()
+		defer db.Close()
+		db.AutoMigrate(&Docker{})
+		db.Model(&docker).Where(Docker{ID: docker.ID}).Update(docker)
+		if len(getDocker(docker)) == 0 {
+			return true
+		}
+		return false
+	}
+	return true
+}
+
+// 要传入Useriddocker
+func addDocker(docker Docker) bool {
+	if len(getDocker(Docker{Name: docker.Name, UID: docker.UID})) == 0 {
+		db := initDatabase()
+		defer db.Close()
+		db.AutoMigrate(&Docker{})
+		db.Create(&docker)
+		if !(db.NewRecord(docker)) {
+			return true
+		}
+		return false
+	}
+	return false
 }

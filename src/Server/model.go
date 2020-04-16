@@ -19,17 +19,6 @@ type (
 		Online   int64 `gorm:"default:true"`
 	}
 
-	// Service TODO
-	Service struct {
-		ID       int64 `gorm:"AUTO_INCREMENT"`
-		Name     string
-		Enable   string
-		Disable  string
-		Status   int64
-		Serverid int64
-		UID      int64
-	}
-
 	// Site model of Site
 	Site struct {
 		ID     int64  `gorm:"AUTO_INCREMENT"`
@@ -62,6 +51,23 @@ type (
 		OCSPServer            string `json:"OCSPServer" xml:"OCSPServer" form:"OCSPServer" query:"OCSPServer"`
 		Subject               string `json:"Subject" xml:"Subject" form:"Subject" query:"Subject"`
 		UID                   int64  `json:"uid" xml:"uid" form:"uid" query:"uid"`
+	}
+
+	// Docker model of docker
+	Docker struct {
+		ID     int64  `gorm:"AUTO_INCREMENT"`
+		Name   string `json:"name" xml:"name" form:"name" query:"name"`
+		Config string `json:"config" xml:"config" form:"config" query:"config"`
+		UID    int64
+	}
+
+	DockerInfo struct {
+		ID     int64  `gorm:"AUTO_INCREMENT"`
+		Name   string `json:"name" xml:"name" form:"name" query:"name"`
+		Status int64  `gorm:"default:-1" json:"status" xml:"status" form:"status" query:"status"` // 10准备开启 | -2 准备关闭 | 1 开启状态 | -1 关闭
+		State  string `gorm:'default:"init"' json:"state" xml:"state" form:"state" query:"state"`
+		Image  string `json:"image" xml:"image" form:"image" query:"image"`
+		UID    int64
 	}
 
 	// Config model of config
@@ -98,6 +104,7 @@ type (
 		CertificateID int64
 		ServerID      int64
 		SiteID        int64
+		DockerID      int64
 	}
 
 	// UpdateInfo model
@@ -106,6 +113,7 @@ type (
 		Sites        []DataSite
 		Certificates []DataCertificate
 		Services     []DataService
+		Dockers      []DockerInfo
 	}
 
 	// DataSite model

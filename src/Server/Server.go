@@ -51,7 +51,7 @@ func getServerUpdate(c echo.Context) error {
 				if getCerID[i].SiteID != 0 {
 					site := getSite(Site{ID: getCerID[i].SiteID})[0]
 					SiteData = append(SiteData, DataSite{ID: site.ID, Config: site.Config, Domain: site.Name, CerID: site.Cer})
-				} else {
+				} else if getCerID[i].CertificateID != 0 {
 					cer := getCer(Certificate{ID: getCerID[i].CertificateID})[0]
 					CerData = append(CerData, DataCertificate{ID: cer.ID, Domain: cer.Name, FullChain: cer.Fullchain, Key: cer.Key})
 				}
