@@ -108,11 +108,12 @@ func infoMiniJSON() string {
 	for _, container := range containers {
 		var str string
 		for _, port := range container.Ports {
-			str += strconv.FormatInt(int64(port.PrivatePort), 10) + " --> " + strconv.FormatInt(int64(port.PublicPort), 10)
+			str += strconv.FormatInt(int64(port.PrivatePort), 10) + " --> " + strconv.FormatInt(int64(port.PublicPort), 10) + "<br>"
 		}
 
 		docker := DockerInfo{}
 		docker.Port = str
+		docker.ID = container.ID
 		docker.Name = container.Names[0]
 		docker.Image = container.Image
 		docker.State = container.Status

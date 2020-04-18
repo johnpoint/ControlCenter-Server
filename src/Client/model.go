@@ -44,6 +44,7 @@ type (
 
 	// DataDocker model
 	DockerInfo struct {
+		ID     string
 		Name   string
 		Status int64
 		Port   string
