@@ -42,11 +42,12 @@ func statuspoll() {
 		if res != nil {
 			fmt.Println(":: Poll Update To " + data.Base.PollAddress)
 		}
+
 		if err != nil {
 			fmt.Println("状态推送失败! 请检查服务端状态")
 			fmt.Println(err)
 		}
-		time.Sleep(time.Duration(2) * time.Second)
+		time.Sleep(time.Duration(15) * time.Second)
 	}
 }
 
@@ -96,6 +97,7 @@ func infoMiniJSON() string {
 		}
 	}
 	cli, err := client.NewEnvClient()
+	defer cli.Close()
 	if err != nil {
 		panic(err)
 	}
