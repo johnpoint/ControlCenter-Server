@@ -99,12 +99,12 @@ func infoMiniJSON() string {
 	cli, err := client.NewEnvClient()
 	defer cli.Close()
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{All: true})
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	for _, container := range containers {
