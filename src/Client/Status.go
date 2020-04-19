@@ -47,7 +47,7 @@ func statuspoll() {
 			fmt.Println("状态推送失败! 请检查服务端状态")
 			fmt.Println(err)
 		}
-		time.Sleep(time.Duration(15) * time.Second)
+		time.Sleep(time.Duration(10) * time.Second)
 	}
 }
 
