@@ -22,6 +22,7 @@ func getUserInfo(c echo.Context) error {
 func updateUserInfo(c echo.Context) error {
 	user := checkAuth(c)
 	if user != nil {
+		addLog("User", "updateUserInfo:{user:{mail:'"+user.Mail+"'}}", 1)
 		return c.JSON(http.StatusOK, user)
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
@@ -45,6 +46,7 @@ func reSetPassword(c echo.Context) error {
 		has = md5.Sum(data)
 		newpass := fmt.Sprintf("%x", has)
 		if (updateUser(u[0], User{Password: newpass})) {
+			addLog("User", "reSetPassword:{user:{mail:'"+user.Mail+"'}}", 1)
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
@@ -68,6 +70,7 @@ func getNewToken(c echo.Context) error {
 	io.WriteString(h, strconv.FormatInt(timeUnixNano, 10))
 	newToken := fmt.Sprintf("%x", h.Sum(nil))
 	if (updateUser(User{Mail: user.Mail}, User{Token: newToken})) {
+		addLog("User", "getNewToken:{user:{mail:'"+user.Mail+"'}}", 1)
 		return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 	}
 	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
@@ -86,6 +89,7 @@ func changeLevel(c echo.Context) error {
 				}
 			}
 			if updateUser(User{ID: uid}, User{Level: level}) {
+				addLog("User", "changeLevel:{user:{mail:'"+user.Mail+"'},target:{id:"+strconv.FormatInt(uid, 10)+",level:"+strconv.FormatInt(level, 10)+"}}", 1)
 				return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 			}
 			return c.JSON(http.StatusInternalServerError, Callback{Code: 0, Info: "ERROR"})

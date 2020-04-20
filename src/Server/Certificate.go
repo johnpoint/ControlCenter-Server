@@ -40,6 +40,7 @@ func addCertificateInfo(c echo.Context) error {
 		if !addCer(certificate) {
 			return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
 		}
+		addLog("Certificate", "addCertificateInfo:{user:{mail:"+user.Mail+"}}", 1)
 		return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
@@ -52,6 +53,7 @@ func deleteCertificateInfo(c echo.Context) error {
 		uid := getUser(User{Mail: user.Mail})[0].ID
 		if delCer(Certificate{ID: id, UID: uid}) {
 			if UnLinkServer(ServerLink{CertificateID: id}) {
+				addLog("Certificate", "deleteCertificateInfo:{user:{mail:"+user.Mail+"},certificate:{id:"+strconv.FormatInt(id, 10)+"}}", 1)
 				return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 			}
 		}
@@ -87,6 +89,7 @@ func updateCertificateInfo(c echo.Context) error {
 		certificate.OCSPServer = x509Cert.OCSPServer[0]
 		certificate.Subject = x509Cert.Subject.String()
 		if updateCer(Certificate{ID: certificate.ID, UID: getUser(User{Mail: user.Mail})[0].ID}, certificate) {
+			addLog("Certificate", "updateCertificateInfo:{user:{mail:"+user.Mail+"},certificate:{id:"+strconv.FormatInt(certificate.ID, 10)+"}}", 1)
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusBadRequest, Callback{Code: 0, Info: "ERROR"})
@@ -108,33 +111,43 @@ func getCertificateInfo(c echo.Context) error {
 }
 
 func linkServerCer(c echo.Context) error {
-	sid := c.Param("ServerID")
-	cid := c.Param("CerID")
-	Isid, _ := strconv.ParseInt(sid, 10, 64)
-	Icid, _ := strconv.ParseInt(cid, 10, 64)
-	payload := ServerLink{ServerID: Isid, CertificateID: Icid}
-	data := getLinkCer(payload)
-	if len(data) == 0 {
-		if (LinkServer(ServerLink{ServerID: Isid, CertificateID: Icid})) {
-			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+	user := checkAuth(c)
+	if user.Level <= 1 {
+		sid := c.Param("ServerID")
+		cid := c.Param("CerID")
+		Isid, _ := strconv.ParseInt(sid, 10, 64)
+		Icid, _ := strconv.ParseInt(cid, 10, 64)
+		payload := ServerLink{ServerID: Isid, CertificateID: Icid}
+		data := getLinkCer(payload)
+		if len(data) == 0 {
+			if (LinkServer(ServerLink{ServerID: Isid, CertificateID: Icid})) {
+				addLog("Certificate", "linkServerCer:{user:{mail:"+user.Mail+"},link:{serverID:"+strconv.FormatInt(Isid, 10)+",certificateID:"+strconv.FormatInt(Icid, 10)+"}}", 1)
+				return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+			}
+			return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
+		} else {
+			return c.JSON(http.StatusOK, Callback{Code: 0, Info: "already linked"})
 		}
-		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
-	} else {
-		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "already linked"})
 	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }
 
 func unLinkServerCer(c echo.Context) error {
-	sid := c.Param("ServerID")
-	cid := c.Param("CerID")
-	Isid, _ := strconv.ParseInt(sid, 10, 64)
-	Icid, _ := strconv.ParseInt(cid, 10, 64)
-	payload := ServerLink{ServerID: Isid, CertificateID: Icid}
-	data := UnLinkServer(payload)
-	if data {
-		if len(getLinkCer(payload)) == 0 {
-			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+	user := checkAuth(c)
+	if user.Level <= 1 {
+		sid := c.Param("ServerID")
+		cid := c.Param("CerID")
+		Isid, _ := strconv.ParseInt(sid, 10, 64)
+		Icid, _ := strconv.ParseInt(cid, 10, 64)
+		payload := ServerLink{ServerID: Isid, CertificateID: Icid}
+		data := UnLinkServer(payload)
+		if data {
+			if len(getLinkCer(payload)) == 0 {
+				addLog("Certificate", "unLinkServerCer:{user:{mail:"+user.Mail+"},link:{serverID:"+strconv.FormatInt(Isid, 10)+",certificateID:"+strconv.FormatInt(Icid, 10)+"}}", 1)
+				return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+			}
 		}
+		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
 	}
-	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }

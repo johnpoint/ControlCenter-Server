@@ -1,5 +1,7 @@
 package main
 
+import "time"
+
 type (
 	// Callback send some info to client
 	Callback struct {
@@ -135,5 +137,13 @@ type (
 		Domain    string
 		FullChain string
 		Key       string
+	}
+
+	LogInfo struct {
+		ID        int64 `gorm:"AUTO_INCREMENT"`
+		Service   string
+		Info      string
+		Level     int64 // 1 Info | 2 Warn | 3 Error
+		CreatedAt time.Time
 	}
 )

@@ -32,6 +32,7 @@ func setupServer(c echo.Context) error {
 	if !addServer(server) {
 		return c.JSON(http.StatusBadGateway, Callback{Code: 0, Info: "ERROR"})
 	}
+	addLog("Server", "setupServer:{server:{ip:'"+server.Ipv4+"',token: '"+server.Token+"'}}", 1)
 	return c.JSON(http.StatusOK, Callback{Code: 200, Info: md5str1})
 }
 
@@ -119,6 +120,7 @@ func updateServerInfo(c echo.Context) error {
 			panic(err)
 		}
 		if updateServer(Server{Ipv4: server.Ipv4, Token: server.Token}, server) {
+			addLog("Server", "updateServerInfo:{ip:'"+server.Ipv4+"',user: '"+user.Mail+"'}", 1)
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusBadRequest, Callback{Code: 0, Info: "ERROR"})
@@ -156,10 +158,7 @@ func serverGetCertificate(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 	}
 	id := c.Param("id")
-	id64, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		panic(err)
-	}
+	id64, _ := strconv.ParseInt(id, 10, 64)
 	return c.JSON(http.StatusOK, getCer(Certificate{ID: id64}))
 }
 
@@ -168,6 +167,7 @@ func removeServer(c echo.Context) error {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	if user.Level <= 1 {
 		if delServer(id, getUser(User{Mail: user.Mail})[0].ID) {
+			addLog("Server", "removeServer: {user:'"+user.Mail+"',server:{id:"+strconv.FormatInt(id, 10)+"}}", 1)
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusOK, Callback{Code: 0, Info: "ERROR"})

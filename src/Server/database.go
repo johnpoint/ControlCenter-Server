@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"time"
 )
 
 func initDatabase() *gorm.DB {
@@ -318,6 +319,18 @@ func addDocker(docker Docker) bool {
 			return true
 		}
 		return false
+	}
+	return false
+}
+
+func addLog(service string, even string, level int64) bool {
+	log := LogInfo{Service: service, Info: even, Level: level, CreatedAt: time.Now()}
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&LogInfo{})
+	db.Create(&log)
+	if !(db.NewRecord(log)) {
+		return true
 	}
 	return false
 }

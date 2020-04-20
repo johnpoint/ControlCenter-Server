@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -47,7 +48,7 @@ func oaLogin(c echo.Context) error {
 		if err != nil {
 			return err
 		}
-
+		addLog("Auth", "Login:{user:{id:"+strconv.FormatInt(user[0].ID, 10)+",mail:'"+user[0].Mail+"',level:"+strconv.FormatInt(user[0].Level, 10)+"},token:'"+t+"'}", 1)
 		return c.JSON(http.StatusOK, echo.Map{
 			"token": t,
 		})
@@ -73,6 +74,7 @@ func oaRegister(c echo.Context) error {
 		md5str1 := fmt.Sprintf("%x", has)
 		newUser := User{Username: u.Username, Mail: u.Mail, Password: md5str1, Level: 1}
 		if addUser(newUser) {
+			addLog("Auth", "Register:{user:{mail:'"+u.Mail+"'}", 1)
 			re = Callback{Code: 200, Info: "OK"}
 		} else {
 			re = Callback{Code: 0, Info: "ERROR"}
