@@ -31,7 +31,7 @@ fi
 
 $PM update -y
 $PM upgrade
-$PM install curl unzip python -y
+$PM install curl wget -y
 curl -fsSL get.docker.com -o get-docker.sh
 sh get-docker.sh --mirror Aliyun
 systemctl enable docker

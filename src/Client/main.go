@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	_ "github.com/tim1020/godaemon"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -21,7 +22,7 @@ func main() {
 			return
 		}
 		setup(os.Args)
-		statuspoll()
+		poll()
 		return
 	}
 	if os.Args[1] == "help" {
@@ -29,7 +30,7 @@ func main() {
 		return
 	}
 	if os.Args[1] == "poll" {
-		statuspoll()
+		poll()
 		return
 	}
 	if os.Args[1] == "update" {

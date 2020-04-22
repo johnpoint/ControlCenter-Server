@@ -18,7 +18,8 @@ type (
 		ID       int64  `gorm:"AUTO_INCREMENT"`
 		UID      int64  `json:"uid" xml:"uid" form:"uid" query:"uid"`
 		Token    string
-		Online   int64 `gorm:"default:true"`
+		Online   int64 `gorm:"default:1"`
+		Update   int64 // 1 yes | -1 no
 	}
 
 	// Site model of Site

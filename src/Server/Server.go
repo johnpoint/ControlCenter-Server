@@ -191,3 +191,15 @@ func checkOnline() {
 	// 2 等待上线
 	// 3 上线 --> 推送
 }
+
+func getNow(c echo.Context) error {
+	token := c.Param("token")
+	servers := getServer(Server{Token: token})
+	if len(servers) != 0 {
+		if servers[0].Update == 1 {
+			updateServer(Server{Token: token}, Server{Update: -1})
+			return c.JSON(http.StatusOK, Callback{Code: 211, Info: "Update"})
+		}
+	}
+	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
+}

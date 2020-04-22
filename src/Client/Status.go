@@ -6,9 +6,13 @@ import (
 	"github.com/docker/distribution/context"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"io"
 	"net/http"
+	"os"
+	"os/exec"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -19,16 +23,26 @@ import (
 	"github.com/shirou/gopsutil/net"
 )
 
-func statuspoll() {
+func poll() {
+	var wg sync.WaitGroup
+	var mutex sync.Mutex
+	wg.Add(1)
+	go listenUpdate(&mutex)
+	go status(&mutex)
+	wg.Wait()
+}
+
+func status(mutex *sync.Mutex) {
 	data := getData()
 	fmt.Println("[ Poll start ] To " + data.Base.PollAddress)
 	defer func() {
 		fmt.Println("状态推送失败! 请检查服务端状态")
 	}()
-	for true {
-		url := data.Base.PollAddress + "/server/update/" + data.Base.Token
-		method := "POST"
+	url := data.Base.PollAddress + "/server/update/" + data.Base.Token
+	method := "POST"
 
+	for true {
+		mutex.Lock()
 		payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
 
 		client := &http.Client{
@@ -36,9 +50,10 @@ func statuspoll() {
 				return http.ErrUseLastResponse
 			},
 		}
-		req, err := http.NewRequest(method, url, payload)
+		req, _ := http.NewRequest(method, url, payload)
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 		res, err := client.Do(req)
+		defer res.Body.Close()
 		if res != nil {
 			fmt.Println(":: Poll Update To " + data.Base.PollAddress)
 		}
@@ -47,6 +62,7 @@ func statuspoll() {
 			fmt.Println("状态推送失败! 请检查服务端状态")
 			fmt.Println(err)
 		}
+		mutex.Unlock()
 		time.Sleep(time.Duration(10) * time.Second)
 	}
 }
@@ -126,5 +142,68 @@ func infoMiniJSON() string {
 		return ""
 	} else {
 		return string(b)
+	}
+}
+
+func listenUpdate(mutex *sync.Mutex) {
+	data := getData()
+	url := data.Base.PollAddress + "/server/now/" + data.Base.Token
+	method := "GET"
+
+	payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
+
+	for true {
+		time.Sleep(time.Duration(2) * time.Second)
+		mutex.Lock()
+		client := &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
+		req, _ := http.NewRequest(method, url, payload)
+		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+		res, err := client.Do(req)
+		fmt.Println("Get Now Message")
+		if res != nil {
+			decoder := json.NewDecoder(res.Body)
+			defer res.Body.Close()
+			data := Webreq{}
+			err := decoder.Decode(&data)
+			if err != nil {
+				fmt.Println("Error:", err)
+				mutex.Unlock()
+				continue
+			}
+			if data.Code == 211 {
+				res.Body.Close()
+				mutex.Unlock()
+				fmt.Println("Update")
+				url := "https://cdn.lvcshu.info/xva/new/Client"
+				resp, err := http.Get(url)
+				if err != nil {
+					fmt.Println(err)
+				}
+				defer resp.Body.Close()
+				out, err := os.Create("Client")
+				if err != nil {
+					fmt.Println(err)
+				}
+				defer out.Close()
+				_, err = io.Copy(out, resp.Body)
+				if err != nil {
+					fmt.Println(err)
+				}
+				cmd := exec.Command("chmod", "+x", "Client")
+				cmd.Start()
+				cmd = exec.Command("./Client", "poll", "restart")
+				cmd.Start()
+			}
+		}
+
+		if err != nil {
+			fmt.Println("与服务端通信失败! 请检查服务端状态")
+			fmt.Println(err)
+		}
+		mutex.Unlock()
 	}
 }

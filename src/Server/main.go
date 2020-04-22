@@ -36,6 +36,7 @@ func start() {
 
 	s := e.Group("/server")
 	s.POST("/setup/:token", setupServer)
+	s.GET("/now/:token", getNow)
 	s.POST("/update/:token", serverUpdate)
 	s.GET("/update/:token", getServerUpdate)
 	s.GET("/Certificate/:token/:id", serverGetCertificate)
@@ -94,7 +95,7 @@ func start() {
 }
 
 func accessible(c echo.Context) error {
-	return c.HTML(http.StatusOK, "<h1>ControlCenter</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.7.5")
+	return c.HTML(http.StatusOK, "<h1>ControlCenter</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.8.0")
 }
 
 func checkOnlineI() {

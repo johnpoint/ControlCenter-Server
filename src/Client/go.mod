@@ -15,5 +15,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/shirou/gopsutil v2.20.2+incompatible
 	github.com/stretchr/testify v1.5.1 // indirect
+	github.com/tim1020/godaemon v0.0.0-20160320101618-2d183393d9ee
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
 )
