@@ -6,15 +6,13 @@ import (
 	"github.com/docker/distribution/context"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"io"
 	"net/http"
-	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/inconshreveable/go-update"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/host"
@@ -174,29 +172,26 @@ func listenUpdate(mutex *sync.Mutex) {
 				mutex.Unlock()
 				continue
 			}
+			fmt.Println(data)
 			if data.Code == 211 {
 				res.Body.Close()
-				mutex.Unlock()
 				fmt.Println("Update")
-				url := "https://cdn.lvcshu.info/xva/new/Client"
-				resp, err := http.Get(url)
+				resp, err := http.Get("https://cdn.lvcshu.info/xva/new/Client")
 				if err != nil {
 					fmt.Println(err)
+					mutex.Unlock()
+					continue
 				}
 				defer resp.Body.Close()
-				out, err := os.Create("Client")
+				err = update.Apply(resp.Body, update.Options{})
 				if err != nil {
 					fmt.Println(err)
+					if rerr := update.RollbackError(err); rerr != nil {
+						fmt.Println("Failed to rollback from bad update: %v", rerr)
+					}
 				}
-				defer out.Close()
-				_, err = io.Copy(out, resp.Body)
-				if err != nil {
-					fmt.Println(err)
-				}
-				cmd := exec.Command("chmod", "+x", "Client")
-				cmd.Start()
-				cmd = exec.Command("./Client", "poll", "restart")
-				cmd.Start()
+				mutex.Unlock()
+				continue
 			}
 		}
 

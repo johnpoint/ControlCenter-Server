@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	_ "github.com/tim1020/godaemon"
 	"io"
 	"io/ioutil"
 	"net/http"

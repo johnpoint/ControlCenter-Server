@@ -197,9 +197,11 @@ func getNow(c echo.Context) error {
 	servers := getServer(Server{Token: token})
 	if len(servers) != 0 {
 		if servers[0].Update == 1 {
+			fmt.Println(servers[0].Ipv4)
 			updateServer(Server{Token: token}, Server{Update: -1})
 			return c.JSON(http.StatusOK, Callback{Code: 211, Info: "Update"})
 		}
+		return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 	}
 	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "Unauthorized"})
 }
