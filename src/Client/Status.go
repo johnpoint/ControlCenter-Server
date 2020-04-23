@@ -141,6 +141,7 @@ func infoMiniJSON() string {
 		docker.State = container.Status
 		ss.DockerInfo = append(ss.DockerInfo, docker)
 	}
+	ss.Version = ClientVersion
 	b, err := json.Marshal(ss)
 	if err != nil {
 		return ""

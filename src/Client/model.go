@@ -62,6 +62,7 @@ type (
 
 	// StatusServer model
 	StatusServer struct {
+		Version    string
 		Percent    StatusPercent
 		CPU        []CPUInfo
 		Mem        MemInfo

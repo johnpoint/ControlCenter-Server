@@ -10,8 +10,10 @@ import (
 	"strings"
 )
 
+const ClientVersion = "1.9.1"
+
 func main() {
-	fmt.Println("ControlCenter-Client v1.9.0")
+	fmt.Println("ControlCenter-Client v", ClientVersion)
 	if len(os.Args) < 2 {
 		fmt.Println("请输入参数(help 可以调用帮助信息)")
 		return
