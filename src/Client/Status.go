@@ -7,9 +7,11 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/inconshreveable/go-update"
@@ -189,8 +191,12 @@ func listenUpdate(mutex *sync.Mutex) {
 						fmt.Println("Failed to rollback from bad update: %v", rerr)
 					}
 				}
+				os.Chmod(os.Args[0], 0777)
+				if err = syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
+					panic(err)
+				}
 				mutex.Unlock()
-				continue
+				return
 			}
 		}
 
