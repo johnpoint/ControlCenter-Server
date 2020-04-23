@@ -51,8 +51,8 @@ func status(mutex *sync.Mutex) {
 		req, _ := http.NewRequest(method, url, payload)
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 		res, err := client.Do(req)
-		defer res.Body.Close()
 		if res != nil {
+			defer res.Body.Close()
 			fmt.Println(":: Poll Update To " + data.Base.PollAddress)
 		}
 
@@ -172,10 +172,9 @@ func listenUpdate(mutex *sync.Mutex) {
 				mutex.Unlock()
 				continue
 			}
-			fmt.Println(data)
 			if data.Code == 211 {
 				res.Body.Close()
-				fmt.Println("Update")
+				fmt.Println("Update to new version")
 				resp, err := http.Get("https://cdn.lvcshu.info/xva/new/Client")
 				if err != nil {
 					fmt.Println(err)
