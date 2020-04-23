@@ -26,13 +26,14 @@ import (
 func poll() {
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
+	var ver int64 = 0
 	wg.Add(1)
-	go listenUpdate(&mutex)
-	go status(&mutex)
+	go listenUpdate(&mutex, &ver)
+	go status(&mutex, &ver)
 	wg.Wait()
 }
 
-func status(mutex *sync.Mutex) {
+func status(mutex *sync.Mutex, ver *int64) {
 	data := getData()
 	fmt.Println("[ Poll start ] To " + data.Base.PollAddress)
 	defer func() {
@@ -42,6 +43,9 @@ func status(mutex *sync.Mutex) {
 	method := "POST"
 
 	for true {
+		if *ver == 1 {
+			os.Exit(0)
+		}
 		mutex.Lock()
 		payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
 
@@ -145,7 +149,7 @@ func infoMiniJSON() string {
 	}
 }
 
-func listenUpdate(mutex *sync.Mutex) {
+func listenUpdate(mutex *sync.Mutex, ver *int64) {
 	data := getData()
 	url := data.Base.PollAddress + "/server/now/" + data.Base.Token
 	method := "GET"
@@ -192,11 +196,20 @@ func listenUpdate(mutex *sync.Mutex) {
 					}
 				}
 				os.Chmod(os.Args[0], 0777)
+				*ver = 1
 				if err = syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
 					panic(err)
 				}
 				mutex.Unlock()
 				return
+			}
+			if data.Code == 210 {
+				fmt.Println("Exit")
+				os.Exit(0)
+			}
+			if data.Code == 212 {
+				getUpdate()
+				syncCer()
 			}
 		}
 
