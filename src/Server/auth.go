@@ -53,7 +53,7 @@ func oaLogin(c echo.Context) error {
 			"token": t,
 		})
 	}
-	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "account or password incorrect"})
+	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "account or password incorrect"})
 
 }
 
