@@ -115,11 +115,12 @@ func getSiteLinked(c echo.Context) error {
 func updateServerInfo(c echo.Context) error {
 	user := checkAuth(c)
 	if user.Level <= 1 {
+		users := getUser(User{Mail: user.Mail})
 		server := Server{}
 		if err := c.Bind(&server); err != nil {
 			panic(err)
 		}
-		if updateServer(Server{Ipv4: server.Ipv4, Token: server.Token}, server) {
+		if updateServer(Server{ID: server.ID, UID: users[0].ID}, server) {
 			addLog("Server", "updateServerInfo:{ip:'"+server.Ipv4+"',user: '"+user.Mail+"'}", 1)
 			return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 		}
