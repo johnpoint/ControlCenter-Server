@@ -1,6 +1,6 @@
 # ControlCenter
 
-ver 1.7.5
+ver 1.9.0
 
 ## 文件
 

@@ -210,7 +210,7 @@ func getNow(c echo.Context) error {
 		if servers[0].Update == 3 {
 			fmt.Println(servers[0].Ipv4)
 			updateServer(Server{Token: token}, Server{Update: -3})
-			return c.JSON(http.StatusOK, Callback{Code: 212, Info: "Exit"})
+			return c.JSON(http.StatusOK, Callback{Code: 212, Info: "Sync"})
 		}
 		return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
 	}

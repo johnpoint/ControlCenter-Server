@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	fmt.Println("ControlCenter-Client v1.9.0")
 	if len(os.Args) < 2 {
 		fmt.Println("请输入参数(help 可以调用帮助信息)")
 		return
