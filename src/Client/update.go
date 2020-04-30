@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 )
@@ -21,17 +21,17 @@ func getUpdate() bool {
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Println("状态获取失败! 请检查服务端状态")
-		fmt.Println(err)
+		log.Print("状态获取失败! 请检查服务端状态")
+		log.Print(err)
 		return false
 	}
 	if res != nil {
-		fmt.Println(":: Get update from " + data.Base.PollAddress)
+		log.Print(":: Get update from " + data.Base.PollAddress)
 		decoder := json.NewDecoder(res.Body)
 		Getdata := UpdateInfo{}
 		err := decoder.Decode(&Getdata)
 		if err != nil {
-			fmt.Println("Error:", err)
+			log.Print("Error:", err)
 		}
 		data.Certificates = Getdata.Certificates
 		data.Sites = Getdata.Sites
@@ -43,7 +43,7 @@ func getUpdate() bool {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("OK!")
+		log.Print("OK!")
 		return true
 	}
 	return false

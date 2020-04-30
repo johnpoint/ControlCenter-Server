@@ -2,15 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/docker/distribution/context"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
-	"sync"
 	"syscall"
 	"time"
 
@@ -24,50 +23,99 @@ import (
 )
 
 func poll() {
-	var wg sync.WaitGroup
-	var mutex sync.Mutex
-	var ver int64 = 0
-	wg.Add(1)
-	go listenUpdate(&mutex, &ver)
-	go status(&mutex, &ver)
-	wg.Wait()
-}
-
-func status(mutex *sync.Mutex, ver *int64) {
+	var timer int64 = 0
 	data := getData()
-	fmt.Println("[ Poll start ] To " + data.Base.PollAddress)
-	defer func() {
-		fmt.Println("状态推送失败! 请检查服务端状态")
-	}()
-	url := data.Base.PollAddress + "/server/update/" + data.Base.Token
-	method := "POST"
-
+	log.Print("[ Poll start ] To " + data.Base.PollAddress)
 	for true {
-		if *ver == 1 {
-			os.Exit(0)
-		}
-		mutex.Lock()
-		payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
+		timer++
+		time.Sleep(time.Duration(1) * time.Second)
+		if timer == 10 {
+			timer = 0
+			defer func() {
+				log.Print("状态推送失败! 请检查服务端状态")
+			}()
+			url := data.Base.PollAddress + "/server/update/" + data.Base.Token
+			method := "POST"
+			payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
 
-		client := &http.Client{
-			CheckRedirect: func(req *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-		}
-		req, _ := http.NewRequest(method, url, payload)
-		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-		res, err := client.Do(req)
-		if res != nil {
-			defer res.Body.Close()
-			fmt.Println(":: Poll Update To " + data.Base.PollAddress)
-		}
+			client := &http.Client{
+				CheckRedirect: func(req *http.Request, via []*http.Request) error {
+					return http.ErrUseLastResponse
+				},
+			}
+			req, _ := http.NewRequest(method, url, payload)
+			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+			res, err := client.Do(req)
+			if res != nil {
+				defer res.Body.Close()
+				log.Print(":: Poll Update To " + data.Base.PollAddress)
+			}
 
-		if err != nil {
-			fmt.Println("状态推送失败! 请检查服务端状态")
-			fmt.Println(err)
+			if err != nil {
+				log.Print("状态推送失败! 请检查服务端状态")
+				log.Print(err)
+			}
 		}
-		mutex.Unlock()
-		time.Sleep(time.Duration(10) * time.Second)
+		if timer%2 == 0 {
+			data := getData()
+			url := data.Base.PollAddress + "/server/now/" + data.Base.Token
+			method := "GET"
+			payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
+			client := &http.Client{
+				CheckRedirect: func(req *http.Request, via []*http.Request) error {
+					return http.ErrUseLastResponse
+				},
+			}
+			req, _ := http.NewRequest(method, url, payload)
+			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+			res, err := client.Do(req)
+			log.Print("Get Now Message")
+			if res != nil {
+				decoder := json.NewDecoder(res.Body)
+				defer res.Body.Close()
+				data := Webreq{}
+				err := decoder.Decode(&data)
+				if err != nil {
+					log.Print("Error:", err)
+					continue
+				}
+				if data.Code == 211 {
+					res.Body.Close()
+					log.Print("Update to new version")
+					resp, err := http.Get("https://cdn.lvcshu.info/xva/new/Client")
+					if err != nil {
+						log.Print(err)
+						continue
+					}
+					defer resp.Body.Close()
+					err = update.Apply(resp.Body, update.Options{})
+					if err != nil {
+						log.Print(err)
+						if rerr := update.RollbackError(err); rerr != nil {
+							log.Print("Failed to rollback from bad update: %v", rerr)
+						}
+					}
+					os.Chmod(os.Args[0], 0777)
+					if err = syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
+						panic(err)
+					}
+					return
+				}
+				if data.Code == 210 {
+					log.Print("Exit")
+					os.Exit(0)
+				}
+				if data.Code == 212 {
+					getUpdate()
+					syncCer()
+				}
+			}
+
+			if err != nil {
+				log.Print("与服务端通信失败! 请检查服务端状态")
+				log.Print(err)
+			}
+		}
 	}
 }
 
@@ -119,12 +167,12 @@ func infoMiniJSON() string {
 	cli, err := client.NewEnvClient()
 	defer cli.Close()
 	if err != nil {
-		fmt.Println(err)
+		log.Print(err)
 	}
 
 	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{All: true})
 	if err != nil {
-		fmt.Println(err)
+		log.Print(err)
 	}
 
 	for _, container := range containers {
@@ -147,77 +195,5 @@ func infoMiniJSON() string {
 		return ""
 	} else {
 		return string(b)
-	}
-}
-
-func listenUpdate(mutex *sync.Mutex, ver *int64) {
-	data := getData()
-	url := data.Base.PollAddress + "/server/now/" + data.Base.Token
-	method := "GET"
-
-	payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
-
-	for true {
-		time.Sleep(time.Duration(2) * time.Second)
-		mutex.Lock()
-		client := &http.Client{
-			CheckRedirect: func(req *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-		}
-		req, _ := http.NewRequest(method, url, payload)
-		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-		res, err := client.Do(req)
-		fmt.Println("Get Now Message")
-		if res != nil {
-			decoder := json.NewDecoder(res.Body)
-			defer res.Body.Close()
-			data := Webreq{}
-			err := decoder.Decode(&data)
-			if err != nil {
-				fmt.Println("Error:", err)
-				mutex.Unlock()
-				continue
-			}
-			if data.Code == 211 {
-				res.Body.Close()
-				fmt.Println("Update to new version")
-				resp, err := http.Get("https://cdn.lvcshu.info/xva/new/Client")
-				if err != nil {
-					fmt.Println(err)
-					mutex.Unlock()
-					continue
-				}
-				defer resp.Body.Close()
-				err = update.Apply(resp.Body, update.Options{})
-				if err != nil {
-					fmt.Println(err)
-					if rerr := update.RollbackError(err); rerr != nil {
-						fmt.Println("Failed to rollback from bad update: %v", rerr)
-					}
-				}
-				os.Chmod(os.Args[0], 0777)
-				*ver = 1
-				if err = syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
-					panic(err)
-				}
-				mutex.Unlock()
-				return
-			}
-			if data.Code == 210 {
-				fmt.Println("Exit")
-				os.Exit(0)
-			}
-			if data.Code == 212 {
-				getUpdate()
-				syncCer()
-			}
-		}
-
-		if err != nil {
-			fmt.Println("与服务端通信失败! 请检查服务端状态")
-			fmt.Println(err)
-		}
-		mutex.Unlock()
 	}
 }

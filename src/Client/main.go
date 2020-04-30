@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -72,7 +73,7 @@ func setup(args []string) {
 	req, err := http.NewRequest(method, url, payload)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Print(err)
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
@@ -82,7 +83,7 @@ func setup(args []string) {
 	webreq := Webreq{}
 	json.Unmarshal([]byte(body), &webreq)
 	if webreq.Code != 200 {
-		fmt.Println(webreq.Info)
+		log.Print(webreq.Info)
 		return
 	}
 	base := DataBase{ServerIpv4: args[4], HostName: args[3], Token: webreq.Info, PollAddress: args[2]}
@@ -94,7 +95,7 @@ func setup(args []string) {
 	if err1 != nil {
 		panic(err1)
 	}
-	fmt.Println("OK!")
+	log.Print("OK!")
 }
 
 func delSite(domain string) bool {
@@ -109,11 +110,11 @@ func delSite(domain string) bool {
 			if err != nil {
 				panic(err)
 			}
-			fmt.Println("OK!")
+			log.Print("OK!")
 			return true
 		}
 	}
-	fmt.Println("Site not exists")
+	log.Print("Site not exists")
 	return false
 }
 
@@ -124,7 +125,7 @@ func getData() Data {
 	data := Data{}
 	err := decoder.Decode(&data)
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Print("Error:", err)
 	}
 	return data
 }

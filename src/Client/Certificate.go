@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
+	"log"
 	"os"
 )
 
@@ -11,7 +11,7 @@ func addCer(id int64, domain string, fullchain string, key string) bool {
 	data := getData()
 	for index := 0; index < len(data.Certificates); index++ {
 		if data.Certificates[index].ID == id {
-			fmt.Println("Certificate already exists")
+			log.Print("Certificate already exists")
 			return false
 		}
 	}
@@ -23,7 +23,7 @@ func addCer(id int64, domain string, fullchain string, key string) bool {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("OK!")
+	log.Print("OK!")
 	return true
 }
 
@@ -61,10 +61,10 @@ func delCer(id int64) bool {
 			if err != nil {
 				panic(err)
 			}
-			fmt.Println("OK!")
+			log.Print("OK!")
 			return true
 		}
 	}
-	fmt.Println("Certificate not exists")
+	log.Print("Certificate not exists")
 	return false
 }
