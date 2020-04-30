@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/md5"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -69,7 +70,7 @@ func getServerInfo(c echo.Context) error {
 	user := checkAuth(c)
 	server := Server{}
 	if err := c.Bind(&server); err != nil {
-		panic(err)
+		log.Print(err)
 	}
 	if user.Level <= 1 {
 		server.UID = getUser(User{Mail: user.Mail})[0].ID
@@ -82,7 +83,7 @@ func getCertificateLinked(c echo.Context) error {
 	user := checkAuth(c)
 	server := Server{}
 	if err := c.Bind(&server); err != nil {
-		panic(err)
+		log.Print(err)
 	}
 	if user.Level <= 1 {
 		server.UID = getUser(User{Mail: user.Mail})[0].ID
@@ -99,7 +100,7 @@ func getSiteLinked(c echo.Context) error {
 	user := checkAuth(c)
 	server := Server{}
 	if err := c.Bind(&server); err != nil {
-		panic(err)
+		log.Print(err)
 	}
 	if user.Level <= 1 {
 		server.UID = getUser(User{Mail: user.Mail})[0].ID
@@ -118,7 +119,7 @@ func updateServerInfo(c echo.Context) error {
 		users := getUser(User{Mail: user.Mail})
 		server := Server{}
 		if err := c.Bind(&server); err != nil {
-			panic(err)
+			log.Print(err)
 		}
 		if updateServer(Server{ID: server.ID, UID: users[0].ID}, server) {
 			addLog("Server", "updateServerInfo:{ip:'"+server.Ipv4+"',user: '"+user.Mail+"'}", 1)
@@ -136,9 +137,9 @@ func serverUpdate(c echo.Context) error {
 	}
 	server := Server{}
 	if err := c.Bind(&server); err != nil {
-		panic(err)
+		log.Print(err)
 	}
-	fmt.Println(":: Get Server update From :" + server.Ipv4)
+	log.Print(server.Ipv4 + " √")
 	status := getServer(Server{Ipv4: server.Ipv4, Token: server.Token})[0].Online
 	if status == 2 {
 		server.Online = 3
@@ -177,14 +178,13 @@ func removeServer(c echo.Context) error {
 }
 
 func checkOnline() {
-
 	updateServer(Server{Online: 1}, Server{Online: -1})
-	time.Sleep(time.Duration(120) * time.Second)
+	time.Sleep(time.Duration(60) * time.Second)
 	offlineServer := getServer(Server{Online: -1})
 	onlineServer := getServer(Server{Online: 3})
-	pushNotification(offlineServer, "offline")
+	pushNotification(offlineServer, " × ")
 	updateServer(Server{Online: -1}, Server{Online: 2})
-	pushNotification(onlineServer, "online")
+	pushNotification(onlineServer, " √ ")
 	updateServer(Server{Online: 3}, Server{Online: 1})
 	return
 	// -1 默认 --> 推送

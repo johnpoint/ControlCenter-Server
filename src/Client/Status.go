@@ -27,10 +27,12 @@ func poll() {
 	data := getData()
 	log.Print("[ Poll start ] To " + data.Base.PollAddress)
 	for true {
-		timer++
-		time.Sleep(time.Duration(1) * time.Second)
 		if timer == 10 {
 			timer = 0
+		}
+		timer++
+		time.Sleep(time.Duration(1) * time.Second)
+		if timer%3 == 0 {
 			defer func() {
 				log.Print("状态推送失败! 请检查服务端状态")
 			}()

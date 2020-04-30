@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-const ClientVersion = "1.9.1"
+const ClientVersion = "1.9.2"
 
 func main() {
 	fmt.Println("ControlCenter-Client v", ClientVersion)
