@@ -198,17 +198,17 @@ func getNow(c echo.Context) error {
 	servers := getServer(Server{Token: token})
 	if len(servers) != 0 {
 		if servers[0].Update == 1 {
-			fmt.Println(servers[0].Ipv4)
+			log.Print(servers[0].Ipv4 + "\t↑")
 			updateServer(Server{Token: token}, Server{Update: -1})
 			return c.JSON(http.StatusOK, Callback{Code: 211, Info: "Update"})
 		}
 		if servers[0].Update == 2 {
-			fmt.Println(servers[0].Ipv4)
+			log.Print(servers[0].Ipv4 + "\t☯")
 			updateServer(Server{Token: token}, Server{Update: -2})
 			return c.JSON(http.StatusOK, Callback{Code: 210, Info: "Exit"})
 		}
 		if servers[0].Update == 3 {
-			fmt.Println(servers[0].Ipv4)
+			log.Print(servers[0].Ipv4 + "\t↕")
 			updateServer(Server{Token: token}, Server{Update: -3})
 			return c.JSON(http.StatusOK, Callback{Code: 212, Info: "Sync"})
 		}
