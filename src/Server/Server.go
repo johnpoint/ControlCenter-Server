@@ -19,7 +19,7 @@ func setupServer(c echo.Context) error {
 	}
 	server := Server{UID: checkU[0].ID}
 	if err := c.Bind(&server); err != nil {
-		panic(err)
+		log.Print(err)
 	}
 	check := getServer(Server{Ipv4: server.Ipv4})
 	if len(check) != 0 {
@@ -139,7 +139,7 @@ func serverUpdate(c echo.Context) error {
 	if err := c.Bind(&server); err != nil {
 		log.Print(err)
 	}
-	log.Print(server.Ipv4 + " √")
+	log.Print(server.Ipv4 + "\t√")
 	status := getServer(Server{Ipv4: server.Ipv4, Token: server.Token})[0].Online
 	if status == 2 {
 		server.Online = 3
