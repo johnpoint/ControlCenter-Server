@@ -139,7 +139,7 @@ func serverUpdate(c echo.Context) error {
 	if err := c.Bind(&server); err != nil {
 		log.Print(err)
 	}
-	log.Print(server.Ipv4 + "\t√")
+	log.Print(server.Ipv4 + "\t✓")
 	status := getServer(Server{Ipv4: server.Ipv4, Token: server.Token})[0].Online
 	if status == 2 {
 		server.Online = 3
@@ -184,7 +184,7 @@ func checkOnline() {
 	onlineServer := getServer(Server{Online: 3})
 	pushNotification(offlineServer, " × ")
 	updateServer(Server{Online: -1}, Server{Online: 2})
-	pushNotification(onlineServer, " √ ")
+	pushNotification(onlineServer, " ✓ ")
 	updateServer(Server{Online: 3}, Server{Online: 1})
 	return
 	// -1 默认 --> 推送
