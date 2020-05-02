@@ -31,7 +31,7 @@ func poll() {
 	urlNow := data.Base.PollAddress + "/server/now/" + data.Base.Token
 	methodNow := "GET"
 	for true {
-		if timer == 100 {
+		if timer == 3600 {
 			if err := syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
 				panic(err)
 			}
