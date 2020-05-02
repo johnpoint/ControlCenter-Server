@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-const ClientVersion = "1.9.2"
+const ClientVersion = "1.9.3"
 
 func main() {
 	go func() {
