@@ -84,7 +84,10 @@ func setup(args []string) {
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	webreq := Webreq{}
-	json.Unmarshal([]byte(body), &webreq)
+	err = json.Unmarshal([]byte(body), &webreq)
+	if err != nil {
+		log.Print(err)
+	}
 	if webreq.Code != 200 {
 		log.Print(webreq.Info)
 		return
