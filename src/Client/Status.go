@@ -26,9 +26,16 @@ func poll() {
 	var timer int64 = 0
 	data := getData()
 	log.Print("[ Poll start ] To " + data.Base.PollAddress)
+	url := data.Base.PollAddress + "/server/update/" + data.Base.Token
+	method := "POST"
+	urlNow := data.Base.PollAddress + "/server/now/" + data.Base.Token
+	methodNow := "GET"
 	for true {
-		if timer == 10 {
-			timer = 0
+		if timer == 100 {
+			if err := syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
+				panic(err)
+			}
+			// 占用内存的暂时解决方法
 		}
 		timer++
 		time.Sleep(time.Duration(1) * time.Second)
@@ -36,10 +43,7 @@ func poll() {
 			defer func() {
 				log.Print("状态推送失败! 请检查服务端状态")
 			}()
-			url := data.Base.PollAddress + "/server/update/" + data.Base.Token
-			method := "POST"
 			payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
-
 			client := &http.Client{
 				CheckRedirect: func(req *http.Request, via []*http.Request) error {
 					return http.ErrUseLastResponse
@@ -49,39 +53,34 @@ func poll() {
 			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 			res, err := client.Do(req)
 			if res != nil {
-				defer res.Body.Close()
 				log.Print(":: Poll Update To " + data.Base.PollAddress)
+				res.Body.Close()
 			}
-
 			if err != nil {
 				log.Print("状态推送失败! 请检查服务端状态")
 				log.Print(err)
 			}
 		}
 		if timer%2 == 0 {
-			data := getData()
-			url := data.Base.PollAddress + "/server/now/" + data.Base.Token
-			method := "GET"
-			payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
-			client := &http.Client{
+			clientNow := &http.Client{
 				CheckRedirect: func(req *http.Request, via []*http.Request) error {
 					return http.ErrUseLastResponse
 				},
 			}
-			req, _ := http.NewRequest(method, url, payload)
+			req, _ := http.NewRequest(methodNow, urlNow, nil)
 			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-			res, err := client.Do(req)
+			res, err := clientNow.Do(req)
 			log.Print("Get Now Message")
 			if res != nil {
 				decoder := json.NewDecoder(res.Body)
 				defer res.Body.Close()
-				data := Webreq{}
-				err := decoder.Decode(&data)
+				gotData := Webreq{}
+				err := decoder.Decode(&gotData)
 				if err != nil {
 					log.Print("Error:", err)
 					continue
 				}
-				if data.Code == 211 {
+				if gotData.Code == 211 {
 					res.Body.Close()
 					log.Print("Update to new version")
 					resp, err := http.Get("https://cdn.lvcshu.info/xva/new/Client")
@@ -101,18 +100,20 @@ func poll() {
 					if err = syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
 						panic(err)
 					}
+
+					res.Body.Close()
 					return
 				}
-				if data.Code == 210 {
+				if gotData.Code == 210 {
 					log.Print("Exit")
 					os.Exit(0)
 				}
-				if data.Code == 212 {
+				if gotData.Code == 212 {
 					getUpdate()
 					syncCer()
 				}
+				res.Body.Close()
 			}
-
 			if err != nil {
 				log.Print("与服务端通信失败! 请检查服务端状态")
 				log.Print(err)
@@ -191,6 +192,7 @@ func infoMiniJSON() string {
 		docker.State = container.Status
 		ss.DockerInfo = append(ss.DockerInfo, docker)
 	}
+	cli.Close()
 	ss.Version = ClientVersion
 	b, err := json.Marshal(ss)
 	if err != nil {

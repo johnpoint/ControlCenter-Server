@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"strings"
 )
@@ -14,6 +15,9 @@ import (
 const ClientVersion = "1.9.2"
 
 func main() {
+	go func() {
+		http.ListenAndServe("0.0.0.0:8080", nil)
+	}()
 	fmt.Println("ControlCenter-Client v", ClientVersion)
 	if len(os.Args) < 2 {
 		fmt.Println("请输入参数(help 可以调用帮助信息)")
