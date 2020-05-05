@@ -30,6 +30,11 @@ func poll() {
 	method := "POST"
 	urlNow := data.Base.PollAddress + "/server/now/" + data.Base.Token
 	methodNow := "GET"
+	client := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
 	for true {
 		if timer == 3600 {
 			if err := syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
@@ -44,11 +49,6 @@ func poll() {
 				log.Print("状态推送失败! 请检查服务端状态")
 			}()
 			payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
-			client := &http.Client{
-				CheckRedirect: func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				},
-			}
 			req, _ := http.NewRequest(method, url, payload)
 			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 			res, err := client.Do(req)
