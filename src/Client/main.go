@@ -104,26 +104,6 @@ func setup(args []string) {
 	log.Print("OK!")
 }
 
-func delSite(domain string) bool {
-	data := getData()
-	for index := 0; index < len(data.Sites); index++ {
-		if data.Sites[index].Domain == domain {
-			data.Sites = append(data.Sites[:index], data.Sites[index+1:]...)
-			file, _ := os.Create("data.json")
-			defer file.Close()
-			databy, _ := json.Marshal(data)
-			_, err := io.WriteString(file, string(databy))
-			if err != nil {
-				panic(err)
-			}
-			log.Print("OK!")
-			return true
-		}
-	}
-	log.Print("Site not exists")
-	return false
-}
-
 func getData() Data {
 	file, _ := os.Open("data.json")
 	defer file.Close()

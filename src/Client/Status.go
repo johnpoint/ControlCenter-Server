@@ -30,7 +30,7 @@ func poll() {
 	method := "POST"
 	urlNow := data.Base.PollAddress + "/server/now/" + data.Base.Token
 	methodNow := "GET"
-	client := &http.Client{
+	webClient := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		},
@@ -51,7 +51,7 @@ func poll() {
 			payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
 			req, _ := http.NewRequest(method, url, payload)
 			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-			res, err := client.Do(req)
+			res, err := webClient.Do(req)
 			if res != nil {
 				log.Print(":: Poll Update To " + data.Base.PollAddress)
 				res.Body.Close()
@@ -62,14 +62,9 @@ func poll() {
 			}
 		}
 		if timer%2 == 0 {
-			clientNow := &http.Client{
-				CheckRedirect: func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				},
-			}
 			req, _ := http.NewRequest(methodNow, urlNow, nil)
 			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-			res, err := clientNow.Do(req)
+			res, err := webClient.Do(req)
 			log.Print("Get Now Message")
 			if res != nil {
 				decoder := json.NewDecoder(res.Body)
@@ -111,6 +106,34 @@ func poll() {
 				if gotData.Code == 212 {
 					getUpdate()
 					syncCer()
+				}
+				if gotData.Code == 213 {
+					// Stop Container
+					if gotData.Info != "" {
+						cli, err := client.NewEnvClient()
+						defer cli.Close()
+						if err != nil {
+							log.Print(err)
+						}
+						err = cli.ContainerStop(context.Background(), gotData.Info, nil)
+						if err != nil {
+							log.Print(err)
+						}
+					}
+				}
+				if gotData.Code == 214 {
+					// Start Container
+					if gotData.Info != "" {
+						cli, err := client.NewEnvClient()
+						defer cli.Close()
+						if err != nil {
+							log.Print(err)
+						}
+						err = cli.ContainerStart(context.Background(), gotData.Info, types.ContainerStartOptions{})
+						if err != nil {
+							log.Print(err)
+						}
+					}
 				}
 				res.Body.Close()
 			}

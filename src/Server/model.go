@@ -67,7 +67,7 @@ type (
 	DockerInfo struct {
 		ID     int64 `gorm:"AUTO_INCREMENT"`
 		Status int64 `gorm:"default:-1" json:"status" xml:"status" form:"status" query:"status"` // 10准备开启 | -2 准备关闭 | 1 开启状态 | -1 关闭
-		UID    int64
+		DID    string
 	}
 
 	// Config model of config
