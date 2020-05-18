@@ -31,7 +31,7 @@ func start() {
 	}))
 
 	u := e.Group("/user")
-	u.POST("/auth/login", oaLogin)
+ 	u.POST("/auth/login", oaLogin)
 	u.POST("/auth/register", oaRegister)
 
 	s := e.Group("/server")

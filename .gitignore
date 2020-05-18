@@ -1,6 +1,4 @@
-src/Client/main
-src/Server/main
-src/Server/config.json
-src/Server/xvadata.db
+main
+config.json
+xvadata.db
 .idea/
-src/pkg/
