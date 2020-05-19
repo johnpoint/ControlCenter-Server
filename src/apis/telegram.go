@@ -2,7 +2,8 @@ package apis
 
 import (
 	"fmt"
-	"main/src/model"
+	. "github.com/johnpoint/ControlCenter-Server/src/database"
+	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"net/http"
 	"net/url"
 )
@@ -12,9 +13,9 @@ func pushNotification(servers []model.Server, status string) bool {
 		Tconfig := model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_BOT_TOKEN"}
 		Iconfig := model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_CHAT_ID"}
 		Econfig := model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_NOTIFICATION"}
-		Tdata := getConfig(Tconfig)
-		Idata := getConfig(Iconfig)
-		Edata := getConfig(Econfig)
+		Tdata := GetConfig(Tconfig)
+		Idata := GetConfig(Iconfig)
+		Edata := GetConfig(Econfig)
 		if len(Tdata) == 0 || len(Idata) == 0 || len(Edata) == 0 {
 			continue
 		}

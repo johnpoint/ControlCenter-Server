@@ -1,21 +1,24 @@
 package apis
 
 import (
+	. "github.com/johnpoint/ControlCenter-Server/src/auth"
+	. "github.com/johnpoint/ControlCenter-Server/src/config"
+	. "github.com/johnpoint/ControlCenter-Server/src/database"
+	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"io"
-	"main/src/model"
 	"net/http"
 	"os"
 
 	"github.com/labstack/echo"
 )
 
-func sysRestart(c echo.Context) error {
+func SysRestart(c echo.Context) error {
 	return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: ""})
 }
 
-func setBackupFile(c echo.Context) error {
-	user := checkAuth(c)
-	conf := loadConfig()
+func SetBackupFile(c echo.Context) error {
+	user := CheckAuth(c)
+	conf := LoadConfig()
 	if user != nil {
 		if user.Level <= 0 {
 			file, err := c.FormFile("file")
@@ -39,7 +42,7 @@ func setBackupFile(c echo.Context) error {
 			if _, err = io.Copy(dst, src); err != nil {
 				return err
 			}
-			addLog("System", "setBackupFile:{user:{mail:'"+user.Mail+"'}}", 1)
+			AddLog("System", "setBackupFile:{user:{mail:'"+user.Mail+"'}}", 1)
 			return c.JSON(http.StatusOK, model.Callback{Code: 0, Info: "OK"})
 		} else {
 			return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
@@ -48,17 +51,17 @@ func setBackupFile(c echo.Context) error {
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
 }
 
-func getBackupFile(c echo.Context) error {
-	conf := loadConfig()
+func GetBackupFile(c echo.Context) error {
+	conf := LoadConfig()
 	token := c.Param("token")
 	getuser := model.User{Token: token}
-	userInfo := getUser(getuser)
+	userInfo := GetUser(getuser)
 	if len(userInfo) == 0 {
 		re := model.Callback{Code: 0, Info: "account or token incorrect"}
 		return c.JSON(http.StatusUnauthorized, re)
 	} else {
 		if userInfo[0].Level <= 0 {
-			addLog("System", "getBackupFile:{user:{mail:'"+userInfo[0].Mail+"'}}", 1)
+			AddLog("System", "getBackupFile:{user:{mail:'"+userInfo[0].Mail+"'}}", 1)
 			return c.File(conf.Database)
 		} else {
 			return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
@@ -66,21 +69,21 @@ func getBackupFile(c echo.Context) error {
 	}
 }
 
-func setSetting(c echo.Context) error {
-	user := checkAuth(c)
+func SetSetting(c echo.Context) error {
+	user := CheckAuth(c)
 	name := c.Param("name")
 	value := c.Param("value")
-	config := model.SysConfig{Name: name, Value: value, UID: getUser(model.User{Mail: user.Mail})[0].ID}
-	if setConfig(config) {
-		addLog("System", "setSetting:{user:{mail:'"+user.Mail+"'},settings:{name:'"+name+"',value:'"+value+"'}}", 1)
+	config := model.SysConfig{Name: name, Value: value, UID: GetUser(model.User{Mail: user.Mail})[0].ID}
+	if SetConfig(config) {
+		AddLog("System", "setSetting:{user:{mail:'"+user.Mail+"'},settings:{name:'"+name+"',value:'"+value+"'}}", 1)
 		return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 	}
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
 }
 
-func getSetting(c echo.Context) error {
-	user := checkAuth(c)
+func GetSetting(c echo.Context) error {
+	user := CheckAuth(c)
 	name := c.Param("name")
-	config := model.SysConfig{Name: name, UID: getUser(model.User{Mail: user.Mail})[0].ID}
-	return c.JSON(http.StatusOK, getConfig(config))
+	config := model.SysConfig{Name: name, UID: GetUser(model.User{Mail: user.Mail})[0].ID}
+	return c.JSON(http.StatusOK, GetConfig(config))
 }

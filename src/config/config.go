@@ -3,11 +3,11 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"main/src/model"
+	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"os"
 )
 
-func loadConfig() model.Config {
+func LoadConfig() model.Config {
 	file, _ := os.Open("config.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)
@@ -19,6 +19,6 @@ func loadConfig() model.Config {
 	return conf
 }
 
-func initServer() {
+func InitServer() {
 	return
 }

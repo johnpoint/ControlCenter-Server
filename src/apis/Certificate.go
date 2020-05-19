@@ -4,15 +4,17 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/pem"
-	"main/src/model"
+	. "github.com/johnpoint/ControlCenter-Server/src/auth"
+	. "github.com/johnpoint/ControlCenter-Server/src/database"
+	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo"
 )
 
-func addCertificateInfo(c echo.Context) error {
-	user := checkAuth(c)
+func AddCertificateInfo(c echo.Context) error {
+	user := CheckAuth(c)
 	if user.Level <= 1 {
 		certificate := model.Certificate{}
 		if err := c.Bind(&certificate); err != nil {
@@ -37,24 +39,24 @@ func addCertificateInfo(c echo.Context) error {
 		certificate.NotBefore = x509Cert.NotBefore.Unix()
 		certificate.OCSPServer = x509Cert.OCSPServer[0]
 		certificate.Subject = x509Cert.Subject.String()
-		certificate.UID = getUser(model.User{Mail: user.Mail})[0].ID
-		if !addCer(certificate) {
+		certificate.UID = GetUser(model.User{Mail: user.Mail})[0].ID
+		if !AddCer(certificate) {
 			return c.JSON(http.StatusBadGateway, model.Callback{Code: 0, Info: "ERROR"})
 		}
-		addLog("Certificate", "addCertificateInfo:{user:{mail:"+user.Mail+"}}", 1)
+		AddLog("Certificate", "addCertificateInfo:{user:{mail:"+user.Mail+"}}", 1)
 		return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 	}
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
 }
 
-func deleteCertificateInfo(c echo.Context) error {
-	user := checkAuth(c)
+func DeleteCertificateInfo(c echo.Context) error {
+	user := CheckAuth(c)
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	if user.Level <= 1 {
-		uid := getUser(model.User{Mail: user.Mail})[0].ID
-		if delCer(model.Certificate{ID: id, UID: uid}) {
+		uid := GetUser(model.User{Mail: user.Mail})[0].ID
+		if DelCer(model.Certificate{ID: id, UID: uid}) {
 			if UnLinkServer(model.ServerLink{CertificateID: id}) {
-				addLog("Certificate", "deleteCertificateInfo:{user:{mail:"+user.Mail+"},certificate:{id:"+strconv.FormatInt(id, 10)+"}}", 1)
+				AddLog("Certificate", "deleteCertificateInfo:{user:{mail:"+user.Mail+"},certificate:{id:"+strconv.FormatInt(id, 10)+"}}", 1)
 				return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 			}
 		}
@@ -63,8 +65,8 @@ func deleteCertificateInfo(c echo.Context) error {
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
 }
 
-func updateCertificateInfo(c echo.Context) error {
-	user := checkAuth(c)
+func UpdateCertificateInfo(c echo.Context) error {
+	user := CheckAuth(c)
 	if user.Level <= 1 {
 		certificate := model.Certificate{}
 		if err := c.Bind(&certificate); err != nil {
@@ -89,8 +91,8 @@ func updateCertificateInfo(c echo.Context) error {
 		certificate.NotBefore = x509Cert.NotBefore.Unix()
 		certificate.OCSPServer = x509Cert.OCSPServer[0]
 		certificate.Subject = x509Cert.Subject.String()
-		if updateCer(model.Certificate{ID: certificate.ID, UID: getUser(model.User{Mail: user.Mail})[0].ID}, certificate) {
-			addLog("Certificate", "updateCertificateInfo:{user:{mail:"+user.Mail+"},certificate:{id:"+strconv.FormatInt(certificate.ID, 10)+"}}", 1)
+		if UpdateCer(model.Certificate{ID: certificate.ID, UID: GetUser(model.User{Mail: user.Mail})[0].ID}, certificate) {
+			AddLog("Certificate", "updateCertificateInfo:{user:{mail:"+user.Mail+"},certificate:{id:"+strconv.FormatInt(certificate.ID, 10)+"}}", 1)
 			return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusBadRequest, model.Callback{Code: 0, Info: "ERROR"})
@@ -98,31 +100,31 @@ func updateCertificateInfo(c echo.Context) error {
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
 }
 
-func getCertificateInfo(c echo.Context) error {
-	user := checkAuth(c)
+func GetCertificateInfo(c echo.Context) error {
+	user := CheckAuth(c)
 	cer := model.Certificate{}
 	if err := c.Bind(&cer); err != nil {
 		panic(err)
 	}
 	if user.Level <= 1 {
-		cer.UID = getUser(model.User{Mail: user.Mail})[0].ID
-		return c.JSON(http.StatusOK, getCer(cer))
+		cer.UID = GetUser(model.User{Mail: user.Mail})[0].ID
+		return c.JSON(http.StatusOK, GetCer(cer))
 	}
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
 }
 
-func linkServerCer(c echo.Context) error {
-	user := checkAuth(c)
+func LinkServerCer(c echo.Context) error {
+	user := CheckAuth(c)
 	if user.Level <= 1 {
 		sid := c.Param("ServerID")
 		cid := c.Param("CerID")
 		Isid, _ := strconv.ParseInt(sid, 10, 64)
 		Icid, _ := strconv.ParseInt(cid, 10, 64)
 		payload := model.ServerLink{ServerID: Isid, CertificateID: Icid}
-		data := getLinkCer(payload)
+		data := GetLinkCer(payload)
 		if len(data) == 0 {
 			if (LinkServer(model.ServerLink{ServerID: Isid, CertificateID: Icid})) {
-				addLog("Certificate", "linkServerCer:{user:{mail:"+user.Mail+"},link:{serverID:"+strconv.FormatInt(Isid, 10)+",certificateID:"+strconv.FormatInt(Icid, 10)+"}}", 1)
+				AddLog("Certificate", "linkServerCer:{user:{mail:"+user.Mail+"},link:{serverID:"+strconv.FormatInt(Isid, 10)+",certificateID:"+strconv.FormatInt(Icid, 10)+"}}", 1)
 				return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 			}
 			return c.JSON(http.StatusOK, model.Callback{Code: 0, Info: "ERROR"})
@@ -133,8 +135,8 @@ func linkServerCer(c echo.Context) error {
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
 }
 
-func unLinkServerCer(c echo.Context) error {
-	user := checkAuth(c)
+func UnLinkServerCer(c echo.Context) error {
+	user := CheckAuth(c)
 	if user.Level <= 1 {
 		sid := c.Param("ServerID")
 		cid := c.Param("CerID")
@@ -143,8 +145,8 @@ func unLinkServerCer(c echo.Context) error {
 		payload := model.ServerLink{ServerID: Isid, CertificateID: Icid}
 		data := UnLinkServer(payload)
 		if data {
-			if len(getLinkCer(payload)) == 0 {
-				addLog("Certificate", "unLinkServerCer:{user:{mail:"+user.Mail+"},link:{serverID:"+strconv.FormatInt(Isid, 10)+",certificateID:"+strconv.FormatInt(Icid, 10)+"}}", 1)
+			if len(GetLinkCer(payload)) == 0 {
+				AddLog("Certificate", "unLinkServerCer:{user:{mail:"+user.Mail+"},link:{serverID:"+strconv.FormatInt(Isid, 10)+",certificateID:"+strconv.FormatInt(Icid, 10)+"}}", 1)
 				return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 			}
 		}
