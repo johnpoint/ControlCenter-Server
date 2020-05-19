@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"main/src/model"
 	"net/http"
 	"os"
 
@@ -9,7 +10,7 @@ import (
 )
 
 func sysRestart(c echo.Context) error {
-	return c.JSON(http.StatusOK, Callback{Code: 200, Info: ""})
+	return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: ""})
 }
 
 func setBackupFile(c echo.Context) error {
@@ -39,28 +40,28 @@ func setBackupFile(c echo.Context) error {
 				return err
 			}
 			addLog("System", "setBackupFile:{user:{mail:'"+user.Mail+"'}}", 1)
-			return c.JSON(http.StatusOK, Callback{Code: 0, Info: "OK"})
+			return c.JSON(http.StatusOK, model.Callback{Code: 0, Info: "OK"})
 		} else {
-			return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
+			return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
 		}
 	}
-	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
+	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
 }
 
 func getBackupFile(c echo.Context) error {
 	conf := loadConfig()
 	token := c.Param("token")
-	getuser := User{Token: token}
+	getuser := model.User{Token: token}
 	userInfo := getUser(getuser)
 	if len(userInfo) == 0 {
-		re := Callback{Code: 0, Info: "account or token incorrect"}
+		re := model.Callback{Code: 0, Info: "account or token incorrect"}
 		return c.JSON(http.StatusUnauthorized, re)
 	} else {
 		if userInfo[0].Level <= 0 {
 			addLog("System", "getBackupFile:{user:{mail:'"+userInfo[0].Mail+"'}}", 1)
 			return c.File(conf.Database)
 		} else {
-			return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
+			return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
 		}
 	}
 }
@@ -69,17 +70,17 @@ func setSetting(c echo.Context) error {
 	user := checkAuth(c)
 	name := c.Param("name")
 	value := c.Param("value")
-	config := SysConfig{Name: name, Value: value, UID: getUser(User{Mail: user.Mail})[0].ID}
+	config := model.SysConfig{Name: name, Value: value, UID: getUser(model.User{Mail: user.Mail})[0].ID}
 	if setConfig(config) {
 		addLog("System", "setSetting:{user:{mail:'"+user.Mail+"'},settings:{name:'"+name+"',value:'"+value+"'}}", 1)
-		return c.JSON(http.StatusOK, Callback{Code: 200, Info: "OK"})
+		return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 	}
-	return c.JSON(http.StatusUnauthorized, Callback{Code: 0, Info: "ERROR"})
+	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
 }
 
 func getSetting(c echo.Context) error {
 	user := checkAuth(c)
 	name := c.Param("name")
-	config := SysConfig{Name: name, UID: getUser(User{Mail: user.Mail})[0].ID}
+	config := model.SysConfig{Name: name, UID: getUser(model.User{Mail: user.Mail})[0].ID}
 	return c.JSON(http.StatusOK, getConfig(config))
 }

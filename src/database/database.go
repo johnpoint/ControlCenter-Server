@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"main/src/model"
 	"time"
 )
 
@@ -16,10 +17,10 @@ func initDatabase() *gorm.DB {
 }
 
 //Server
-func addServer(server Server) bool {
+func addServer(server model.Server) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Server{})
+	db.AutoMigrate(&model.Server{})
 	db.Create(&server)
 	if !(db.NewRecord(server)) {
 		return true
@@ -27,10 +28,10 @@ func addServer(server Server) bool {
 	return false
 }
 
-func updateServer(where Server, server Server) bool {
+func updateServer(where model.Server, server model.Server) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Server{})
+	db.AutoMigrate(&model.Server{})
 	db.Model(&server).Where(where).Update(server)
 	if len(getServer(server)) != 0 {
 		return true
@@ -38,11 +39,11 @@ func updateServer(where Server, server Server) bool {
 	return false
 }
 
-func getServer(server Server) []Server {
+func getServer(server model.Server) []model.Server {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Server{})
-	servers := []Server{}
+	db.AutoMigrate(&model.Server{})
+	servers := []model.Server{}
 	db.Where(server).Find(&servers)
 	return servers
 }
@@ -50,17 +51,17 @@ func getServer(server Server) []Server {
 func delServer(id int64, uid int64) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Server{})
-	server := Server{ID: id, UID: uid}
-	db.Where(server).Delete(Server{})
+	db.AutoMigrate(&model.Server{})
+	server := model.Server{ID: id, UID: uid}
+	db.Where(server).Delete(model.Server{})
 	return true
 }
 
 //User
-func addUser(user User) bool {
+func addUser(user model.User) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&model.User{})
 	db.Create(&user)
 	if !(db.NewRecord(user)) {
 		return true
@@ -68,30 +69,30 @@ func addUser(user User) bool {
 	return false
 }
 
-func updateUser(where User, user User) bool {
+func updateUser(where model.User, user model.User) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&model.User{})
 	db.Model(&user).Where(where).Update(user)
 	if len(getUser(user)) != 0 {
 		return true
 	}
 	return false
 }
-func getUser(user User) []User {
+func getUser(user model.User) []model.User {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&User{})
-	users := []User{}
+	db.AutoMigrate(&model.User{})
+	users := []model.User{}
 	db.Where(user).Find(&users)
 	return users
 }
 
 //Domain
-func addDomain(domain Domain) bool {
+func addDomain(domain model.Domain) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Domain{})
+	db.AutoMigrate(&model.Domain{})
 	db.Create(&domain)
 	if !(db.NewRecord(domain)) {
 		return true
@@ -99,19 +100,19 @@ func addDomain(domain Domain) bool {
 	return false
 }
 
-func getDomain(domain Domain) []Domain {
+func getDomain(domain model.Domain) []model.Domain {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Domain{})
-	domains := []Domain{}
+	db.AutoMigrate(&model.Domain{})
+	domains := []model.Domain{}
 	db.Where(domain).Find(&domains)
 	return domains
 }
 
-func updateDomain(where Domain, domain Domain) bool {
+func updateDomain(where model.Domain, domain model.Domain) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Domain{})
+	db.AutoMigrate(&model.Domain{})
 	db.Model(&domain).Where(where).Update(domain)
 	if len(getDomain(domain)) != 0 {
 		return true
@@ -120,10 +121,10 @@ func updateDomain(where Domain, domain Domain) bool {
 }
 
 //Site
-func addSite(site Site) bool {
+func addSite(site model.Site) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Site{})
+	db.AutoMigrate(&model.Site{})
 	db.Create(&site)
 	if !(db.NewRecord(site)) {
 		return true
@@ -131,11 +132,11 @@ func addSite(site Site) bool {
 	return false
 }
 
-func getSite(site Site) []Site {
+func getSite(site model.Site) []model.Site {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Site{})
-	sites := []Site{}
+	db.AutoMigrate(&model.Site{})
+	sites := []model.Site{}
 	if site.Name == "*" {
 		db.Find(&sites)
 	} else {
@@ -144,19 +145,19 @@ func getSite(site Site) []Site {
 	return sites
 }
 
-func delSite(site Site) bool {
+func delSite(site model.Site) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Site{})
-	db.Where(site).Delete(Site{})
+	db.AutoMigrate(&model.Site{})
+	db.Where(site).Delete(model.Site{})
 	return true
 }
 
 //Cer
-func addCer(certificate Certificate) bool {
+func addCer(certificate model.Certificate) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Certificate{})
+	db.AutoMigrate(&model.Certificate{})
 	db.Create(&certificate)
 	if !(db.NewRecord(certificate)) {
 		return true
@@ -165,10 +166,10 @@ func addCer(certificate Certificate) bool {
 }
 
 // LinkCer link
-func LinkServer(serverLink ServerLink) bool {
+func LinkServer(serverLink model.ServerLink) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&ServerLink{})
+	db.AutoMigrate(&model.ServerLink{})
 	db.Create(&serverLink)
 	if !(db.NewRecord(serverLink)) {
 		return true
@@ -176,46 +177,46 @@ func LinkServer(serverLink ServerLink) bool {
 	return false
 }
 
-func getLinkCer(serverLink ServerLink) []ServerLink {
+func getLinkCer(serverLink model.ServerLink) []model.ServerLink {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&ServerLink{})
-	ServerLinks := []ServerLink{}
+	db.AutoMigrate(&model.ServerLink{})
+	ServerLinks := []model.ServerLink{}
 	serverLink.SiteID = 0
 	db.Where(serverLink).Find(&ServerLinks)
 	return ServerLinks
 }
 
-func getLinkSite(serverLink ServerLink) []ServerLink {
+func getLinkSite(serverLink model.ServerLink) []model.ServerLink {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&ServerLink{})
-	ServerLinks := []ServerLink{}
+	db.AutoMigrate(&model.ServerLink{})
+	ServerLinks := []model.ServerLink{}
 	serverLink.CertificateID = 0
 	db.Where(serverLink).Find(&ServerLinks)
 	return ServerLinks
 }
 
-func UnLinkServer(serverLink ServerLink) bool {
+func UnLinkServer(serverLink model.ServerLink) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&ServerLink{})
-	db.Where(serverLink).Delete(ServerLink{})
+	db.AutoMigrate(&model.ServerLink{})
+	db.Where(serverLink).Delete(model.ServerLink{})
 	return true
 }
 
-func delCer(certificate Certificate) bool {
+func delCer(certificate model.Certificate) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Certificate{})
-	db.Where(certificate).Delete(Certificate{})
+	db.AutoMigrate(&model.Certificate{})
+	db.Where(certificate).Delete(model.Certificate{})
 	return true
 }
 
-func updateCer(where Certificate, certificate Certificate) bool {
+func updateCer(where model.Certificate, certificate model.Certificate) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Certificate{})
+	db.AutoMigrate(&model.Certificate{})
 	db.Model(&certificate).Where(where).Update(certificate)
 	if len(getCer(certificate)) != 0 {
 		return true
@@ -223,34 +224,34 @@ func updateCer(where Certificate, certificate Certificate) bool {
 	return false
 }
 
-func getCer(certificate Certificate) []Certificate {
+func getCer(certificate model.Certificate) []model.Certificate {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Certificate{})
-	certificates := []Certificate{}
+	db.AutoMigrate(&model.Certificate{})
+	certificates := []model.Certificate{}
 	db.Where(certificate).Find(&certificates)
 	return certificates
 }
 
 //System Config
-func setConfig(config SysConfig) bool {
-	if len(getConfig(SysConfig{Name: config.Name})) == 0 {
+func setConfig(config model.SysConfig) bool {
+	if len(getConfig(model.SysConfig{Name: config.Name})) == 0 {
 		return addConfig(config)
 	}
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&SysConfig{})
-	db.Model(&config).Where(SysConfig{Name: config.Name}).Update(config)
+	db.AutoMigrate(&model.SysConfig{})
+	db.Model(&config).Where(model.SysConfig{Name: config.Name}).Update(config)
 	if len(getConfig(config)) == 0 {
 		return false
 	}
 	return true
 }
 
-func addConfig(config SysConfig) bool {
+func addConfig(config model.SysConfig) bool {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&SysConfig{})
+	db.AutoMigrate(&model.SysConfig{})
 	db.Create(&config)
 	if len(getConfig(config)) == 0 {
 		return false
@@ -258,33 +259,33 @@ func addConfig(config SysConfig) bool {
 	return true
 }
 
-func getConfig(config SysConfig) []SysConfig {
+func getConfig(config model.SysConfig) []model.SysConfig {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&SysConfig{})
-	configs := []SysConfig{}
+	db.AutoMigrate(&model.SysConfig{})
+	configs := []model.SysConfig{}
 	db.Where(config).Find(&configs)
 	return configs
 }
 
 // Docker
 // 要传入Userid
-func getDocker(docker Docker) []Docker {
+func getDocker(docker model.Docker) []model.Docker {
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&Docker{})
-	dockers := []Docker{}
+	db.AutoMigrate(&model.Docker{})
+	dockers := []model.Docker{}
 	db.Where(docker).Find(&dockers)
 	return dockers
 }
 
 // 要传入Userid
-func editDocker(docker Docker) bool {
-	if len(getDocker(Docker{ID: docker.ID})) != 0 {
+func editDocker(docker model.Docker) bool {
+	if len(getDocker(model.Docker{ID: docker.ID})) != 0 {
 		db := initDatabase()
 		defer db.Close()
-		db.AutoMigrate(&Docker{})
-		db.Model(&docker).Where(Docker{ID: docker.ID, UID: docker.UID}).Update(docker)
+		db.AutoMigrate(&model.Docker{})
+		db.Model(&docker).Where(model.Docker{ID: docker.ID, UID: docker.UID}).Update(docker)
 		if len(getDocker(docker)) == 0 {
 			return false
 		}
@@ -294,12 +295,12 @@ func editDocker(docker Docker) bool {
 }
 
 // 要传入Userid
-func delDocker(docker Docker) bool {
-	if len(getDocker(Docker{ID: docker.ID})) != 0 {
+func delDocker(docker model.Docker) bool {
+	if len(getDocker(model.Docker{ID: docker.ID})) != 0 {
 		db := initDatabase()
 		defer db.Close()
-		db.AutoMigrate(&Docker{})
-		db.Model(&docker).Where(Docker{ID: docker.ID}).Update(docker)
+		db.AutoMigrate(&model.Docker{})
+		db.Model(&docker).Where(model.Docker{ID: docker.ID}).Update(docker)
 		if len(getDocker(docker)) == 0 {
 			return true
 		}
@@ -309,11 +310,11 @@ func delDocker(docker Docker) bool {
 }
 
 // 要传入Useriddocker
-func addDocker(docker Docker) bool {
-	if len(getDocker(Docker{Name: docker.Name, UID: docker.UID})) == 0 {
+func addDocker(docker model.Docker) bool {
+	if len(getDocker(model.Docker{Name: docker.Name, UID: docker.UID})) == 0 {
 		db := initDatabase()
 		defer db.Close()
-		db.AutoMigrate(&Docker{})
+		db.AutoMigrate(&model.Docker{})
 		db.Create(&docker)
 		if !(db.NewRecord(docker)) {
 			return true
@@ -324,10 +325,10 @@ func addDocker(docker Docker) bool {
 }
 
 func addLog(service string, even string, level int64) bool {
-	log := LogInfo{Service: service, Info: even, Level: level, CreatedAt: time.Now()}
+	log := model.LogInfo{Service: service, Info: even, Level: level, CreatedAt: time.Now()}
 	db := initDatabase()
 	defer db.Close()
-	db.AutoMigrate(&LogInfo{})
+	db.AutoMigrate(&model.LogInfo{})
 	db.Create(&log)
 	if !(db.NewRecord(log)) {
 		return true

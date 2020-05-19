@@ -3,14 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"main/src/model"
 	"os"
 )
 
-func loadConfig() Config {
+func loadConfig() model.Config {
 	file, _ := os.Open("config.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)
-	conf := Config{}
+	conf := model.Config{}
 	err := decoder.Decode(&conf)
 	if err != nil {
 		fmt.Println("Error:", err)

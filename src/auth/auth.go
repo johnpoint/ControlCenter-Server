@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/md5"
 	"fmt"
+	"main/src/model"
 	"net/http"
 	"strconv"
 	"time"
@@ -21,17 +22,17 @@ type jwtCustomClaims struct {
 func oaLogin(c echo.Context) error {
 	conf := loadConfig()
 	salt := conf.Salt
-	u := User{}
+	u := model.User{}
 	if err := c.Bind(&u); err != nil {
 		return err
 	}
 	data := []byte(u.Mail + salt + u.Password)
 	has := md5.Sum(data)
 	md5str1 := fmt.Sprintf("%x", has)
-	getuser := User{Mail: u.Mail}
+	getuser := model.User{Mail: u.Mail}
 	user := getUser(getuser)
 	if len(user) == 0 {
-		re := Callback{Code: 0, Info: "account or password incorrect"}
+		re := model.Callback{Code: 0, Info: "account or password incorrect"}
 		return c.JSON(http.StatusOK, re)
 	}
 	if user[0].Password == md5str1 {
@@ -53,31 +54,31 @@ func oaLogin(c echo.Context) error {
 			"token": t,
 		})
 	}
-	return c.JSON(http.StatusOK, Callback{Code: 0, Info: "account or password incorrect"})
+	return c.JSON(http.StatusOK, model.Callback{Code: 0, Info: "account or password incorrect"})
 
 }
 
 func oaRegister(c echo.Context) error {
 	conf := loadConfig()
 	salt := conf.Salt
-	u := User{}
-	var re Callback
+	u := model.User{}
+	var re model.Callback
 	if err := c.Bind(&u); err != nil {
 		return err
 	}
-	checkUser := getUser(User{Mail: u.Mail})
+	checkUser := getUser(model.User{Mail: u.Mail})
 	if len(checkUser) != 0 {
-		re = Callback{Code: 0, Info: "This account has been used"}
+		re = model.Callback{Code: 0, Info: "This account has been used"}
 	} else {
 		data := []byte(u.Mail + salt + u.Password)
 		has := md5.Sum(data)
 		md5str1 := fmt.Sprintf("%x", has)
-		newUser := User{Username: u.Username, Mail: u.Mail, Password: md5str1, Level: 1}
+		newUser := model.User{Username: u.Username, Mail: u.Mail, Password: md5str1, Level: 1}
 		if addUser(newUser) {
 			addLog("Auth", "Register:{user:{mail:'"+u.Mail+"'}", 1)
-			re = Callback{Code: 200, Info: "OK"}
+			re = model.Callback{Code: 200, Info: "OK"}
 		} else {
-			re = Callback{Code: 0, Info: "ERROR"}
+			re = model.Callback{Code: 0, Info: "ERROR"}
 		}
 	}
 
@@ -87,7 +88,7 @@ func oaRegister(c echo.Context) error {
 func checkAuth(c echo.Context) *jwtCustomClaims {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*jwtCustomClaims)
-	if len(getUser(User{Mail: claims.Mail, Level: claims.Level})) == 0 {
+	if len(getUser(model.User{Mail: claims.Mail, Level: claims.Level})) == 0 {
 		return nil
 	}
 	return claims

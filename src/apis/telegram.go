@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"main/src/model"
 	"net/http"
 	"net/url"
 )
 
-func pushNotification(servers []Server, status string) bool {
+func pushNotification(servers []model.Server, status string) bool {
 	for i := 0; i < len(servers); i++ {
-		Tconfig := SysConfig{UID: servers[i].UID, Name: "TELEGRAM_BOT_TOKEN"}
-		Iconfig := SysConfig{UID: servers[i].UID, Name: "TELEGRAM_CHAT_ID"}
-		Econfig := SysConfig{UID: servers[i].UID, Name: "TELEGRAM_NOTIFICATION"}
+		Tconfig := model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_BOT_TOKEN"}
+		Iconfig := model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_CHAT_ID"}
+		Econfig := model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_NOTIFICATION"}
 		Tdata := getConfig(Tconfig)
 		Idata := getConfig(Iconfig)
 		Edata := getConfig(Econfig)
