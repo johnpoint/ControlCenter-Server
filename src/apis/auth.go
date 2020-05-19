@@ -99,3 +99,7 @@ func CheckAuth(c echo.Context) *JwtCustomClaims {
 func CheckPower(c echo.Context) error {
 	return c.JSON(http.StatusOK, CheckAuth(c))
 }
+
+func Accessible(c echo.Context) error {
+	return c.HTML(http.StatusOK, "<h1>ControlCenter</h1>(´・ω・`) 运行正常<br><hr>Ver: 1.9.0")
+}
