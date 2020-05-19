@@ -1,7 +1,6 @@
 package apis
 
 import (
-	. "github.com/johnpoint/ControlCenter-Server/src/auth"
 	. "github.com/johnpoint/ControlCenter-Server/src/database"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"github.com/labstack/echo"
