@@ -1,4 +1,6 @@
 echo "[ build start ]"
+echo "mkdir dev"
+mkdir dev
 echo "mv dev/main dev/.main.old"
 mv dev/main dev/.main.old
 echo "cd src/main"
