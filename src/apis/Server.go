@@ -156,16 +156,6 @@ func ServerUpdate(c echo.Context) error {
 	return c.JSON(http.StatusBadRequest, model.Callback{Code: 0, Info: "ERROR"})
 }
 
-func ServerGetCertificate(c echo.Context) error {
-	Token := c.Param("Token")
-	if (len(GetServer(model.Server{Token: Token})) == 0) {
-		return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
-	}
-	id := c.Param("id")
-	id64, _ := strconv.ParseInt(id, 10, 64)
-	return c.JSON(http.StatusOK, GetCer(model.Certificate{ID: id64}))
-}
-
 func RemoveServer(c echo.Context) error {
 	user := CheckAuth(c)
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)

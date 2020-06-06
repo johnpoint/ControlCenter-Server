@@ -27,7 +27,6 @@ func Run() {
 	s.GET("/now/:token", GetNow)
 	s.POST("/update/:token", ServerUpdate)
 	s.GET("/update/:token", GetServerUpdate)
-	s.GET("/Certificate/:token/:id", ServerGetCertificate)
 
 	e.GET("/", Accessible)
 
