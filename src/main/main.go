@@ -13,7 +13,11 @@ func main() {
 			InitServer()
 		} else if os.Args[1] == "start" {
 			router.Run()
+		} else if os.Args[1] == "test" {
+			fmt.Println("build pass")
+			return
 		}
 	}
 	fmt.Println("参数错误")
+	return
 }

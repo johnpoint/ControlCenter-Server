@@ -3,4 +3,6 @@ language: go
 go:
 - 1.14.4
 
-script: cd src/main && go build
+script:
+- cd src/config && go test
+- cd src/main && go build
