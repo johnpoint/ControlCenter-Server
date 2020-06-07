@@ -4,5 +4,5 @@ go:
 - 1.14.4
 
 script:
-- cd src/config && go test
+- cd src/config && go test && cd ../../
 - cd src/main && go build
