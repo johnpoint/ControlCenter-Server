@@ -3,6 +3,4 @@ language: go
 go:
 - 1.14.4
 
-script:
-- ls
-- bash build.sh
+script: cd src/main && go build
