@@ -5,6 +5,7 @@ import (
 	"fmt"
 	. "github.com/johnpoint/ControlCenter-Server/src/database"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
+	"github.com/johnpoint/ControlCenter-Server/src/push"
 	"log"
 	"net/http"
 	"strconv"
@@ -170,19 +171,23 @@ func RemoveServer(c echo.Context) error {
 }
 
 func CheckOnline() {
-	UpdateServer(model.Server{Online: 1}, model.Server{Online: -1})
-	time.Sleep(time.Duration(60) * time.Second)
-	offlineServer := GetServer(model.Server{Online: -1})
-	onlineServer := GetServer(model.Server{Online: 3})
-	pushNotification(offlineServer, " × ")
-	UpdateServer(model.Server{Online: -1}, model.Server{Online: 2})
-	pushNotification(onlineServer, " ✓ ")
-	UpdateServer(model.Server{Online: 3}, model.Server{Online: 1})
-	return
 	// -1 默认 --> 推送
 	// 1 在线
 	// 2 等待上线
 	// 3 上线 --> 推送
+	UpdateServer(model.Server{Online: 1}, model.Server{Online: -1})
+	time.Sleep(time.Duration(60) * time.Second)
+	offlineServer := GetServer(model.Server{Online: -1})
+	onlineServer := GetServer(model.Server{Online: 3})
+	go func() {
+		push.PushNotification(offlineServer, -1)
+	}()
+	UpdateServer(model.Server{Online: -1}, model.Server{Online: 2})
+	go func() {
+		push.PushNotification(onlineServer, 1)
+	}()
+	UpdateServer(model.Server{Online: 3}, model.Server{Online: 1})
+	return
 }
 
 func GetNow(c echo.Context) error {
