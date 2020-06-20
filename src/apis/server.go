@@ -180,11 +180,15 @@ func CheckOnline() {
 	offlineServer := GetServer(model.Server{Online: -1})
 	onlineServer := GetServer(model.Server{Online: 3})
 	go func() {
-		push.PushNotification(offlineServer, -1)
+		if !push.PushNotification(offlineServer, -1) {
+			log.Print("PUSH FAIL")
+		}
 	}()
 	UpdateServer(model.Server{Online: -1}, model.Server{Online: 2})
 	go func() {
-		push.PushNotification(onlineServer, 1)
+		if !push.PushNotification(onlineServer, 1) {
+			log.Print("PUSH FAIL")
+		}
 	}()
 	UpdateServer(model.Server{Online: 3}, model.Server{Online: 1})
 	return
