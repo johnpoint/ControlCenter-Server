@@ -5,7 +5,7 @@ import (
 )
 
 func PushNotification(servers []model.Server, status int64) bool {
-	if status == 1 {
+	if status == -1 {
 		if !Telegram_Push(servers, " × ") {
 			return false
 		}
