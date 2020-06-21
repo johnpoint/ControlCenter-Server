@@ -9,11 +9,12 @@ import (
 )
 
 func TestLoadConfig(t *testing.T) {
-	var testData = model.Config{AllowAddress: []string{"127.0.0.1"}, ListenPort: string("1323"), TLS: false, CERTPath: "PATHtoCER", KEYPath: "PATHtoKEY", Salt: "ControlCenter", Database: "xvadata.db"}
+	// 测试配置文件内容
+	var testData = model.Config{AllowAddress: []string{"127.0.0.1"}, ListenPort: string("1323"), TLS: false, CERTPath: "PATHtoCER", KEYPath: "PATHtoKEY", Salt: "ControlCenter", Database: "testdata.db"}
 	file, _ := os.Create("config.json")
 	defer file.Close()
 	databy, _ := json.Marshal(testData)
-	io.WriteString(file, string(databy))
+	io.WriteString(file, string(databy)) // 写入测试配置文件
 	var getConf model.Config
 	getConf = LoadConfig()
 	if getConf.AllowAddress[0] != testData.AllowAddress[0] {
