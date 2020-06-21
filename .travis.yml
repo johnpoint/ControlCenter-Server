@@ -5,4 +5,5 @@ go:
 
 script:
 - cd src/config && go test && cd ../../
+- cd src/database && go test && cd ../../
 - cd src/main && go build
