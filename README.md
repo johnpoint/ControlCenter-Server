@@ -1,7 +1,7 @@
 # ControlCenter-Server
 
 <div style="text-align: center">
-![Build Status](https://travis-ci.org/johnpoint/ControlCenter-Server.svg?branch=master)](https://travis-ci.org/johnpoint/ControlCenter-Server)
+<img src="https://travis-ci.org/johnpoint/ControlCenter-Server.svg?branch=master">
 </div>
 
 ## 项目仓库列表
