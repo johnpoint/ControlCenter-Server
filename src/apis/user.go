@@ -14,6 +14,28 @@ import (
 	"github.com/labstack/echo"
 )
 
+type User struct {
+	ID       int64
+	Username string
+	Mail     string
+	Password string
+	level    int64 // 用户等级 0 = 特权用户 1 = 普通用户 2 = 游客
+	Token    string
+}
+
+func (u User) init(ID int64, Username string, Mail string, Password string, level int64, Token string) error {
+	u = User{ID: ID, Username: Username, Mail: Mail, Password: Password, level: level, Token: Token}
+	return nil
+}
+
+func (u User) getID() int64 {
+	return u.ID
+}
+
+func (u User) getLevel() int64 {
+	return u.level
+}
+
 func GetUserInfo(c echo.Context) error {
 	user := CheckAuth(c)
 	if user != nil {

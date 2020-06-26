@@ -89,6 +89,14 @@ func GetUser(user model.User) []model.User {
 	return users
 }
 
+func DelUser(user model.User) bool {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&model.User{})
+	db.Where(user).Delete(model.User{})
+	return true
+}
+
 //Domain
 func addDomain(domain model.Domain) bool {
 	db := initDatabase()
