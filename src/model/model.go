@@ -16,6 +16,7 @@ type (
 		KEYPath      string
 		Salt         string
 		Database     string
+		Debug        bool
 	}
 
 	// SysConfig model of config

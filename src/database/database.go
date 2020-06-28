@@ -11,6 +11,9 @@ import (
 func initDatabase() *gorm.DB {
 	conf := LoadConfig()
 	db, err := gorm.Open("sqlite3", conf.Database)
+	if conf.Debug {
+		db.LogMode(true)
+	}
 	if err != nil {
 		panic("连接数据库失败")
 	}
