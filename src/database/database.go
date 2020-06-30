@@ -11,6 +11,9 @@ import (
 func initDatabase() *gorm.DB {
 	conf := LoadConfig()
 	db, err := gorm.Open("sqlite3", conf.Database)
+	if conf.Debug {
+		db.LogMode(true)
+	}
 	if err != nil {
 		panic("连接数据库失败")
 	}
@@ -87,6 +90,14 @@ func GetUser(user model.User) []model.User {
 	users := []model.User{}
 	db.Where(user).Find(&users)
 	return users
+}
+
+func DelUser(user model.User) bool {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&model.User{})
+	db.Where(user).Delete(model.User{})
+	return true
 }
 
 //Domain
