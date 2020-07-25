@@ -3,6 +3,9 @@ language: go
 go:
 - 1.14.4
 
+services:
+- redis-server
+
 script:
 - cd src/config && go test && cd ../../
 - cd src/database && go test && cd ../../
