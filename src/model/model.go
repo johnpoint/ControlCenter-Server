@@ -26,25 +26,28 @@ type (
 
 	// UpdateInfo model
 	UpdateInfo struct {
-		Code  int64
-		Sites []struct {
-			ID     int64
-			Domain string
-			CerID  int64
-			Config string
-		}
-		Certificates []struct {
-			ID        int64
-			Domain    string
-			FullChain string
-			Key       string
-		}
-		Services struct {
+		Code         int64
+		Sites        []DataSite
+		Certificates []DataCertificate
+		Services     struct {
 			Name    string
 			Enable  string
 			Disable string
 			Status  string
 		}
 		Dockers []DockerInfo
+	}
+
+	DataSite struct {
+		ID     int64
+		Domain string
+		CerID  int64
+		Config string
+	}
+	DataCertificate struct {
+		ID        int64
+		Domain    string
+		FullChain string
+		Key       string
 	}
 )

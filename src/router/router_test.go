@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/johnpoint/ControlCenter-Server/src/apis"
-	. "github.com/johnpoint/ControlCenter-Server/src/database"
+	"github.com/johnpoint/ControlCenter-Server/src/database"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
@@ -23,7 +23,11 @@ func TestMain(m *testing.M) {
 	if del != nil {
 		fmt.Println("= 数据库已经初始化 =")
 	}
-	var testData = model.Config{AllowAddress: []string{"127.0.0.1"}, ListenPort: string("1323"), TLS: false, CERTPath: "PATHtoCER", KEYPath: "PATHtoKEY", Salt: "ControlCenter", Database: "testdata.db", RedisConfig: model.RedisConfig{Addr: "127.0.0.1:6379", Password: "", DB: 1}}
+	var testData = model.Config{AllowAddress: []string{"127.0.0.1"}, ListenPort: string("1323"), TLS: false, CERTPath: "PATHtoCER", KEYPath: "PATHtoKEY", Salt: "ControlCenter", Database: "testdata.db", RedisConfig: struct {
+		Addr     string
+		Password string
+		DB       int
+	}{Addr: "127.0.0.1:6379", Password: "", DB: 1}}
 	file, _ := os.Create("config.json")
 	fmt.Println("= 配置文件设置完成 =")
 	defer file.Close()
@@ -51,7 +55,7 @@ func TestOnline(t *testing.T) {
 
 func TestLogin(t *testing.T) {
 	e := echo.New()
-	if !AddUser(model.User{ID: 233, Username: "testUser", Mail: "i@test.com", Password: "23333", Level: 1, Token: "23456"}) {
+	if !database.AddUser(model.User{ID: 233, Username: "testUser", Mail: "i@test.com", Password: "23333", Level: 1, Token: "23456"}) {
 		panic("add user fail")
 	}
 	f := make(url.Values)

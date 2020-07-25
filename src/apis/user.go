@@ -3,8 +3,8 @@ package apis
 import (
 	"crypto/md5"
 	"fmt"
-	. "github.com/johnpoint/ControlCenter-Server/src/config"
-	. "github.com/johnpoint/ControlCenter-Server/src/database"
+	"github.com/johnpoint/ControlCenter-Server/src/config"
+	"github.com/johnpoint/ControlCenter-Server/src/database"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"io"
 	"net/http"
@@ -25,14 +25,14 @@ func GetUserInfo(c echo.Context) error {
 func UpdateUserInfo(c echo.Context) error {
 	user := CheckAuth(c)
 	if user != nil {
-		AddLog("User", "updateUserInfo:{user:{mail:'"+user.Mail+"'}}", 1)
+		database.AddLog("User", "updateUserInfo:{user:{mail:'"+user.Mail+"'}}", 1)
 		return c.JSON(http.StatusOK, user)
 	}
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
 }
 
 func ReSetPassword(c echo.Context) error {
-	conf := LoadConfig()
+	conf := config.LoadConfig()
 	salt := conf.Salt
 	oldPass := c.Param("oldpass")
 	newPass := c.Param("newpass")
@@ -41,15 +41,15 @@ func ReSetPassword(c echo.Context) error {
 		data := []byte(user.Mail + salt + oldPass)
 		has := md5.Sum(data)
 		oldpass := fmt.Sprintf("%x", has)
-		u := GetUser(model.User{Mail: user.Mail})
+		u := database.GetUser(model.User{Mail: user.Mail})
 		if u[0].Password != oldpass {
 			return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
 		}
 		data = []byte(user.Mail + salt + newPass)
 		has = md5.Sum(data)
 		newpass := fmt.Sprintf("%x", has)
-		if (UpdateUser(u[0], model.User{Password: newpass})) {
-			AddLog("User", "reSetPassword:{user:{mail:'"+user.Mail+"'}}", 1)
+		if (database.UpdateUser(u[0], model.User{Password: newpass})) {
+			database.AddLog("User", "reSetPassword:{user:{mail:'"+user.Mail+"'}}", 1)
 			return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusOK, model.Callback{Code: 0, Info: "ERROR"})
@@ -59,7 +59,7 @@ func ReSetPassword(c echo.Context) error {
 
 func GetUserToken(c echo.Context) error {
 	user := CheckAuth(c)
-	data := GetUser(model.User{Mail: user.Mail})
+	data := database.GetUser(model.User{Mail: user.Mail})
 	if len(data) != 0 {
 		return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: data[0].Token})
 	}
@@ -72,8 +72,8 @@ func GetNewToken(c echo.Context) error {
 	h := md5.New()
 	io.WriteString(h, strconv.FormatInt(timeUnixNano, 10))
 	newToken := fmt.Sprintf("%x", h.Sum(nil))
-	if (UpdateUser(model.User{Mail: user.Mail}, model.User{Token: newToken})) {
-		AddLog("User", "getNewToken:{user:{mail:'"+user.Mail+"'}}", 1)
+	if (database.UpdateUser(model.User{Mail: user.Mail}, model.User{Token: newToken})) {
+		database.AddLog("User", "getNewToken:{user:{mail:'"+user.Mail+"'}}", 1)
 		return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 	}
 	return c.JSON(http.StatusOK, model.Callback{Code: 0, Info: "ERROR"})
@@ -82,17 +82,17 @@ func GetNewToken(c echo.Context) error {
 func ChangeLevel(c echo.Context) error {
 	user := CheckAuth(c)
 	if user != nil {
-		if GetUser(model.User{Mail: user.Mail})[0].Level <= 0 {
+		if database.GetUser(model.User{Mail: user.Mail})[0].Level <= 0 {
 			uid, _ := strconv.ParseInt(c.Param("uid"), 10, 64)
 			level, _ := strconv.ParseInt(c.Param("level"), 10, 64)
-			userTarget := GetUser(model.User{ID: uid})
+			userTarget := database.GetUser(model.User{ID: uid})
 			if len(userTarget) != 0 {
 				if userTarget[0].Level == 0 {
 					return c.JSON(http.StatusForbidden, model.Callback{Code: 0, Info: "No permission"})
 				}
 			}
-			if UpdateUser(model.User{ID: uid}, model.User{Level: level}) {
-				AddLog("User", "changeLevel:{user:{mail:'"+user.Mail+"'},target:{id:"+strconv.FormatInt(uid, 10)+",level:"+strconv.FormatInt(level, 10)+"}}", 1)
+			if database.UpdateUser(model.User{ID: uid}, model.User{Level: level}) {
+				database.AddLog("User", "changeLevel:{user:{mail:'"+user.Mail+"'},target:{id:"+strconv.FormatInt(uid, 10)+",level:"+strconv.FormatInt(level, 10)+"}}", 1)
 				return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 			}
 			return c.JSON(http.StatusInternalServerError, model.Callback{Code: 0, Info: "ERROR"})
@@ -105,8 +105,8 @@ func ChangeLevel(c echo.Context) error {
 func GetUserList(c echo.Context) error {
 	user := CheckAuth(c)
 	if user != nil {
-		if GetUser(model.User{Mail: user.Mail})[0].Level <= 0 {
-			users := GetUser(model.User{})
+		if database.GetUser(model.User{Mail: user.Mail})[0].Level <= 0 {
+			users := database.GetUser(model.User{})
 			for i := 0; i < len(users); i++ {
 				users[i].Password = "*********"
 				users[i].Token = "*********"

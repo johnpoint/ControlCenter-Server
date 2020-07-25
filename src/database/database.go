@@ -6,14 +6,14 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	. "github.com/johnpoint/ControlCenter-Server/src/config"
+	"github.com/johnpoint/ControlCenter-Server/src/config"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"log"
 	"time"
 )
 
 func initDatabase() *gorm.DB {
-	conf := LoadConfig()
+	conf := config.LoadConfig()
 	db, err := gorm.Open("sqlite3", conf.Database)
 	if conf.Debug {
 		db.LogMode(true)
@@ -25,7 +25,7 @@ func initDatabase() *gorm.DB {
 }
 
 func initRedis() *redis.Client {
-	conf := LoadConfig()
+	conf := config.LoadConfig()
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     conf.RedisConfig.Addr,
 		Password: conf.RedisConfig.Password, // no password set
@@ -95,7 +95,9 @@ func GetServer(server model.Server) []model.Server {
 		db.Where(server).Find(&servers)
 		return servers
 	} else {
-
+		servers := []model.Server{}
+		json.Unmarshal([]byte(data), &servers)
+		return servers
 	}
 }
 

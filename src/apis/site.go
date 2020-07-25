@@ -1,7 +1,7 @@
 package apis
 
 import (
-	. "github.com/johnpoint/ControlCenter-Server/src/database"
+	"github.com/johnpoint/ControlCenter-Server/src/database"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"net/http"
 	"strconv"
@@ -16,7 +16,7 @@ func GetSiteInfo(c echo.Context) error {
 		if err := c.Bind(&site); err != nil {
 			panic(err)
 		}
-		return c.JSON(http.StatusOK, GetSite(site))
+		return c.JSON(http.StatusOK, database.GetSite(site))
 	}
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
 }
@@ -26,7 +26,7 @@ func AddSiteInfo(c echo.Context) error {
 	if err := c.Bind(&site); err != nil {
 		panic(err)
 	}
-	if !AddSite(site) {
+	if !database.AddSite(site) {
 		return c.JSON(http.StatusBadGateway, model.Callback{Code: 0, Info: "ERROR"})
 	}
 	return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
@@ -37,7 +37,7 @@ func DeleteSiteInfo(c echo.Context) error {
 	if err := c.Bind(&site); err != nil {
 		panic(err)
 	}
-	if !DelSite(site) {
+	if !database.DelSite(site) {
 		return c.JSON(http.StatusBadGateway, model.Callback{Code: 0, Info: "ERROR"})
 	}
 	return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
@@ -49,9 +49,9 @@ func LinkServerSite(c echo.Context) error {
 	Isid, _ := strconv.ParseInt(sid, 10, 64)
 	Icid, _ := strconv.ParseInt(cid, 10, 64)
 	payload := model.ServerLink{ServerID: Isid, SiteID: Icid}
-	data := GetLinkSite(payload)
+	data := database.GetLinkSite(payload)
 	if len(data) == 0 {
-		if (LinkServer(model.ServerLink{ServerID: Isid, SiteID: Icid})) {
+		if (database.LinkServer(model.ServerLink{ServerID: Isid, SiteID: Icid})) {
 			return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusOK, model.Callback{Code: 0, Info: "ERROR"})
@@ -66,9 +66,9 @@ func UnLinkServerSite(c echo.Context) error {
 	Isid, _ := strconv.ParseInt(sid, 10, 64)
 	Icid, _ := strconv.ParseInt(cid, 10, 64)
 	payload := model.ServerLink{ServerID: Isid, SiteID: Icid}
-	data := UnLinkServer(payload)
+	data := database.UnLinkServer(payload)
 	if data {
-		if len(GetLinkCer(payload)) == 0 {
+		if len(database.GetLinkCer(payload)) == 0 {
 			return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 		}
 	}
@@ -78,7 +78,7 @@ func UnLinkServerSite(c echo.Context) error {
 func GetCertificatesInfo(c echo.Context) error {
 	sid := c.Param("SiteID")
 	Isid, _ := strconv.ParseInt(sid, 10, 64)
-	SiteInfo := GetSite(model.Site{ID: Isid})
+	SiteInfo := database.GetSite(model.Site{ID: Isid})
 	if len(SiteInfo) != 0 {
 		SiteName := SiteInfo[0].Name
 		resp, _ := http.Get("https://" + SiteName)

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	. "github.com/johnpoint/ControlCenter-Server/src/config"
+	"github.com/johnpoint/ControlCenter-Server/src/config"
 	"github.com/johnpoint/ControlCenter-Server/src/router"
 	"os"
 )
@@ -10,7 +10,7 @@ import (
 func main() {
 	if len(os.Args) == 2 {
 		if os.Args[1] == "init" {
-			InitServer()
+			config.InitServer()
 			// TODO: 交互初始化配置文件
 		} else if os.Args[1] == "start" {
 			router.Run()

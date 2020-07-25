@@ -1,7 +1,7 @@
 package apis
 
 import (
-	. "github.com/johnpoint/ControlCenter-Server/src/database"
+	"github.com/johnpoint/ControlCenter-Server/src/database"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"net/http"
 
@@ -11,7 +11,7 @@ import (
 func GetDomainInfo(c echo.Context) error {
 	user := CheckAuth(c)
 	if user.Level == 1 {
-		return c.JSON(http.StatusOK, GetDomain(model.Domain{}))
+		return c.JSON(http.StatusOK, database.GetDomain(model.Domain{}))
 	}
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
 }
@@ -23,7 +23,7 @@ func UpdateDomainInfo(c echo.Context) error {
 		if err := c.Bind(&domain); err != nil {
 			panic(err)
 		}
-		if UpdateDomain(model.Domain{Name: domain.Name}, domain) {
+		if database.UpdateDomain(model.Domain{Name: domain.Name}, domain) {
 			return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusBadRequest, model.Callback{Code: 0, Info: "ERROR"})
