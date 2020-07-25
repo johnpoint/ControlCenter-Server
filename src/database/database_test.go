@@ -28,10 +28,11 @@ func TestMain(m *testing.M) {
 func TestInitDatabase(t *testing.T) {
 	// 测试配置文件内容
 	var testData = model.Config{AllowAddress: []string{"127.0.0.1"}, ListenPort: string("1323"), TLS: false, CERTPath: "PATHtoCER", KEYPath: "PATHtoKEY", Salt: "ControlCenter", Database: "testdata.db", RedisConfig: struct {
+		Enable   bool
 		Addr     string
 		Password string
 		DB       int
-	}{Addr: "127.0.0.1:6379", Password: "", DB: 1}}
+	}{Addr: "127.0.0.1:6379", Password: "", DB: 1, Enable: true}}
 	file, _ := os.Create("config.json")
 	defer file.Close()
 	databy, _ := json.Marshal(testData)

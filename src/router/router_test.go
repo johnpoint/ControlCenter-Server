@@ -24,10 +24,11 @@ func TestMain(m *testing.M) {
 		fmt.Println("= 数据库已经初始化 =")
 	}
 	var testData = model.Config{AllowAddress: []string{"127.0.0.1"}, ListenPort: string("1323"), TLS: false, CERTPath: "PATHtoCER", KEYPath: "PATHtoKEY", Salt: "ControlCenter", Database: "testdata.db", RedisConfig: struct {
+		Enable   bool
 		Addr     string
 		Password string
 		DB       int
-	}{Addr: "127.0.0.1:6379", Password: "", DB: 1}}
+	}{Addr: "127.0.0.1:6379", Password: "", DB: 1, Enable: true}}
 	file, _ := os.Create("config.json")
 	fmt.Println("= 配置文件设置完成 =")
 	defer file.Close()
