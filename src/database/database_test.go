@@ -3,7 +3,8 @@ package database
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/johnpoint/ControlCenter-Server/src/model"
+	"github.com/johnpoint/ControlCenter-Server/src/model"
+	"github.com/stretchr/testify/assert"
 	"io"
 	"os"
 	"testing"
@@ -26,7 +27,7 @@ func TestMain(m *testing.M) {
 
 func TestInitDatabase(t *testing.T) {
 	// 测试配置文件内容
-	var testData = Config{AllowAddress: []string{"127.0.0.1"}, ListenPort: string("1323"), TLS: false, CERTPath: "PATHtoCER", KEYPath: "PATHtoKEY", Salt: "ControlCenter", Database: "testdata.db"}
+	var testData = model.Config{AllowAddress: []string{"127.0.0.1"}, ListenPort: string("1323"), TLS: false, CERTPath: "PATHtoCER", KEYPath: "PATHtoKEY", Salt: "ControlCenter", Database: "testdata.db", RedisConfig: model.RedisConfig{Addr: "127.0.0.1:6379", Password: "", DB: 1}}
 	file, _ := os.Create("config.json")
 	defer file.Close()
 	databy, _ := json.Marshal(testData)
@@ -37,61 +38,64 @@ func TestInitDatabase(t *testing.T) {
 }
 
 func TestAddServer(t *testing.T) {
-	if !AddServer(Server{ID: 10086, Hostname: "testServer", Ipv4: "8.8.8.8", Ipv6: "::1", UID: 1, Token: "TestToken", Online: 1, Update: 1}) {
+	if !AddServer(model.Server{ID: 10086, Hostname: "testServer", Ipv4: "8.8.8.8", Ipv6: "::1", UID: 1, Token: "TestToken", Online: 1, Update: 1}) {
 		t.Fatal("add server1 fail")
 	}
-	if !AddServer(Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1, Update: 1}) {
+	if !AddServer(model.Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1, Update: 1}) {
 		t.Fatal("add server1 fail")
 	}
 }
 
-func ExampleGetServer() {
-	ServerInfo := GetServer(Server{Hostname: "testServer"})
+func TestGetServer(t *testing.T) {
+	ServerInfo := GetServer(model.Server{Hostname: "testServer"})
 	fmt.Println(ServerInfo)
-	// Output: [{ testServer 8.8.8.8 ::1 10086 1 TestToken 1 1} { testServer 1.1.1.1 ::2 10087 1 TestToken 1 1}]
+	want := []model.Server{}
+	want = append(want, model.Server{ID: 10086, Hostname: "testServer", Ipv4: "8.8.8.8", Ipv6: "::1", UID: 1, Token: "TestToken", Online: 1, Update: 1}, model.Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1, Update: 1})
+	assert.Equal(t, want, ServerInfo)
 }
 
-func ExampleDelServer() {
+func TestDelServer(t *testing.T) {
 	if !DelServer(10086, 1) {
 		panic("del server fail")
 	}
-	ServerInfo := GetServer(Server{Hostname: "testServer"})
-	fmt.Println(ServerInfo)
-	// Output: [{ testServer 1.1.1.1 ::2 10087 1 TestToken 1 1}]
+	ServerInfo := GetServer(model.Server{Hostname: "testServer"})
+	want := []model.Server{}
+	want = append(want, model.Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1, Update: 1})
+	assert.Equal(t, want, ServerInfo)
 }
 
 func ExampleUpdateServer() {
-	if !UpdateServer(Server{ID: 10087}, Server{Hostname: "Server"}) {
+	if !UpdateServer(model.Server{ID: 10087}, model.Server{Hostname: "Server"}) {
 		panic("update server fail")
 	}
-	ServerInfo := GetServer(Server{ID: 10087})
+	ServerInfo := GetServer(model.Server{ID: 10087})
 	fmt.Println(ServerInfo)
 	// Output: [{ Server 1.1.1.1 ::2 10087 1 TestToken 1 1}]
 }
 
 func ExampleAddUser() {
-	if !AddUser(User{ID: 233, Username: "testUser", Mail: "i@test.com", Password: "23333", Level: 1, Token: "23456"}) {
+	if !AddUser(model.User{ID: 233, Username: "testUser", Mail: "i@test.com", Password: "23333", Level: 1, Token: "23456"}) {
 		panic("add user fail")
 	}
-	user := GetUser(User{ID: 233})
+	user := GetUser(model.User{ID: 233})
 	fmt.Println(user)
 	// Output: [{233 testUser i@test.com 23333 1 23456}]
 }
 
 func ExampleUpdateUser() {
-	if !UpdateUser(User{ID: 233}, User{Username: "User"}) {
+	if !UpdateUser(model.User{ID: 233}, model.User{Username: "User"}) {
 		panic("add user fail")
 	}
-	user := GetUser(User{ID: 233})
+	user := GetUser(model.User{ID: 233})
 	fmt.Println(user)
 	// Output: [{233 User i@test.com 23333 1 23456}]
 }
 
 func ExampleDelUser() {
-	if !DelUser(User{ID: 233}) {
+	if !DelUser(model.User{ID: 233}) {
 		panic("del user fail")
 	}
-	user := GetUser(User{})
+	user := GetUser(model.User{})
 	fmt.Println(user)
 	// Output: []
 }

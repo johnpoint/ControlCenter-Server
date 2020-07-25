@@ -17,6 +17,13 @@ type (
 		Salt         string
 		Database     string
 		Debug        bool
+		RedisConfig  RedisConfig
+	}
+
+	RedisConfig struct {
+		Addr     string
+		Password string
+		DB       int
 	}
 
 	// SysConfig model of config

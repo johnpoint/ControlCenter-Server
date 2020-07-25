@@ -10,7 +10,7 @@ import (
 
 func TestLoadConfig(t *testing.T) {
 	// 测试配置文件内容
-	var testData = model.Config{AllowAddress: []string{"127.0.0.1"}, ListenPort: string("1323"), TLS: false, CERTPath: "PATHtoCER", KEYPath: "PATHtoKEY", Salt: "ControlCenter", Database: "testdata.db"}
+	var testData = model.Config{AllowAddress: []string{"127.0.0.1"}, ListenPort: string("1323"), TLS: false, CERTPath: "PATHtoCER", KEYPath: "PATHtoKEY", Salt: "ControlCenter", Database: "testdata.db", RedisConfig: model.RedisConfig{Addr: "127.0.0.1:6379", Password: "", DB: 1}}
 	file, _ := os.Create("config.json")
 	defer file.Close()
 	databy, _ := json.Marshal(testData)

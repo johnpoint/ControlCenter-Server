@@ -11,7 +11,7 @@ func Run() {
 	go checkOnlineI()
 	conf := LoadConfig()
 	e := echo.New()
-	e.Debug = true
+	e.Debug = conf.Debug
 	e.HideBanner = true
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: conf.AllowAddress,

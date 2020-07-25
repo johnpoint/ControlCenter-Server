@@ -11,6 +11,7 @@ func main() {
 	if len(os.Args) == 2 {
 		if os.Args[1] == "init" {
 			InitServer()
+			// TODO: 交互初始化配置文件
 		} else if os.Args[1] == "start" {
 			router.Run()
 		} else if os.Args[1] == "test" {

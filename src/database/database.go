@@ -1,10 +1,13 @@
 package database
 
 import (
+	"context"
+	"github.com/go-redis/redis/v8"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	. "github.com/johnpoint/ControlCenter-Server/src/config"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
+	"log"
 	"time"
 )
 
@@ -18,6 +21,43 @@ func initDatabase() *gorm.DB {
 		panic("连接数据库失败")
 	}
 	return db
+}
+
+func initRedis() *redis.Client {
+	conf := LoadConfig()
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     conf.RedisConfig.Addr,
+		Password: conf.RedisConfig.Password, // no password set
+		DB:       conf.RedisConfig.DB,       // use default DB
+	})
+	return rdb
+}
+
+func redisGet(key string) string {
+	rdb := initRedis()
+	ctx := context.Background()
+	val, err := rdb.Get(ctx, key).Result()
+	if err != nil {
+		if err == redis.Nil {
+			return "key does not exists"
+		}
+		log.Print(err)
+		return "err"
+	}
+	return val
+}
+
+func redisSet(key string, value string, exp time.Duration) string {
+	rdb := initRedis()
+	ctx := context.Background()
+	_, err := rdb.Set(ctx, key, value, exp).Result()
+	if err != nil {
+		if redisGet(key) != value {
+			return "data set fail"
+		}
+		return "err"
+	}
+	return "ok"
 }
 
 //Server
