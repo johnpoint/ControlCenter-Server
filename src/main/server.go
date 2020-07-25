@@ -17,6 +17,9 @@ func main() {
 		} else if os.Args[1] == "test" {
 			fmt.Println("build pass")
 			return
+		} else if os.Args[1] == "update" {
+			config.UpdateConfig()
+			return
 		}
 	}
 	fmt.Println("参数错误")

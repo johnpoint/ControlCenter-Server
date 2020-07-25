@@ -18,6 +18,7 @@ type (
 		Database     string
 		Debug        bool
 		RedisConfig  struct {
+			Enable   bool
 			Addr     string
 			Password string
 			DB       int

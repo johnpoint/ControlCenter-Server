@@ -1,16 +1,16 @@
-package main
+package config
 
 import (
 	"encoding/json"
-	"github.com/johnpoint/ControlCenter-Server/src/config"
 	"io"
 	"os"
 )
 
-func main() {
-	conf := config.LoadConfig()
+func UpdateConfig() {
+	conf := LoadConfig()
 	file, _ := os.Create("config.json")
 	defer file.Close()
+	conf.RedisConfig.Enable = false
 	databy, _ := json.Marshal(conf)
 	io.WriteString(file, string(databy))
 }

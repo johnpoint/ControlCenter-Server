@@ -12,6 +12,9 @@ import (
 	"time"
 )
 
+var conf = config.LoadConfig()
+var redisEable = conf.RedisConfig.Enable
+
 func initDatabase() *gorm.DB {
 	conf := config.LoadConfig()
 	db, err := gorm.Open("sqlite3", conf.Database)
@@ -85,8 +88,11 @@ func UpdateServer(where model.Server, server model.Server) bool {
 }
 
 func GetServer(server model.Server) []model.Server {
-	serverjson, _ := json.Marshal(server)
-	data := redisGet(string(serverjson))
+	data := "key does not exists"
+	if redisEable {
+		serverjson, _ := json.Marshal(server)
+		data = redisGet(string(serverjson)) //check cache
+	}
 	if data == "key does not exists" {
 		db := initDatabase()
 		defer db.Close()
