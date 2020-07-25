@@ -17,36 +17,34 @@ type (
 		Salt         string
 		Database     string
 		Debug        bool
+		RedisConfig  struct {
+			Enable   bool
+			Addr     string
+			Password string
+			DB       int
+		}
 	}
-
-	// SysConfig model of config
 
 	// UpdateInfo model
 	UpdateInfo struct {
 		Code         int64
 		Sites        []DataSite
 		Certificates []DataCertificate
-		Services     []DataService
-		Dockers      []DockerInfo
+		Services     struct {
+			Name    string
+			Enable  string
+			Disable string
+			Status  string
+		}
+		Dockers []DockerInfo
 	}
 
-	// DataSite model
 	DataSite struct {
 		ID     int64
 		Domain string
 		CerID  int64
 		Config string
 	}
-
-	// DataService model
-	DataService struct {
-		Name    string
-		Enable  string
-		Disable string
-		Status  string
-	}
-
-	// DataCertificate model
 	DataCertificate struct {
 		ID        int64
 		Domain    string

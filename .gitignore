@@ -1,2 +1,7 @@
 .idea/
 dev/
+/src/updatetool/tool
+/src/updatetool/config.json
+/src/router/config.json
+/src/config/c.out
+/src/database/config.json

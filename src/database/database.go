@@ -1,15 +1,22 @@
 package database
 
 import (
+	"context"
+	"encoding/json"
+	"github.com/go-redis/redis/v8"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	. "github.com/johnpoint/ControlCenter-Server/src/config"
+	"github.com/johnpoint/ControlCenter-Server/src/config"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
+	"log"
 	"time"
 )
 
+var conf = config.LoadConfig()
+var redisEable = conf.RedisConfig.Enable
+
 func initDatabase() *gorm.DB {
-	conf := LoadConfig()
+	conf := config.LoadConfig()
 	db, err := gorm.Open("sqlite3", conf.Database)
 	if conf.Debug {
 		db.LogMode(true)
@@ -18,6 +25,43 @@ func initDatabase() *gorm.DB {
 		panic("连接数据库失败")
 	}
 	return db
+}
+
+func initRedis() *redis.Client {
+	conf := config.LoadConfig()
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     conf.RedisConfig.Addr,
+		Password: conf.RedisConfig.Password, // no password set
+		DB:       conf.RedisConfig.DB,       // use default DB
+	})
+	return rdb
+}
+
+func redisGet(key string) string {
+	rdb := initRedis()
+	ctx := context.Background()
+	val, err := rdb.Get(ctx, key).Result()
+	if err != nil {
+		if err == redis.Nil {
+			return "key does not exists"
+		}
+		log.Print(err)
+		return "err"
+	}
+	return val
+}
+
+func redisSet(key string, value string, exp time.Duration) string {
+	rdb := initRedis()
+	ctx := context.Background()
+	_, err := rdb.Set(ctx, key, value, exp).Result()
+	if err != nil {
+		if redisGet(key) != value {
+			return "data set fail"
+		}
+		return "err"
+	}
+	return "ok"
 }
 
 //Server
@@ -44,12 +88,23 @@ func UpdateServer(where model.Server, server model.Server) bool {
 }
 
 func GetServer(server model.Server) []model.Server {
-	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Server{})
-	servers := []model.Server{}
-	db.Where(server).Find(&servers)
-	return servers
+	data := "key does not exists"
+	if redisEable {
+		serverjson, _ := json.Marshal(server)
+		data = redisGet(string(serverjson)) //check cache
+	}
+	if data == "key does not exists" {
+		db := initDatabase()
+		defer db.Close()
+		db.AutoMigrate(&model.Server{})
+		servers := []model.Server{}
+		db.Where(server).Find(&servers)
+		return servers
+	} else {
+		servers := []model.Server{}
+		json.Unmarshal([]byte(data), &servers)
+		return servers
+	}
 }
 
 func DelServer(id int64, uid int64) bool {
@@ -83,6 +138,7 @@ func UpdateUser(where model.User, user model.User) bool {
 	}
 	return false
 }
+
 func GetUser(user model.User) []model.User {
 	db := initDatabase()
 	defer db.Close()

@@ -2,7 +2,7 @@ package push
 
 import (
 	"fmt"
-	. "github.com/johnpoint/ControlCenter-Server/src/database"
+	"github.com/johnpoint/ControlCenter-Server/src/database"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"net/http"
 	"net/url"
@@ -10,9 +10,9 @@ import (
 
 func Telegram_Push(servers []model.Server, status string) bool {
 	for i := 0; i < len(servers); i++ {
-		TelegramBotToken := GetConfig(model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_BOT_TOKEN"})
-		TelegramChatId := GetConfig(model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_CHAT_ID"})
-		TelegramNotification := GetConfig(model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_NOTIFICATION"})
+		TelegramBotToken := database.GetConfig(model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_BOT_TOKEN"})
+		TelegramChatId := database.GetConfig(model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_CHAT_ID"})
+		TelegramNotification := database.GetConfig(model.SysConfig{UID: servers[i].UID, Name: "TELEGRAM_NOTIFICATION"})
 		if len(TelegramBotToken) == 0 || len(TelegramChatId) == 0 || len(TelegramNotification) == 0 {
 			continue
 		}

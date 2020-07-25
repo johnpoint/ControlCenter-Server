@@ -1,17 +1,17 @@
 package router
 
 import (
-	. "github.com/johnpoint/ControlCenter-Server/src/apis"
-	. "github.com/johnpoint/ControlCenter-Server/src/config"
+	"github.com/johnpoint/ControlCenter-Server/src/apis"
+	"github.com/johnpoint/ControlCenter-Server/src/config"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
 func Run() {
 	go checkOnlineI()
-	conf := LoadConfig()
+	conf := config.LoadConfig()
 	e := echo.New()
-	e.Debug = true
+	e.Debug = conf.Debug
 	e.HideBanner = true
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: conf.AllowAddress,
@@ -19,60 +19,60 @@ func Run() {
 	}))
 
 	u := e.Group("/user")
-	u.POST("/auth/login", OaLogin)
-	u.POST("/auth/register", OaRegister)
+	u.POST("/auth/login", apis.OaLogin)
+	u.POST("/auth/register", apis.OaRegister)
 
 	s := e.Group("/server")
-	s.POST("/setup/:token", SetupServer)
-	s.GET("/now/:token", GetNow)
-	s.POST("/update/:token", ServerUpdate)
-	s.GET("/update/:token", GetServerUpdate)
+	s.POST("/setup/:token", apis.SetupServer)
+	s.GET("/now/:token", apis.GetNow)
+	s.POST("/update/:token", apis.ServerUpdate)
+	s.GET("/update/:token", apis.GetServerUpdate)
 
-	e.GET("/", Accessible)
+	e.GET("/", apis.Accessible)
 
 	sys := e.Group("/system")
-	sys.POST("/restart", SysRestart)
+	sys.POST("/restart", apis.SysRestart)
 	jwtConfig := middleware.JWTConfig{
-		Claims:     &JwtCustomClaims{},
+		Claims:     &apis.JwtCustomClaims{},
 		SigningKey: []byte(conf.Salt),
 	}
 	w := e.Group("/web")
 	w.Use(middleware.JWTWithConfig(jwtConfig))
-	w.POST("/debug/check", CheckPower)
-	w.GET("/ServerInfo", GetServerInfo)
-	w.PUT("/ServerInfo", UpdateServerInfo)
-	w.GET("/ServerInfo/Certificate", GetCertificateLinked)
-	w.GET("/ServerInfo/Site", GetSiteLinked)
-	w.DELETE("/Server/:id", RemoveServer)
-	w.GET("/DomainInfo", GetDomainInfo)
-	w.PUT("/DomainInfo", UpdateDomainInfo)
-	w.PUT("/UserInfo/:mail/:key/:value", UpdateUserInfo)
-	w.PUT("/SiteInfo", AddSiteInfo)
-	w.GET("/SiteInfo", GetSiteInfo)
-	w.DELETE("/SiteInfo", DeleteSiteInfo)
-	w.PUT("/Certificate", AddCertificateInfo)
-	w.GET("/Certificate", GetCertificateInfo)
-	w.POST("/Certificate", UpdateCertificateInfo)
-	w.DELETE("/Certificate/:id", DeleteCertificateInfo)
-	w.PUT("/link/Certificate/:ServerID/:CerID", LinkServerCer)
-	w.DELETE("/link/Certificate/:ServerID/:CerID", UnLinkServerCer)
-	w.PUT("/link/Site/:ServerID/:SiteID", LinkServerSite)
-	w.DELETE("/link/Site/:ServerID/:SiteID", UnLinkServerSite)
-	w.POST("/backup", SetBackupFile)
-	w.GET("/SiteInfo/check", GetCertificatesInfo)
-	w.POST("/Setting/:name/:value", SetSetting)
-	w.GET("/Setting/:name", GetSetting)
-	w.GET("/DockerInfo/:id", GetDockerInfo)
-	w.PUT("/DockerInfo", AddDockerInfo)
-	w.PUT("/DockerInfo/:id", EditDockerInfo)
-	e.GET("/web/:token/backup", GetBackupFile)
+	w.POST("/debug/check", apis.CheckPower)
+	w.GET("/ServerInfo", apis.GetServerInfo)
+	w.PUT("/ServerInfo", apis.UpdateServerInfo)
+	w.GET("/ServerInfo/Certificate", apis.GetCertificateLinked)
+	w.GET("/ServerInfo/Site", apis.GetSiteLinked)
+	w.DELETE("/Server/:id", apis.RemoveServer)
+	w.GET("/DomainInfo", apis.GetDomainInfo)
+	w.PUT("/DomainInfo", apis.UpdateDomainInfo)
+	w.PUT("/UserInfo/:mail/:key/:value", apis.UpdateUserInfo)
+	w.PUT("/SiteInfo", apis.AddSiteInfo)
+	w.GET("/SiteInfo", apis.GetSiteInfo)
+	w.DELETE("/SiteInfo", apis.DeleteSiteInfo)
+	w.PUT("/Certificate", apis.AddCertificateInfo)
+	w.GET("/Certificate", apis.GetCertificateInfo)
+	w.POST("/Certificate", apis.UpdateCertificateInfo)
+	w.DELETE("/Certificate/:id", apis.DeleteCertificateInfo)
+	w.PUT("/link/Certificate/:ServerID/:CerID", apis.LinkServerCer)
+	w.DELETE("/link/Certificate/:ServerID/:CerID", apis.UnLinkServerCer)
+	w.PUT("/link/Site/:ServerID/:SiteID", apis.LinkServerSite)
+	w.DELETE("/link/Site/:ServerID/:SiteID", apis.UnLinkServerSite)
+	w.POST("/backup", apis.SetBackupFile)
+	w.GET("/SiteInfo/check", apis.GetCertificatesInfo)
+	w.POST("/Setting/:name/:value", apis.SetSetting)
+	w.GET("/Setting/:name", apis.GetSetting)
+	w.GET("/DockerInfo/:id", apis.GetDockerInfo)
+	w.PUT("/DockerInfo", apis.AddDockerInfo)
+	w.PUT("/DockerInfo/:id", apis.EditDockerInfo)
+	e.GET("/web/:token/backup", apis.GetBackupFile)
 	user := w.Group("/UserInfo")
-	user.PUT("/level/:uid/:level", ChangeLevel)
-	user.GET("/Password/:oldpass/:newpass", ReSetPassword)
-	user.GET("/Token", GetUserToken)
-	user.PUT("/Token", GetNewToken)
-	user.GET("", GetUserInfo)
-	user.GET("/", GetUserList)
+	user.PUT("/level/:uid/:level", apis.ChangeLevel)
+	user.GET("/Password/:oldpass/:newpass", apis.ReSetPassword)
+	user.GET("/Token", apis.GetUserToken)
+	user.PUT("/Token", apis.GetNewToken)
+	user.GET("", apis.GetUserInfo)
+	user.GET("/", apis.GetUserList)
 
 	if conf.TLS {
 		e.Logger.Fatal(e.StartTLS(":"+conf.ListenPort, conf.CERTPath, conf.KEYPath))
@@ -83,6 +83,6 @@ func Run() {
 
 func checkOnlineI() {
 	for true {
-		CheckOnline()
+		apis.CheckOnline()
 	}
 }

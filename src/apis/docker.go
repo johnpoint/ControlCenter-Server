@@ -1,7 +1,7 @@
 package apis
 
 import (
-	. "github.com/johnpoint/ControlCenter-Server/src/database"
+	"github.com/johnpoint/ControlCenter-Server/src/database"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"github.com/labstack/echo"
 	"net/http"
@@ -10,17 +10,17 @@ import (
 
 func GetDockerInfo(c echo.Context) error {
 	user := CheckAuth(c)
-	userInfo := GetUser(model.User{Mail: user.Mail})
+	userInfo := database.GetUser(model.User{Mail: user.Mail})
 	if len(userInfo) != 0 {
 		id := c.Param("id")
 		if userInfo[0].Level <= 0 {
 			if id == "all" {
-				docker := GetDocker(model.Docker{})
+				docker := database.GetDocker(model.Docker{})
 				return c.JSON(http.StatusOK, docker)
 			}
 		}
 		did, _ := strconv.ParseInt(id, 10, 64)
-		docker := GetDocker(model.Docker{UID: userInfo[0].ID, ID: did})
+		docker := database.GetDocker(model.Docker{UID: userInfo[0].ID, ID: did})
 		return c.JSON(http.StatusOK, docker)
 	}
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
@@ -28,14 +28,14 @@ func GetDockerInfo(c echo.Context) error {
 
 func AddDockerInfo(c echo.Context) error {
 	user := CheckAuth(c)
-	userInfo := GetUser(model.User{Mail: user.Mail})
+	userInfo := database.GetUser(model.User{Mail: user.Mail})
 	if len(userInfo) != 0 {
 		docker := model.Docker{}
 		if err := c.Bind(&docker); err != nil {
 			return err
 		}
 		docker.UID = userInfo[0].ID
-		if AddDocker(docker) {
+		if database.AddDocker(docker) {
 			return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusInternalServerError, model.Callback{Code: 0, Info: "ERROR"})
@@ -45,7 +45,7 @@ func AddDockerInfo(c echo.Context) error {
 
 func EditDockerInfo(c echo.Context) error {
 	user := CheckAuth(c)
-	userInfo := GetUser(model.User{Mail: user.Mail})
+	userInfo := database.GetUser(model.User{Mail: user.Mail})
 	if len(userInfo) != 0 {
 		docker := model.Docker{}
 		if err := c.Bind(&docker); err != nil {
@@ -53,7 +53,7 @@ func EditDockerInfo(c echo.Context) error {
 		}
 		docker.ID, _ = strconv.ParseInt(c.Param("id"), 10, 64)
 		docker.UID = userInfo[0].ID
-		if EditDocker(docker) {
+		if database.EditDocker(docker) {
 			return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 		}
 		return c.JSON(http.StatusInternalServerError, model.Callback{Code: 0, Info: "ERROR"})

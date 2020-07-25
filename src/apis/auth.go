@@ -3,8 +3,8 @@ package apis
 import (
 	"crypto/md5"
 	"fmt"
-	. "github.com/johnpoint/ControlCenter-Server/src/config"
-	. "github.com/johnpoint/ControlCenter-Server/src/database"
+	"github.com/johnpoint/ControlCenter-Server/src/config"
+	"github.com/johnpoint/ControlCenter-Server/src/database"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"net/http"
 	"strconv"
@@ -22,7 +22,7 @@ type JwtCustomClaims struct {
 }
 
 func OaLogin(c echo.Context) error {
-	conf := LoadConfig()
+	conf := config.LoadConfig()
 	salt := conf.Salt
 	u := model.User{}
 	if err := c.Bind(&u); err != nil {
@@ -32,7 +32,7 @@ func OaLogin(c echo.Context) error {
 	has := md5.Sum(data)
 	md5str1 := fmt.Sprintf("%x", has)
 	getuser := model.User{Mail: u.Mail}
-	user := GetUser(getuser)
+	user := database.GetUser(getuser)
 	if len(user) == 0 {
 		re := model.Callback{Code: 0, Info: "account or password incorrect"}
 		return c.JSON(http.StatusOK, re)
@@ -51,7 +51,7 @@ func OaLogin(c echo.Context) error {
 		if err != nil {
 			return err
 		}
-		AddLog("Auth", "Login:{user:{id:"+strconv.FormatInt(user[0].ID, 10)+",mail:'"+user[0].Mail+"',level:"+strconv.FormatInt(user[0].Level, 10)+"},token:'"+t+"'}", 1)
+		database.AddLog("Auth", "Login:{user:{id:"+strconv.FormatInt(user[0].ID, 10)+",mail:'"+user[0].Mail+"',level:"+strconv.FormatInt(user[0].Level, 10)+"},token:'"+t+"'}", 1)
 		return c.JSON(http.StatusOK, echo.Map{
 			"token": t,
 		})
@@ -61,14 +61,14 @@ func OaLogin(c echo.Context) error {
 }
 
 func OaRegister(c echo.Context) error {
-	conf := LoadConfig()
+	conf := config.LoadConfig()
 	salt := conf.Salt
 	u := model.User{}
 	var re model.Callback
 	if err := c.Bind(&u); err != nil {
 		return err
 	}
-	checkUser := GetUser(model.User{Mail: u.Mail})
+	checkUser := database.GetUser(model.User{Mail: u.Mail})
 	if len(checkUser) != 0 {
 		re = model.Callback{Code: 0, Info: "This account has been used"}
 	} else {
@@ -76,8 +76,8 @@ func OaRegister(c echo.Context) error {
 		has := md5.Sum(data)
 		md5str1 := fmt.Sprintf("%x", has)
 		newUser := model.User{Username: u.Username, Mail: u.Mail, Password: md5str1, Level: 1}
-		if AddUser(newUser) {
-			AddLog("Auth", "Register:{user:{mail:'"+u.Mail+"'}", 1)
+		if database.AddUser(newUser) {
+			database.AddLog("Auth", "Register:{user:{mail:'"+u.Mail+"'}", 1)
 			re = model.Callback{Code: 200, Info: "OK"}
 		} else {
 			re = model.Callback{Code: 0, Info: "ERROR"}
@@ -90,7 +90,7 @@ func OaRegister(c echo.Context) error {
 func CheckAuth(c echo.Context) *JwtCustomClaims {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*JwtCustomClaims)
-	if len(GetUser(model.User{Mail: claims.Mail, Level: claims.Level})) == 0 {
+	if len(database.GetUser(model.User{Mail: claims.Mail, Level: claims.Level})) == 0 {
 		return nil
 	}
 	return claims
