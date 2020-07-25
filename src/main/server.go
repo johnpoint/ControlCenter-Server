@@ -9,19 +9,23 @@ import (
 
 func main() {
 	if len(os.Args) == 2 {
-		if os.Args[1] == "init" {
-			config.InitServer()
-			// TODO: 交互初始化配置文件
-		} else if os.Args[1] == "start" {
+		switch os.Args[1] {
+		case "start":
 			router.Run()
-		} else if os.Args[1] == "test" {
+			break
+		case "init":
+			config.InitServer()
+			break
+			// TODO: 交互初始化配置文件
+		case "test":
 			fmt.Println("build pass")
-			return
-		} else if os.Args[1] == "update" {
+			break
+		case "update":
 			config.UpdateConfig()
-			return
+			break
+		default:
+			fmt.Println("参数错误")
 		}
 	}
-	fmt.Println("参数错误")
 	return
 }
