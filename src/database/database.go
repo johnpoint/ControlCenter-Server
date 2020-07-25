@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -84,12 +85,18 @@ func UpdateServer(where model.Server, server model.Server) bool {
 }
 
 func GetServer(server model.Server) []model.Server {
-	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Server{})
-	servers := []model.Server{}
-	db.Where(server).Find(&servers)
-	return servers
+	serverjson, _ := json.Marshal(server)
+	data := redisGet(string(serverjson))
+	if data == "key does not exists" {
+		db := initDatabase()
+		defer db.Close()
+		db.AutoMigrate(&model.Server{})
+		servers := []model.Server{}
+		db.Where(server).Find(&servers)
+		return servers
+	} else {
+
+	}
 }
 
 func DelServer(id int64, uid int64) bool {
@@ -123,6 +130,7 @@ func UpdateUser(where model.User, user model.User) bool {
 	}
 	return false
 }
+
 func GetUser(user model.User) []model.User {
 	db := initDatabase()
 	defer db.Close()
