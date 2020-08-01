@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/johnpoint/ControlCenter-Server/src/config"
@@ -605,15 +604,12 @@ func FinishEvent(id int64) bool {
 	if tx.Error != nil {
 		return false
 	}
-	fmt.Print("t")
 	tx.AutoMigrate(&model.Event{})
 	event := model.Event{Active: 2}
 	if err := tx.Model(&event).Where(model.Event{ID: id, Active: 1}).Update(event).Error; err != nil {
-		fmt.Print("stt")
 		tx.Rollback()
 		return false
 	}
-	fmt.Print("sttt")
 	tx.Commit()
 	return true
 }
