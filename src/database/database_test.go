@@ -33,6 +33,7 @@ func TestInitDatabase(t *testing.T) {
 		Password string
 		DB       int
 	}{Addr: "127.0.0.1:6379", Password: "", DB: 1, Enable: true}}
+	testData.Debug = true
 	file, _ := os.Create("config.json")
 	defer file.Close()
 	databy, _ := json.Marshal(testData)
@@ -40,22 +41,32 @@ func TestInitDatabase(t *testing.T) {
 	if initDatabase() == nil {
 		t.Fatal("connect db error")
 	}
+	testData.Debug = false
+	file, _ = os.Create("config.json")
+	defer file.Close()
+	databy, _ = json.Marshal(testData)
+	io.WriteString(file, string(databy)) // 写入测试配置文件
+	if initDatabase() == nil {
+		t.Fatal("connect db error")
+	}
 }
 
 func TestAddServer(t *testing.T) {
-	if !AddServer(model.Server{ID: 10086, Hostname: "testServer", Ipv4: "8.8.8.8", Ipv6: "::1", UID: 1, Token: "TestToken", Online: 1, Update: 1}) {
+	if !AddServer(model.Server{ID: 10086, Hostname: "testServer", Ipv4: "8.8.8.8", Ipv6: "::1", UID: 1, Token: "TestToken", Online: 1}) {
 		t.Fatal("add server1 fail")
 	}
-	if !AddServer(model.Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1, Update: 1}) {
+	if !AddServer(model.Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1}) {
+		t.Fatal("add server1 fail")
+	}
+	if AddServer(model.Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1}) {
 		t.Fatal("add server1 fail")
 	}
 }
 
 func TestGetServer(t *testing.T) {
 	ServerInfo := GetServer(model.Server{Hostname: "testServer"})
-	fmt.Println(ServerInfo)
 	want := []model.Server{}
-	want = append(want, model.Server{ID: 10086, Hostname: "testServer", Ipv4: "8.8.8.8", Ipv6: "::1", UID: 1, Token: "TestToken", Online: 1, Update: 1}, model.Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1, Update: 1})
+	want = append(want, model.Server{ID: 10086, Hostname: "testServer", Ipv4: "8.8.8.8", Ipv6: "::1", UID: 1, Token: "TestToken", Online: 1}, model.Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1})
 	assert.Equal(t, want, ServerInfo)
 }
 
@@ -65,42 +76,45 @@ func TestDelServer(t *testing.T) {
 	}
 	ServerInfo := GetServer(model.Server{Hostname: "testServer"})
 	want := []model.Server{}
-	want = append(want, model.Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1, Update: 1})
+	want = append(want, model.Server{ID: 10087, Hostname: "testServer", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1})
 	assert.Equal(t, want, ServerInfo)
 }
 
-func ExampleUpdateServer() {
+func TestUpdateServer(t *testing.T) {
 	if !UpdateServer(model.Server{ID: 10087}, model.Server{Hostname: "Server"}) {
 		panic("update server fail")
 	}
 	ServerInfo := GetServer(model.Server{ID: 10087})
-	fmt.Println(ServerInfo)
-	// Output: [{ Server 1.1.1.1 ::2 10087 1 TestToken 1 1}]
+	want := []model.Server{}
+	want = append(want, model.Server{ID: 10087, Hostname: "Server", Ipv4: "1.1.1.1", Ipv6: "::2", UID: 1, Token: "TestToken", Online: 1})
+	assert.Equal(t, want, ServerInfo)
 }
 
-func ExampleAddUser() {
+func TestAddUser(t *testing.T) {
 	if !AddUser(model.User{ID: 233, Username: "testUser", Mail: "i@test.com", Password: "23333", Level: 1, Token: "23456"}) {
 		panic("add user fail")
 	}
 	user := GetUser(model.User{ID: 233})
-	fmt.Println(user)
-	// Output: [{233 testUser i@test.com 23333 1 23456}]
+	want := []model.User{}
+	want = append(want, model.User{ID: 233, Username: "testUser", Mail: "i@test.com", Password: "23333", Level: 1, Token: "23456"})
+	assert.Equal(t, want, user)
 }
 
-func ExampleUpdateUser() {
+func TestUpdateUser(t *testing.T) {
 	if !UpdateUser(model.User{ID: 233}, model.User{Username: "User"}) {
 		panic("add user fail")
 	}
 	user := GetUser(model.User{ID: 233})
-	fmt.Println(user)
-	// Output: [{233 User i@test.com 23333 1 23456}]
+	want := []model.User{}
+	want = append(want, model.User{ID: 233, Username: "User", Mail: "i@test.com", Password: "23333", Level: 1, Token: "23456"})
+	assert.Equal(t, want, user)
 }
 
-func ExampleDelUser() {
+func TestDelUser(t *testing.T) {
 	if !DelUser(model.User{ID: 233}) {
 		panic("del user fail")
 	}
 	user := GetUser(model.User{})
-	fmt.Println(user)
-	// Output: []
+	want := []model.User{}
+	assert.Equal(t, want, user)
 }

@@ -212,22 +212,50 @@ func GetNow(c echo.Context) error {
 	token := c.Param("token")
 	servers := database.GetServer(model.Server{Token: token})
 	if len(servers) != 0 {
-		if servers[0].Update == 1 {
-			log.Print(servers[0].Ipv4 + "\t↑")
-			database.UpdateServer(model.Server{Token: token}, model.Server{Update: -1})
-			return c.JSON(http.StatusOK, model.Callback{Code: 211, Info: "Update"})
-		}
-		if servers[0].Update == 2 {
-			log.Print(servers[0].Ipv4 + "\t☯")
-			database.UpdateServer(model.Server{Token: token}, model.Server{Update: -2})
-			return c.JSON(http.StatusOK, model.Callback{Code: 210, Info: "Exit"})
-		}
-		if servers[0].Update == 3 {
-			log.Print(servers[0].Ipv4 + "\t↕")
-			database.UpdateServer(model.Server{Token: token}, model.Server{Update: -3})
-			return c.JSON(http.StatusOK, model.Callback{Code: 212, Info: "Sync"})
+		eventList := database.GetEvent(0, servers[0].ID, 0, "", 1)
+		if len(eventList) != 0 {
+			b := database.FinishEvent(eventList[0].ID)
+			if b {
+				return c.JSON(http.StatusOK, model.Callback{Code: eventList[0].Code, Info: eventList[0].Info})
+			}
+			return c.JSON(http.StatusOK, model.Callback{Code: 500, Info: "Internal Server Error"})
 		}
 		return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
+	}
+	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
+}
+
+func ChangeDockerStatus(c echo.Context) error {
+	user := CheckAuth(c)
+	if user.Level <= 1 {
+		action, _ := strconv.ParseInt(c.Param("action"), 10, 64)
+		containterID := c.Param("id")
+		serverID, _ := strconv.ParseInt(c.Param("serverid"), 10, 64)
+		if len(database.GetServer(model.Server{ID: serverID, UID: database.GetUser(model.User{Mail: user.Mail})[0].ID})) == 1 {
+			if database.AddEvent(1, serverID, action, containterID) == false {
+				log.Print("AddEvent Fail:" + c.Path())
+				database.AddLog("Event", c.Path()+"|From:"+c.RealIP(), 2)
+				return c.JSON(http.StatusOK, model.Callback{Code: 500, Info: "Internal Server Error"})
+			}
+			return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
+		}
+	}
+	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
+}
+
+func AddClientEvent(c echo.Context) error {
+	user := CheckAuth(c)
+	if user.Level <= 1 {
+		action, _ := strconv.ParseInt(c.Param("action"), 10, 64)
+		serverID, _ := strconv.ParseInt(c.Param("serverid"), 10, 64)
+		if len(database.GetServer(model.Server{ID: serverID, UID: database.GetUser(model.User{Mail: user.Mail})[0].ID})) == 1 {
+			if database.AddEvent(1, serverID, action, "OK") == false {
+				log.Print("AddEvent Fail:" + c.Path())
+				database.AddLog("Event", c.Path()+"|From:"+c.RealIP(), 2)
+				return c.JSON(http.StatusOK, model.Callback{Code: 500, Info: "Internal Server Error"})
+			}
+			return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
+		}
 	}
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
 }

@@ -12,7 +12,7 @@ type Server struct {
 	UID      int64  `json:"uid" xml:"uid" form:"uid" query:"uid"`
 	Token    string
 	Online   int64 `gorm:"default:1"`
-	Update   int64 // 1 yes | -1 no
+	//Update   int64 // 1 yes | -1 no // TODO: remove
 }
 
 // Site model of Site
@@ -94,4 +94,13 @@ type LogInfo struct {
 	Info      string
 	Level     int64 // 1 Info | 2 Warn | 3 Error
 	CreatedAt time.Time
+}
+
+type Event struct {
+	ID       int64 `gorm:"AUTO_INCREMENT"`
+	Type     int64 // 1 docker | 2 client
+	TargetID int64
+	Code     int64
+	Info     string
+	Active   int64
 }
