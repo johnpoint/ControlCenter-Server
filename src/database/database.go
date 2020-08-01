@@ -1,19 +1,17 @@
 package database
 
 import (
-	"context"
-	"encoding/json"
-	"github.com/go-redis/redis/v8"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/johnpoint/ControlCenter-Server/src/config"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
-	"log"
 	"time"
 )
 
-var conf = config.LoadConfig()
-var redisEable = conf.RedisConfig.Enable
+//var conf = config.LoadConfig()
+
+//var redisEable = conf.RedisConfig.Enable
 
 func initDatabase() *gorm.DB {
 	conf := config.LoadConfig()
@@ -27,6 +25,7 @@ func initDatabase() *gorm.DB {
 	return db
 }
 
+/*
 func initRedis() *redis.Client {
 	conf := config.LoadConfig()
 	rdb := redis.NewClient(&redis.Options{
@@ -62,81 +61,132 @@ func redisSet(key string, value string, exp time.Duration) string {
 		return "err"
 	}
 	return "ok"
-}
+}*/
 
 //Server
 func AddServer(server model.Server) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Server{})
-	db.Create(&server)
-	if !(db.NewRecord(server)) {
-		return true
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if tx.Error != nil {
+		return false
 	}
-	return false
+
+	tx.AutoMigrate(&model.Server{})
+	if err := tx.Create(&server).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
 }
 
 func UpdateServer(where model.Server, server model.Server) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Server{})
-	db.Model(&server).Where(where).Update(server)
-	if len(GetServer(server)) != 0 {
-		return true
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if tx.Error != nil {
+		return false
 	}
-	return false
+	tx.AutoMigrate(&model.Server{})
+	if err := tx.Model(&server).Where(where).Update(server).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
 }
 
 func GetServer(server model.Server) []model.Server {
-	data := "key does not exists"
+	/*data := "key does not exists"
 	if redisEable {
 		serverjson, _ := json.Marshal(server)
 		data = redisGet(string(serverjson)) //check cache
 	}
-	if data == "key does not exists" {
-		db := initDatabase()
-		defer db.Close()
-		db.AutoMigrate(&model.Server{})
-		servers := []model.Server{}
-		db.Where(server).Find(&servers)
-		return servers
-	} else {
+	if data == "key does not exists" {*/
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&model.Server{})
+	servers := []model.Server{}
+	db.Where(server).Find(&servers)
+	return servers
+	/*} else {
 		servers := []model.Server{}
 		json.Unmarshal([]byte(data), &servers)
 		return servers
-	}
+	}*/
 }
 
 func DelServer(id int64, uid int64) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Server{})
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	tx.AutoMigrate(&model.Server{})
 	server := model.Server{ID: id, UID: uid}
-	db.Where(server).Delete(model.Server{})
+	if err := tx.Where(server).Delete(model.Server{}).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
 	return true
 }
 
 //User
 func AddUser(user model.User) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.User{})
-	db.Create(&user)
-	if !(db.NewRecord(user)) {
-		return true
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
 	}
-	return false
+	tx.AutoMigrate(&model.User{})
+	if err := tx.Create(&user).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
 }
 
 func UpdateUser(where model.User, user model.User) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.User{})
-	db.Model(&user).Where(where).Update(user)
-	if len(GetUser(user)) != 0 {
-		return true
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
 	}
-	return false
+	tx.AutoMigrate(&model.User{})
+	if err := tx.Model(&user).Where(where).Update(user).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
 }
 
 func GetUser(user model.User) []model.User {
@@ -150,23 +200,44 @@ func GetUser(user model.User) []model.User {
 
 func DelUser(user model.User) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.User{})
-	db.Where(user).Delete(model.User{})
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	tx.AutoMigrate(&model.User{})
+	if err := tx.Where(user).Delete(model.User{}).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
 	return true
 }
 
 //Domain
-func addDomain(domain model.Domain) bool {
+/*func addDomain(domain model.Domain) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Domain{})
-	db.Create(&domain)
-	if !(db.NewRecord(domain)) {
-		return true
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
 	}
-	return false
-}
+	tx.AutoMigrate(&model.Domain{})
+	if err := tx.Create(&domain).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
+}*/
 
 func GetDomain(domain model.Domain) []model.Domain {
 	db := initDatabase()
@@ -179,25 +250,43 @@ func GetDomain(domain model.Domain) []model.Domain {
 
 func UpdateDomain(where model.Domain, domain model.Domain) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Domain{})
-	db.Model(&domain).Where(where).Update(domain)
-	if len(GetDomain(domain)) != 0 {
-		return true
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
 	}
-	return false
+	tx.AutoMigrate(&model.Domain{})
+	if err := tx.Model(&domain).Where(where).Update(domain).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
 }
 
 //Site
 func AddSite(site model.Site) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Site{})
-	db.Create(&site)
-	if !(db.NewRecord(site)) {
-		return true
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
 	}
-	return false
+	tx.AutoMigrate(&model.Site{})
+	if err := tx.Create(&site).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
 }
 
 func GetSite(site model.Site) []model.Site {
@@ -215,34 +304,113 @@ func GetSite(site model.Site) []model.Site {
 
 func DelSite(site model.Site) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Site{})
-	db.Where(site).Delete(model.Site{})
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	tx.AutoMigrate(&model.Site{})
+	if err := tx.Where(site).Delete(model.Site{}).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
 	return true
 }
 
 //Cer
 func AddCer(certificate model.Certificate) bool {
 	db := initDatabase()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	tx.AutoMigrate(&model.Certificate{})
+	if err := tx.Create(&certificate).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
+}
+
+func DelCer(certificate model.Certificate) bool {
+	db := initDatabase()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	tx.AutoMigrate(&model.Certificate{})
+	if err := tx.Where(certificate).Delete(model.Certificate{}).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
+}
+
+func UpdateCer(where model.Certificate, certificate model.Certificate) bool {
+	db := initDatabase()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	tx.AutoMigrate(&model.Certificate{})
+	if err := tx.Model(&certificate).Where(where).Update(certificate).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
+}
+
+func GetCer(certificate model.Certificate) []model.Certificate {
+	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&model.Certificate{})
-	db.Create(&certificate)
-	if !(db.NewRecord(certificate)) {
-		return true
-	}
-	return false
+	certificates := []model.Certificate{}
+	db.Where(certificate).Find(&certificates)
+	return certificates
 }
 
 // LinkCer link
 func LinkServer(serverLink model.ServerLink) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.ServerLink{})
-	db.Create(&serverLink)
-	if !(db.NewRecord(serverLink)) {
-		return true
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
 	}
-	return false
+	tx.AutoMigrate(&model.ServerLink{})
+	if err := tx.Create(&serverLink).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
 }
 
 func GetLinkCer(serverLink model.ServerLink) []model.ServerLink {
@@ -267,40 +435,25 @@ func GetLinkSite(serverLink model.ServerLink) []model.ServerLink {
 
 func UnLinkServer(serverLink model.ServerLink) bool {
 	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.ServerLink{})
-	db.Where(serverLink).Delete(model.ServerLink{})
-	return true
-}
-
-func DelCer(certificate model.Certificate) bool {
-	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Certificate{})
-	db.Where(certificate).Delete(model.Certificate{})
-	return true
-}
-
-func UpdateCer(where model.Certificate, certificate model.Certificate) bool {
-	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Certificate{})
-	db.Model(&certificate).Where(where).Update(certificate)
-	if len(GetCer(certificate)) != 0 {
-		return true
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
 	}
-	return false
+	tx.AutoMigrate(&model.ServerLink{})
+	if err := tx.Where(serverLink).Delete(model.ServerLink{}).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
 }
 
-func GetCer(certificate model.Certificate) []model.Certificate {
-	db := initDatabase()
-	defer db.Close()
-	db.AutoMigrate(&model.Certificate{})
-	certificates := []model.Certificate{}
-	db.Where(certificate).Find(&certificates)
-	return certificates
-}
-
+// TODO: sql事务改造
 //System Config
 func SetConfig(config model.SysConfig) bool {
 	if len(GetConfig(model.SysConfig{Name: config.Name})) == 0 {
@@ -363,7 +516,7 @@ func EditDocker(docker model.Docker) bool {
 }
 
 // 要传入Userid
-func delDocker(docker model.Docker) bool {
+/*func delDocker(docker model.Docker) bool {
 	if len(GetDocker(model.Docker{ID: docker.ID})) != 0 {
 		db := initDatabase()
 		defer db.Close()
@@ -375,7 +528,7 @@ func delDocker(docker model.Docker) bool {
 		return false
 	}
 	return true
-}
+}*/
 
 // 要传入Useriddocker
 func AddDocker(docker model.Docker) bool {
@@ -392,14 +545,75 @@ func AddDocker(docker model.Docker) bool {
 	return false
 }
 
-func AddLog(service string, even string, level int64) bool {
-	log := model.LogInfo{Service: service, Info: even, Level: level, CreatedAt: time.Now()}
+func AddLog(service string, event string, level int64) bool {
+	newLog := model.LogInfo{Service: service, Info: event, Level: level, CreatedAt: time.Now()}
 	db := initDatabase()
 	defer db.Close()
 	db.AutoMigrate(&model.LogInfo{})
-	db.Create(&log)
-	if !(db.NewRecord(log)) {
+	db.Create(&newLog)
+	if !(db.NewRecord(newLog)) {
 		return true
 	}
 	return false
+}
+
+func AddEvent(eventType int64, target int64, code int64, info string) bool {
+	db := initDatabase()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	tx.AutoMigrate(&model.Event{})
+	if len(GetEvent(eventType, target, code, info, 2)) != 0 {
+		if err := tx.Model(&model.Event{}).Where(model.Event{Type: eventType, TargetID: target, Code: code, Info: info}).Update(model.Event{Active: 1}).Error; err != nil {
+			tx.Rollback()
+			return false
+		}
+	} else {
+		if err := tx.Create(&model.Event{Type: eventType, TargetID: target, Code: code, Info: info, Active: 1}).Error; err != nil {
+			tx.Rollback()
+			panic(err)
+			return false
+		}
+	}
+	tx.Commit()
+	return true
+}
+
+func GetEvent(eventType int64, target int64, code int64, info string, active int64) []model.Event {
+	db := initDatabase()
+	defer db.Close()
+	db.AutoMigrate(&model.Event{})
+	events := []model.Event{}
+	db.Where(model.Event{Type: eventType, TargetID: target, Code: code, Info: info, Active: active}).Find(&events)
+	return events
+}
+
+func FinishEvent(id int64) bool {
+	db := initDatabase()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	fmt.Print("t")
+	tx.AutoMigrate(&model.Event{})
+	event := model.Event{Active: 2}
+	if err := tx.Model(&event).Where(model.Event{ID: id, Active: 1}).Update(event).Error; err != nil {
+		fmt.Print("stt")
+		tx.Rollback()
+		return false
+	}
+	fmt.Print("sttt")
+	tx.Commit()
+	return true
 }

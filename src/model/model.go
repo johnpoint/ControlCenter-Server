@@ -36,7 +36,6 @@ type (
 			Disable string
 			Status  string
 		}
-		Dockers []DockerInfo
 	}
 
 	DataSite struct {

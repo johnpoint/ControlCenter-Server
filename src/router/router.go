@@ -40,7 +40,9 @@ func Run() {
 	w.Use(middleware.JWTWithConfig(jwtConfig))
 	w.POST("/debug/check", apis.CheckPower)
 	w.GET("/ServerInfo", apis.GetServerInfo)
-	w.PUT("/ServerInfo", apis.UpdateServerInfo)
+	w.PUT("/ServerInfo", apis.UpdateServerInfo) // TODO: remove this
+	w.POST("/Server/:serverid/Server/:action", apis.AddClientEvent)
+	w.POST("/Server/:serverid/Docker/:action/:id", apis.ChangeDockerStatus)
 	w.GET("/ServerInfo/Certificate", apis.GetCertificateLinked)
 	w.GET("/ServerInfo/Site", apis.GetSiteLinked)
 	w.DELETE("/Server/:id", apis.RemoveServer)
