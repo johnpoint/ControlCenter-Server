@@ -5,12 +5,15 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/johnpoint/ControlCenter-Server/src/config"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
+	"sync"
 	"time"
 )
 
 //var conf = config.LoadConfig()
 
 //var redisEable = conf.RedisConfig.Enable
+
+var mutex sync.Mutex
 
 func initDatabase() *gorm.DB {
 	conf := config.LoadConfig()
@@ -64,7 +67,10 @@ func redisSet(key string, value string, exp time.Duration) string {
 
 //Server
 func AddServer(server model.Server) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -86,7 +92,10 @@ func AddServer(server model.Server) bool {
 }
 
 func UpdateServer(where model.Server, server model.Server) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -115,6 +124,7 @@ func GetServer(server model.Server) []model.Server {
 	if data == "key does not exists" {*/
 	db := initDatabase()
 	defer db.Close()
+	defer db.Close()
 	db.AutoMigrate(&model.Server{})
 	servers := []model.Server{}
 	db.Where(server).Find(&servers)
@@ -127,7 +137,10 @@ func GetServer(server model.Server) []model.Server {
 }
 
 func DelServer(id int64, uid int64) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -149,7 +162,10 @@ func DelServer(id int64, uid int64) bool {
 
 //User
 func AddUser(user model.User) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -169,7 +185,10 @@ func AddUser(user model.User) bool {
 }
 
 func UpdateUser(where model.User, user model.User) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -191,6 +210,7 @@ func UpdateUser(where model.User, user model.User) bool {
 func GetUser(user model.User) []model.User {
 	db := initDatabase()
 	defer db.Close()
+	defer db.Close()
 	db.AutoMigrate(&model.User{})
 	users := []model.User{}
 	db.Where(user).Find(&users)
@@ -198,7 +218,10 @@ func GetUser(user model.User) []model.User {
 }
 
 func DelUser(user model.User) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -220,6 +243,7 @@ func DelUser(user model.User) bool {
 //Domain
 /*func addDomain(domain model.Domain) bool {
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -241,6 +265,7 @@ func DelUser(user model.User) bool {
 func GetDomain(domain model.Domain) []model.Domain {
 	db := initDatabase()
 	defer db.Close()
+	defer db.Close()
 	db.AutoMigrate(&model.Domain{})
 	domains := []model.Domain{}
 	db.Where(domain).Find(&domains)
@@ -248,7 +273,10 @@ func GetDomain(domain model.Domain) []model.Domain {
 }
 
 func UpdateDomain(where model.Domain, domain model.Domain) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -269,7 +297,10 @@ func UpdateDomain(where model.Domain, domain model.Domain) bool {
 
 //Site
 func AddSite(site model.Site) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -291,6 +322,7 @@ func AddSite(site model.Site) bool {
 func GetSite(site model.Site) []model.Site {
 	db := initDatabase()
 	defer db.Close()
+	defer db.Close()
 	db.AutoMigrate(&model.Site{})
 	sites := []model.Site{}
 	if site.Name == "*" {
@@ -302,7 +334,10 @@ func GetSite(site model.Site) []model.Site {
 }
 
 func DelSite(site model.Site) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -323,7 +358,10 @@ func DelSite(site model.Site) bool {
 
 //Cer
 func AddCer(certificate model.Certificate) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -343,7 +381,10 @@ func AddCer(certificate model.Certificate) bool {
 }
 
 func DelCer(certificate model.Certificate) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -363,7 +404,10 @@ func DelCer(certificate model.Certificate) bool {
 }
 
 func UpdateCer(where model.Certificate, certificate model.Certificate) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -385,6 +429,7 @@ func UpdateCer(where model.Certificate, certificate model.Certificate) bool {
 func GetCer(certificate model.Certificate) []model.Certificate {
 	db := initDatabase()
 	defer db.Close()
+	defer db.Close()
 	db.AutoMigrate(&model.Certificate{})
 	certificates := []model.Certificate{}
 	db.Where(certificate).Find(&certificates)
@@ -393,7 +438,10 @@ func GetCer(certificate model.Certificate) []model.Certificate {
 
 // LinkCer link
 func LinkServer(serverLink model.ServerLink) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -415,6 +463,7 @@ func LinkServer(serverLink model.ServerLink) bool {
 func GetLinkCer(serverLink model.ServerLink) []model.ServerLink {
 	db := initDatabase()
 	defer db.Close()
+	defer db.Close()
 	db.AutoMigrate(&model.ServerLink{})
 	ServerLinks := []model.ServerLink{}
 	serverLink.SiteID = 0
@@ -425,6 +474,7 @@ func GetLinkCer(serverLink model.ServerLink) []model.ServerLink {
 func GetLinkSite(serverLink model.ServerLink) []model.ServerLink {
 	db := initDatabase()
 	defer db.Close()
+	defer db.Close()
 	db.AutoMigrate(&model.ServerLink{})
 	ServerLinks := []model.ServerLink{}
 	serverLink.CertificateID = 0
@@ -433,7 +483,10 @@ func GetLinkSite(serverLink model.ServerLink) []model.ServerLink {
 }
 
 func UnLinkServer(serverLink model.ServerLink) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -455,10 +508,13 @@ func UnLinkServer(serverLink model.ServerLink) bool {
 // TODO: sql事务改造
 //System Config
 func SetConfig(config model.SysConfig) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	if len(GetConfig(model.SysConfig{Name: config.Name})) == 0 {
 		return addConfig(config)
 	}
 	db := initDatabase()
+	defer db.Close()
 	defer db.Close()
 	db.AutoMigrate(&model.SysConfig{})
 	db.Model(&config).Where(model.SysConfig{Name: config.Name}).Update(config)
@@ -469,7 +525,10 @@ func SetConfig(config model.SysConfig) bool {
 }
 
 func addConfig(config model.SysConfig) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	defer db.Close()
 	db.AutoMigrate(&model.SysConfig{})
 	db.Create(&config)
@@ -482,6 +541,7 @@ func addConfig(config model.SysConfig) bool {
 func GetConfig(config model.SysConfig) []model.SysConfig {
 	db := initDatabase()
 	defer db.Close()
+	defer db.Close()
 	db.AutoMigrate(&model.SysConfig{})
 	configs := []model.SysConfig{}
 	db.Where(config).Find(&configs)
@@ -493,6 +553,7 @@ func GetConfig(config model.SysConfig) []model.SysConfig {
 func GetDocker(docker model.Docker) []model.Docker {
 	db := initDatabase()
 	defer db.Close()
+	defer db.Close()
 	db.AutoMigrate(&model.Docker{})
 	dockers := []model.Docker{}
 	db.Where(docker).Find(&dockers)
@@ -501,8 +562,11 @@ func GetDocker(docker model.Docker) []model.Docker {
 
 // 要传入Userid
 func EditDocker(docker model.Docker) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	if len(GetDocker(model.Docker{ID: docker.ID})) != 0 {
 		db := initDatabase()
+		defer db.Close()
 		defer db.Close()
 		db.AutoMigrate(&model.Docker{})
 		db.Model(&docker).Where(model.Docker{ID: docker.ID, UID: docker.UID}).Update(docker)
@@ -518,6 +582,7 @@ func EditDocker(docker model.Docker) bool {
 /*func delDocker(docker model.Docker) bool {
 	if len(GetDocker(model.Docker{ID: docker.ID})) != 0 {
 		db := initDatabase()
+	defer db.Close()
 		defer db.Close()
 		db.AutoMigrate(&model.Docker{})
 		db.Model(&docker).Where(model.Docker{ID: docker.ID}).Update(docker)
@@ -531,8 +596,11 @@ func EditDocker(docker model.Docker) bool {
 
 // 要传入Useriddocker
 func AddDocker(docker model.Docker) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	if len(GetDocker(model.Docker{Name: docker.Name, UID: docker.UID})) == 0 {
 		db := initDatabase()
+		defer db.Close()
 		defer db.Close()
 		db.AutoMigrate(&model.Docker{})
 		db.Create(&docker)
@@ -545,8 +613,11 @@ func AddDocker(docker model.Docker) bool {
 }
 
 func AddLog(service string, event string, level int64) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	newLog := model.LogInfo{Service: service, Info: event, Level: level, CreatedAt: time.Now()}
 	db := initDatabase()
+	defer db.Close()
 	defer db.Close()
 	db.AutoMigrate(&model.LogInfo{})
 	db.Create(&newLog)
@@ -557,7 +628,10 @@ func AddLog(service string, event string, level int64) bool {
 }
 
 func AddEvent(eventType int64, target int64, code int64, info string) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -587,6 +661,7 @@ func AddEvent(eventType int64, target int64, code int64, info string) bool {
 func GetEvent(eventType int64, target int64, code int64, info string, active int64) []model.Event {
 	db := initDatabase()
 	defer db.Close()
+	defer db.Close()
 	db.AutoMigrate(&model.Event{})
 	events := []model.Event{}
 	db.Where(model.Event{Type: eventType, TargetID: target, Code: code, Info: info, Active: active}).Find(&events)
@@ -594,7 +669,10 @@ func GetEvent(eventType int64, target int64, code int64, info string, active int
 }
 
 func FinishEvent(id int64) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
 	db := initDatabase()
+	defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
