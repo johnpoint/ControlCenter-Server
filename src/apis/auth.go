@@ -52,9 +52,7 @@ func OaLogin(c echo.Context) error {
 			return err
 		}
 		database.AddLog("Auth", "Login:{user:{id:"+strconv.FormatInt(user[0].ID, 10)+",mail:'"+user[0].Mail+"',level:"+strconv.FormatInt(user[0].Level, 10)+"},token:'"+t+"'}", 1)
-		return c.JSON(http.StatusOK, echo.Map{
-			"token": t,
-		})
+		return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: t})
 	}
 	return c.JSON(http.StatusOK, model.Callback{Code: 0, Info: "account or password incorrect"})
 
