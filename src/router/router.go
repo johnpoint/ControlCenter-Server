@@ -44,6 +44,7 @@ func Run() {
 	w.POST("/Server/:serverid/Server/:action", apis.AddClientEvent)
 	w.POST("/Server/:serverid/Docker/:action/:id", apis.ChangeDockerStatus)
 	w.GET("/ServerInfo/Certificate", apis.GetCertificateLinked)
+	w.GET("/ServerInfo/Task", apis.GetServerEvents)
 	w.GET("/ServerInfo/Site", apis.GetSiteLinked)
 	w.DELETE("/Server/:id", apis.RemoveServer)
 	w.GET("/DomainInfo", apis.GetDomainInfo)
