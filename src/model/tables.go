@@ -98,7 +98,7 @@ type LogInfo struct {
 
 type Event struct {
 	ID       int64 `gorm:"AUTO_INCREMENT"`
-	Type     int64 // 1 docker | 2 client
+	Type     int64 // 1 client | 2 docker
 	TargetID int64
 	Code     int64
 	Info     string

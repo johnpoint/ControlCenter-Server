@@ -642,7 +642,7 @@ func AddEvent(eventType int64, target int64, code int64, info string) bool {
 		return false
 	}
 	tx.AutoMigrate(&model.Event{})
-	if len(GetEvent(eventType, target, code, info, 2)) != 0 {
+	if len(GetEvent(eventType, target, code, info, 0)) != 0 {
 		if err := tx.Model(&model.Event{}).Where(model.Event{Type: eventType, TargetID: target, Code: code, Info: info}).Update(model.Event{Active: 1}).Error; err != nil {
 			tx.Rollback()
 			return false
