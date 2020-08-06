@@ -1,5 +1,7 @@
 package model
 
+import "github.com/shirou/gopsutil/load"
+
 type (
 	// Callback send some info to client
 	Callback struct {
@@ -49,5 +51,21 @@ type (
 		Domain    string
 		FullChain string
 		Key       string
+	}
+	// StatusServer model
+	StatusServer struct {
+		Version  string
+		Percent  StatusPercent
+		Load     *load.AvgStat
+		BootTime uint64
+		Uptime   uint64
+	}
+
+	// StatusPercent model
+	StatusPercent struct {
+		CPU  float64
+		Disk float64
+		Mem  float64
+		Swap float64
 	}
 )
