@@ -32,10 +32,12 @@ func Run() {
 
 	sys := e.Group("/system")
 	sys.POST("/restart", apis.SysRestart)
+	sys.GET("/info", apis.GetSystemInfo)
 	jwtConfig := middleware.JWTConfig{
 		Claims:     &apis.JwtCustomClaims{},
 		SigningKey: []byte(conf.Salt),
 	}
+
 	w := e.Group("/web")
 	w.Use(middleware.JWTWithConfig(jwtConfig))
 	w.POST("/debug/check", apis.CheckPower)

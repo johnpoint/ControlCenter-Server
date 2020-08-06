@@ -1,15 +1,25 @@
 package apis
 
 import (
+	"encoding/json"
 	"github.com/johnpoint/ControlCenter-Server/src/config"
 	"github.com/johnpoint/ControlCenter-Server/src/database"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"io"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/labstack/echo"
+
+	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/disk"
+	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/load"
+	"github.com/shirou/gopsutil/mem"
 )
+
+const VERSION = "2.0.0"
 
 func SysRestart(c echo.Context) error {
 	return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: ""})
@@ -85,4 +95,38 @@ func GetSetting(c echo.Context) error {
 	name := c.Param("name")
 	config := model.SysConfig{Name: name, UID: database.GetUser(model.User{Mail: user.Mail})[0].ID}
 	return c.JSON(http.StatusOK, database.GetConfig(config))
+}
+
+func Accessible(c echo.Context) error {
+	return c.HTML(http.StatusOK, "<h1>ControlCenter</h1>(´・ω・`) 运行正常<br><hr>Ver: "+VERSION)
+}
+
+func GetSystemInfo(c echo.Context) error {
+	sysinfo := getSystemInfo()
+	return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: sysinfo})
+}
+
+func getSystemInfo() string {
+	v, _ := mem.VirtualMemory()
+	s, _ := mem.SwapMemory()
+	cc, _ := cpu.Percent(time.Second, false)
+	d, _ := disk.Usage("/")
+	n, _ := host.Info()
+	l, _ := load.Avg()
+	ss := new(model.StatusServer)
+	ss.Load = l
+	ss.Uptime = n.Uptime
+	ss.BootTime = n.BootTime
+	ss.Percent.Mem = v.UsedPercent
+	ss.Percent.CPU = cc[0]
+	ss.Percent.Swap = s.UsedPercent
+	ss.Percent.Disk = d.UsedPercent
+
+	ss.Version = VERSION
+	b, err := json.Marshal(ss)
+	if err != nil {
+		return ""
+	} else {
+		return string(b)
+	}
 }
