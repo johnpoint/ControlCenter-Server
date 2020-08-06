@@ -19,7 +19,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const VERSION = "2.0.0"
+const VERSION = "2.0.1"
 
 func SysRestart(c echo.Context) error {
 	return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: ""})
@@ -63,6 +63,9 @@ func SetBackupFile(c echo.Context) error {
 func GetBackupFile(c echo.Context) error {
 	conf := config.LoadConfig()
 	token := c.Param("token")
+	if token == "" {
+		return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
+	}
 	getuser := model.User{Token: token}
 	userInfo := database.GetUser(getuser)
 	if len(userInfo) == 0 {

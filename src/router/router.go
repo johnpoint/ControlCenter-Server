@@ -15,7 +15,7 @@ func Run() {
 	e.HideBanner = true
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: conf.AllowAddress,
-		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.PATCH},
 	}))
 
 	u := e.Group("/user")
@@ -51,7 +51,7 @@ func Run() {
 	w.DELETE("/Server/:id", apis.RemoveServer)
 	w.GET("/DomainInfo", apis.GetDomainInfo)
 	w.PUT("/DomainInfo", apis.UpdateDomainInfo)
-	w.PUT("/UserInfo/:mail/:key/:value", apis.UpdateUserInfo)
+	w.PATCH("/UserInfo/:id/:key/:value", apis.UpdateUserInfo)
 	w.PUT("/SiteInfo", apis.AddSiteInfo)
 	w.GET("/SiteInfo", apis.GetSiteInfo)
 	w.DELETE("/SiteInfo", apis.DeleteSiteInfo)
@@ -72,7 +72,7 @@ func Run() {
 	w.PUT("/DockerInfo/:id", apis.EditDockerInfo)
 	e.GET("/web/:token/backup", apis.GetBackupFile)
 	user := w.Group("/UserInfo")
-	user.PUT("/level/:uid/:level", apis.ChangeLevel)
+	user.PATCH("/level/:uid/:level", apis.ChangeLevel)
 	user.GET("/Password/:oldpass/:newpass", apis.ReSetPassword)
 	user.GET("/Token", apis.GetUserToken)
 	user.PUT("/Token", apis.GetNewToken)
