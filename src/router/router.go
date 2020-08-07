@@ -73,7 +73,7 @@ func Run() {
 	e.GET("/web/:token/backup", apis.GetBackupFile)
 	user := w.Group("/UserInfo")
 	user.PATCH("/level/:uid/:level", apis.ChangeLevel)
-	user.PATCH("/Password/:oldpass/:newpass", apis.ReSetPassword)
+	user.POST("/Password", apis.ReSetPassword)
 	user.GET("/Token", apis.GetUserToken)
 	user.PUT("/Token", apis.GetNewToken)
 	user.GET("", apis.GetUserInfo)

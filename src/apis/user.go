@@ -34,18 +34,20 @@ func UpdateUserInfo(c echo.Context) error {
 func ReSetPassword(c echo.Context) error {
 	conf := config.LoadConfig()
 	salt := conf.Salt
-	oldPass := c.Param("oldpass")
-	newPass := c.Param("newpass")
 	user := CheckAuth(c)
+	Getdata := model.ReSetPassword{}
+	if err := c.Bind(&Getdata); err != nil {
+		return err
+	}
 	if user != nil {
-		data := []byte(user.Mail + salt + oldPass)
+		data := []byte(user.Mail + salt + Getdata.Oldpass)
 		has := md5.Sum(data)
 		oldpass := fmt.Sprintf("%x", has)
 		u := database.GetUser(model.User{Mail: user.Mail})
 		if u[0].Password != oldpass {
 			return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})
 		}
-		data = []byte(user.Mail + salt + newPass)
+		data = []byte(user.Mail + salt + Getdata.Newpass)
 		has = md5.Sum(data)
 		newpass := fmt.Sprintf("%x", has)
 		if (database.UpdateUser(u[0], model.User{Password: newpass})) {
