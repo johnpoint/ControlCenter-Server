@@ -69,3 +69,8 @@ type (
 		Swap float64
 	}
 )
+
+type ReSetPassword struct {
+	Oldpass string `json:"oldpass" xml:"oldpass" form:"oldpass" query:"oldpass"`
+	Newpass string `json:"newpass" xml:"newpass" form:"newpass" query:"newpass"`
+}
