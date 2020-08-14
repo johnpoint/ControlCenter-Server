@@ -22,7 +22,8 @@ func initDatabase() *gorm.DB {
 		db.LogMode(true)
 	}
 	if err != nil {
-		panic("连接数据库失败")
+		AddLog("Database", err.Error(), 2)
+		return nil
 	}
 	return db
 }
