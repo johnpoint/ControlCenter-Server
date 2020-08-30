@@ -28,44 +28,6 @@ func initDatabase() *gorm.DB {
 	return db
 }
 
-/*
-func initRedis() *redis.Client {
-	conf := config.LoadConfig()
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     conf.RedisConfig.Addr,
-		Password: conf.RedisConfig.Password, // no password set
-		DB:       conf.RedisConfig.DB,       // use default DB
-	})
-	return rdb
-}
-
-func redisGet(key string) string {
-	rdb := initRedis()
-	ctx := context.Background()
-	val, err := rdb.Get(ctx, key).Result()
-	if err != nil {
-		if err == redis.Nil {
-			return "key does not exists"
-		}
-		log.Print(err)
-		return "err"
-	}
-	return val
-}
-
-func redisSet(key string, value string, exp time.Duration) string {
-	rdb := initRedis()
-	ctx := context.Background()
-	_, err := rdb.Set(ctx, key, value, exp).Result()
-	if err != nil {
-		if redisGet(key) != value {
-			return "data set fail"
-		}
-		return "err"
-	}
-	return "ok"
-}*/
-
 //Server
 func AddServer(server model.Server) bool {
 	mutex.Lock()
@@ -234,122 +196,6 @@ func DelUser(user model.User) bool {
 	}
 	tx.AutoMigrate(&model.User{})
 	if err := tx.Where(user).Delete(model.User{}).Error; err != nil {
-		tx.Rollback()
-		return false
-	}
-	tx.Commit()
-	return true
-}
-
-//Domain
-/*func addDomain(domain model.Domain) bool {
-	db := initDatabase()
-	defer db.Close()
-	tx := db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-	if tx.Error != nil {
-		return false
-	}
-	tx.AutoMigrate(&model.Domain{})
-	if err := tx.Create(&domain).Error; err != nil {
-		tx.Rollback()
-		return false
-	}
-	tx.Commit()
-	return true
-}*/
-
-func GetDomain(domain model.Domain) []model.Domain {
-	db := initDatabase()
-	defer db.Close()
-	defer db.Close()
-	db.AutoMigrate(&model.Domain{})
-	domains := []model.Domain{}
-	db.Where(domain).Find(&domains)
-	return domains
-}
-
-func UpdateDomain(where model.Domain, domain model.Domain) bool {
-	mutex.Lock()
-	defer mutex.Unlock()
-	db := initDatabase()
-	defer db.Close()
-	tx := db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-	if tx.Error != nil {
-		return false
-	}
-	tx.AutoMigrate(&model.Domain{})
-	if err := tx.Model(&domain).Where(where).Update(domain).Error; err != nil {
-		tx.Rollback()
-		return false
-	}
-	tx.Commit()
-	return true
-}
-
-//Site
-func AddSite(site model.Site) bool {
-	mutex.Lock()
-	defer mutex.Unlock()
-	db := initDatabase()
-	defer db.Close()
-	tx := db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-	if tx.Error != nil {
-		return false
-	}
-	tx.AutoMigrate(&model.Site{})
-	if err := tx.Create(&site).Error; err != nil {
-		tx.Rollback()
-		return false
-	}
-	tx.Commit()
-	return true
-}
-
-func GetSite(site model.Site) []model.Site {
-	db := initDatabase()
-	defer db.Close()
-	defer db.Close()
-	db.AutoMigrate(&model.Site{})
-	sites := []model.Site{}
-	if site.Name == "*" {
-		db.Find(&sites)
-	} else {
-		db.Where(site).Find(&sites)
-	}
-	return sites
-}
-
-func DelSite(site model.Site) bool {
-	mutex.Lock()
-	defer mutex.Unlock()
-	db := initDatabase()
-	defer db.Close()
-	tx := db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-	if tx.Error != nil {
-		return false
-	}
-	tx.AutoMigrate(&model.Site{})
-	if err := tx.Where(site).Delete(model.Site{}).Error; err != nil {
 		tx.Rollback()
 		return false
 	}
@@ -549,70 +395,6 @@ func GetConfig(config model.SysConfig) []model.SysConfig {
 	return configs
 }
 
-// Docker
-// 要传入Userid
-func GetDocker(docker model.Docker) []model.Docker {
-	db := initDatabase()
-	defer db.Close()
-	defer db.Close()
-	db.AutoMigrate(&model.Docker{})
-	dockers := []model.Docker{}
-	db.Where(docker).Find(&dockers)
-	return dockers
-}
-
-// 要传入Userid
-func EditDocker(docker model.Docker) bool {
-	mutex.Lock()
-	defer mutex.Unlock()
-	if len(GetDocker(model.Docker{ID: docker.ID})) != 0 {
-		db := initDatabase()
-		defer db.Close()
-		defer db.Close()
-		db.AutoMigrate(&model.Docker{})
-		db.Model(&docker).Where(model.Docker{ID: docker.ID, UID: docker.UID}).Update(docker)
-		if len(GetDocker(docker)) == 0 {
-			return false
-		}
-		return true
-	}
-	return false
-}
-
-// 要传入Userid
-/*func delDocker(docker model.Docker) bool {
-	if len(GetDocker(model.Docker{ID: docker.ID})) != 0 {
-		db := initDatabase()
-	defer db.Close()
-		defer db.Close()
-		db.AutoMigrate(&model.Docker{})
-		db.Model(&docker).Where(model.Docker{ID: docker.ID}).Update(docker)
-		if len(GetDocker(docker)) == 0 {
-			return true
-		}
-		return false
-	}
-	return true
-}*/
-
-// 要传入Useriddocker
-func AddDocker(docker model.Docker) bool {
-	mutex.Lock()
-	defer mutex.Unlock()
-	if len(GetDocker(model.Docker{Name: docker.Name, UID: docker.UID})) == 0 {
-		db := initDatabase()
-		defer db.Close()
-		defer db.Close()
-		db.AutoMigrate(&model.Docker{})
-		db.Create(&docker)
-		if !(db.NewRecord(docker)) {
-			return true
-		}
-		return false
-	}
-	return false
-}
-
 func AddLog(service string, event string, level int64) bool {
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -686,6 +468,86 @@ func FinishEvent(id int64) bool {
 	tx.AutoMigrate(&model.Event{})
 	event := model.Event{Active: 2}
 	if err := tx.Model(&event).Where(model.Event{ID: id, Active: 1}).Update(event).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
+}
+
+//Configuration
+func AddConfiguration(conf model.Configuration) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
+	db := initDatabase()
+	defer db.Close()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	tx.AutoMigrate(&model.Configuration{})
+	if err := tx.Create(&conf).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
+}
+
+func GetConfiguration(conf model.Configuration) []model.Configuration {
+	db := initDatabase()
+	defer db.Close()
+	defer db.Close()
+	db.AutoMigrate(&model.Configuration{})
+	confs := []model.Configuration{}
+	db.Where(conf).Find(&confs)
+	return confs
+}
+
+func DeleteConfiguration(conf model.Configuration) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
+	db := initDatabase()
+	defer db.Close()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	tx.AutoMigrate(&model.Configuration{})
+	if err := tx.Where(conf).Delete(model.Configuration{}).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
+}
+
+func UpdateConfiguration(conf model.Configuration, where model.Configuration) bool {
+	mutex.Lock()
+	defer mutex.Unlock()
+	db := initDatabase()
+	defer db.Close()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	tx.AutoMigrate(&model.Configuration{})
+	if err := tx.Model(&conf).Where(where).Update(conf).Error; err != nil {
 		tx.Rollback()
 		return false
 	}
