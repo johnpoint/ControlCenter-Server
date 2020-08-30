@@ -14,13 +14,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-type DataSite struct {
-	ID     int64
-	Domain string
-	CerID  int64
-	Config string
-}
-
 type DataCertificate struct {
 	ID        int64
 	Domain    string
@@ -65,19 +58,14 @@ func GetServerUpdate(c echo.Context) error {
 		getCerID := database.GetLinkCer(model.ServerLink{ServerID: check[0].ID})
 		if len(getCerID) != 0 {
 			CerData := []model.DataCertificate{}
-			SiteData := []model.DataSite{}
 			for i := 0; i < len(getCerID); i++ {
-				if getCerID[i].SiteID != 0 {
-					site := database.GetSite(model.Site{ID: getCerID[i].SiteID})[0]
-					SiteData = append(SiteData, model.DataSite{ID: site.ID, Config: site.Config, Domain: site.Name, CerID: site.Cer})
-				} else if getCerID[i].CertificateID != 0 {
+				if getCerID[i].CertificateID != 0 {
 					cer := database.GetCer(model.Certificate{ID: getCerID[i].CertificateID})[0]
 					CerData = append(CerData, model.DataCertificate{ID: cer.ID, Domain: cer.Name, FullChain: cer.Fullchain, Key: cer.Key})
 				}
 			}
 			data.Code = 200
 			data.Certificates = CerData
-			data.Sites = SiteData
 		}
 	}
 	return c.JSON(http.StatusOK, data)

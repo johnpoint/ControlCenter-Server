@@ -5,6 +5,7 @@ import (
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"io"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -42,5 +43,45 @@ func TestLoadConfig(t *testing.T) {
 	}
 	if getConf.Database != testData.Database {
 		t.Error("Database Not Match")
+	}
+}
+
+func TestInitServer(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+		})
+	}
+}
+
+func TestLoadConfig1(t *testing.T) {
+	tests := []struct {
+		name string
+		want model.Config
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := LoadConfig(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("LoadConfig() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUpdateConfig(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+		})
 	}
 }

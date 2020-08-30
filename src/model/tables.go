@@ -12,7 +12,6 @@ type Server struct {
 	UID      int64  `json:"uid" xml:"uid" form:"uid" query:"uid"`
 	Token    string
 	Online   int64 `gorm:"default:1"`
-	//Update   int64 // 1 yes | -1 no // TODO: remove
 }
 
 // Site model of Site
@@ -49,34 +48,11 @@ type Certificate struct {
 	UID                   int64  `json:"uid" xml:"uid" form:"uid" query:"uid"`
 }
 
-// Docker model of docker
-type Docker struct {
-	ID     int64  `gorm:"AUTO_INCREMENT"`
-	Name   string `json:"name" xml:"name" form:"name" query:"name"`
-	Config string `json:"config" xml:"config" form:"config" query:"config"`
-	UID    int64
-}
-
-type DockerInfo struct {
-	ID     int64 `gorm:"AUTO_INCREMENT"`
-	Status int64 `gorm:"default:-1" json:"status" xml:"status" form:"status" query:"status"` // 10准备开启 | -2 准备关闭 | 1 开启状态 | -1 关闭
-	DID    string
-}
-
 type SysConfig struct {
 	ID    int64 `gorm:"AUTO_INCREMENT"`
 	UID   int64
 	Name  string
 	Value string
-}
-
-// Domain model of domain
-type Domain struct {
-	ID     int64  `gorm:"AUTO_INCREMENT"`
-	Name   string `json:"name" xml:"name" form:"name" query:"name"`
-	Status string `json:"status" xml:"status" form:"status" query:"status"`
-	Cer    string `json:"cer" xml:"cer" form:"cer" query:"cer"`
-	Key    string `json:"key" xml:"key" form:"key" query:"key"`
 }
 
 // ServerCertificate model
@@ -103,4 +79,13 @@ type Event struct {
 	Code     int64
 	Info     string
 	Active   int64
+}
+
+type Configuration struct {
+	ID    int64  `gorm:"AUTO_INCREMENT"`
+	Type  string `json:"type" xml:"type" form:"type" query:"type"`
+	Value string `json:"value" xml:"value" form:"value" query:"value"`
+	Name  string `json:"name" xml:"name" form:"name" query:"name"`
+	Path  string `json:"path" xml:"path" form:"path" query:"path"`
+	UID   int64
 }
