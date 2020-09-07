@@ -57,11 +57,10 @@ type SysConfig struct {
 
 // ServerCertificate model
 type ServerLink struct {
-	ID            int64 `gorm:"AUTO_INCREMENT"`
-	CertificateID int64
-	ServerID      int64
-	SiteID        int64
-	DockerID      int64
+	ID       int64 `gorm:"AUTO_INCREMENT"`
+	Type     string
+	ServerID int64
+	ItemID   int64
 }
 
 type LogInfo struct {

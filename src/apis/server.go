@@ -55,12 +55,12 @@ func GetServerUpdate(c echo.Context) error {
 	data := model.UpdateInfo{}
 	check := database.GetServer(model.Server{Token: token})
 	if len(check) == 1 {
-		getCerID := database.GetLinkCer(model.ServerLink{ServerID: check[0].ID})
+		getCerID := database.GetServerLinkedItem(model.ServerLink{ServerID: check[0].ID, Type: "Certificate"})
 		if len(getCerID) != 0 {
 			CerData := []model.DataCertificate{}
 			for i := 0; i < len(getCerID); i++ {
-				if getCerID[i].CertificateID != 0 {
-					cer := database.GetCer(model.Certificate{ID: getCerID[i].CertificateID})[0]
+				if getCerID[i].ItemID != 0 {
+					cer := database.GetCer(model.Certificate{ID: getCerID[i].ItemID})[0]
 					CerData = append(CerData, model.DataCertificate{ID: cer.ID, Domain: cer.Name, FullChain: cer.Fullchain, Key: cer.Key})
 				}
 			}
@@ -94,7 +94,7 @@ func GetCertificateLinked(c echo.Context) error {
 		server.UID = database.GetUser(model.User{Mail: user.Mail})[0].ID
 		data := database.GetServer(server)
 		if len(data) != 0 {
-			return c.JSON(http.StatusOK, database.GetLinkCer(model.ServerLink{ServerID: data[0].ID}))
+			return c.JSON(http.StatusOK, database.GetServerLinkedItem(model.ServerLink{ServerID: data[0].ID, Type: "Certificate"}))
 		}
 		return c.JSON(http.StatusOK, model.Callback{Code: 404, Info: "Server Not Found"})
 	}
@@ -114,23 +114,6 @@ func GetServerEvents(c echo.Context) error {
 			return c.JSON(http.StatusOK, database.GetEvent(0, data[0].ID, 0, "", 0))
 		}
 		return c.JSON(http.StatusOK, model.Callback{Code: 404, Info: "Server Not Found"})
-	}
-	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
-}
-
-func GetSiteLinked(c echo.Context) error {
-	user := CheckAuth(c)
-	server := model.Server{}
-	if err := c.Bind(&server); err != nil {
-		log.Print(err)
-	}
-	if user.Level <= 1 {
-		server.UID = database.GetUser(model.User{Mail: user.Mail})[0].ID
-		data := database.GetServer(server)
-		if len(data) != 0 {
-			return c.JSON(http.StatusOK, database.GetLinkSite(model.ServerLink{ServerID: data[0].ID}))
-		}
-		return c.JSON(http.StatusOK, database.GetLinkSite(model.ServerLink{ServerID: 0}))
 	}
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
 }

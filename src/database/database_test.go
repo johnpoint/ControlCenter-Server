@@ -3,9 +3,9 @@ package database
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 	"io"
 	"os"
 	"reflect"
@@ -384,28 +384,8 @@ func TestGetLinkCer(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetLinkCer(tt.args.serverLink); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetLinkCer() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestGetLinkSite(t *testing.T) {
-	type args struct {
-		serverLink model.ServerLink
-	}
-	tests := []struct {
-		name string
-		args args
-		want []model.ServerLink
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := GetLinkSite(tt.args.serverLink); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetLinkSite() = %v, want %v", got, tt.want)
+			if got := GetServerLinkedItem(tt.args.serverLink); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetServerLinkedItem() = %v, want %v", got, tt.want)
 			}
 		})
 	}

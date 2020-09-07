@@ -61,6 +61,8 @@ func Run() {
 	w.DELETE("/Certificate/:id", apis.DeleteCertificateInfo)                //删除SSL证书
 	w.GET("/Configuration", apis.GetConfigurationInfo)                      //获取配置文件信息
 	w.PUT("/Configuration", apis.AddConfigurationInfo)                      //新增配置文件
+	w.PATCH("/Configuration/:id", apis.UpdataConfigurationInfo)             //更新配置文件
+	w.DELETE("/Configuration/:id", apis.DeleteConfigurationInfo)            //删除配置文件
 	w.PUT("/link/Certificate/:ServerID/:CerID", apis.LinkServerCer)         //分配证书给服务器
 	w.DELETE("/link/Certificate/:ServerID/:CerID", apis.UnLinkServerCer)    //将证书的分配记录删除
 	w.POST("/backup", apis.SetBackupFile)                                   //获取系统数据库
