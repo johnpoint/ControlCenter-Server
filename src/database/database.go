@@ -16,24 +16,29 @@ var mutex sync.Mutex
 
 func initDatabase() *gorm.DB {
 	conf := config.LoadConfig()
-	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
-		logger.Config{
-			SlowThreshold: time.Second, // 慢 SQL 阈值
-			LogLevel:      logger.Info, // Log level
-			Colorful:      false,       // 禁用彩色打印
-		},
-	)
 
 	// 全局模式
 	var db *gorm.DB
 	var err error
 	if conf.Debug {
 		db, err = gorm.Open(sqlite.Open(conf.Database), &gorm.Config{
-			Logger: newLogger,
+			Logger: logger.New(
+				log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+				logger.Config{
+					SlowThreshold: time.Second, // 慢 SQL 阈值
+					LogLevel:      logger.Info, // Log level
+					Colorful:      false,       // 禁用彩色打印
+				},
+			),
 		})
 	} else {
-		db, err = gorm.Open(sqlite.Open(conf.Database), &gorm.Config{})
+		db, err = gorm.Open(sqlite.Open(conf.Database), &gorm.Config{
+			Logger: logger.New(
+				log.New(os.Stdout, "\r\n", log.LstdFlags),
+				logger.Config{
+					LogLevel: logger.Silent,
+				}),
+		})
 	}
 	if err != nil {
 		AddLog("Database", err.Error(), 2)
