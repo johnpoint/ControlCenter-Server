@@ -19,7 +19,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const VERSION = "2.0.8"
+const VERSION = "2.0.9"
 
 func SysRestart(c echo.Context) error {
 	return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: ""})
