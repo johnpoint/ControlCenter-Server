@@ -153,7 +153,6 @@ func UpdateUser(where model.User, user model.User) bool {
 	mutex.Lock()
 	defer mutex.Unlock()
 	db := initDatabase()
-
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
