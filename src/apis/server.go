@@ -145,15 +145,15 @@ func ServerUpdate(c echo.Context) error {
 		log.Print(err)
 	}
 	log.Print(server.Ipv4 + "\t✓")
-	status := database.GetServer(model.Server{Ipv4: server.Ipv4, Token: server.Token})[0].Online
-	if status == 2 {
+	dbServer := database.GetServer(model.Server{Ipv4: server.Ipv4, Token: server.Token})
+	if dbServer[0].Online == 2 {
 		server.Online = 3
-	} else if status == 3 {
+	} else if dbServer[0].Online == 3 {
 		server.Online = 3
 	} else {
 		server.Online = 1
 	}
-	if database.UpdateServer(model.Server{Ipv4: server.Ipv4, Token: server.Token}, server) {
+	if database.UpdateServer(model.Server{ID: dbServer[0].ID}, model.Server{Status: server.Status, Online: server.Online}) {
 		return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 	}
 	return c.JSON(http.StatusBadRequest, model.Callback{Code: 0, Info: "ERROR"})
