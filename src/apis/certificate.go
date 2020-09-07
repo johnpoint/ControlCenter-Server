@@ -54,7 +54,7 @@ func DeleteCertificateInfo(c echo.Context) error {
 	if user.Level <= 1 {
 		uid := database.GetUser(model.User{Mail: user.Mail})[0].ID
 		if database.DelCer(model.Certificate{ID: id, UID: uid}) {
-			if database.UnLinkServer(model.ServerLink{CertificateID: id}) {
+			if database.UnLinkServer(model.ServerLink{ItemID: id, Type: "Certificate"}) {
 				database.AddLog("Certificate", "deleteCertificateInfo:{user:{mail:"+user.Mail+"},certificate:{id:"+strconv.FormatInt(id, 10)+"}}", 1)
 				return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 			}
@@ -119,10 +119,10 @@ func LinkServerCer(c echo.Context) error {
 		cid := c.Param("CerID")
 		Isid, _ := strconv.ParseInt(sid, 10, 64)
 		Icid, _ := strconv.ParseInt(cid, 10, 64)
-		payload := model.ServerLink{ServerID: Isid, CertificateID: Icid}
-		data := database.GetLinkCer(payload)
+		payload := model.ServerLink{ServerID: Isid, ItemID: Icid, Type: "Certificate"}
+		data := database.GetServerLinkedItem(payload)
 		if len(data) == 0 {
-			if (database.LinkServer(model.ServerLink{ServerID: Isid, CertificateID: Icid})) {
+			if (database.LinkServer(model.ServerLink{ServerID: Isid, ItemID: Icid, Type: "Certificate"})) {
 				database.AddLog("Certificate", "linkServerCer:{user:{mail:"+user.Mail+"},link:{serverID:"+strconv.FormatInt(Isid, 10)+",certificateID:"+strconv.FormatInt(Icid, 10)+"}}", 1)
 				return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 			}
@@ -141,10 +141,10 @@ func UnLinkServerCer(c echo.Context) error {
 		cid := c.Param("CerID")
 		Isid, _ := strconv.ParseInt(sid, 10, 64)
 		Icid, _ := strconv.ParseInt(cid, 10, 64)
-		payload := model.ServerLink{ServerID: Isid, CertificateID: Icid}
+		payload := model.ServerLink{ServerID: Isid, ItemID: Icid, Type: "Certificate"}
 		data := database.UnLinkServer(payload)
 		if data {
-			if len(database.GetLinkCer(payload)) == 0 {
+			if len(database.GetServerLinkedItem(payload)) == 0 {
 				database.AddLog("Certificate", "unLinkServerCer:{user:{mail:"+user.Mail+"},link:{serverID:"+strconv.FormatInt(Isid, 10)+",certificateID:"+strconv.FormatInt(Icid, 10)+"}}", 1)
 				return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 			}
