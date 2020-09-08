@@ -583,7 +583,7 @@ func Test_initDatabase(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := initDatabase(); !reflect.DeepEqual(got, tt.want) {
+			if got, _ := initDatabase(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("initDatabase() = %v, want %v", got, tt.want)
 			}
 		})
