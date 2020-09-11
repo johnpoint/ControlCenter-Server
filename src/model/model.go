@@ -30,14 +30,14 @@ type (
 	// UpdateInfo model
 	UpdateInfo struct {
 		Code         int64
-		Sites        []DataSite
 		Certificates []DataCertificate
-		Services     struct {
-			Name    string
-			Enable  string
-			Disable string
-			Status  string
-		}
+		ConfFile     []File
+	}
+
+	File struct {
+		Name  string
+		Path  string
+		Value string
 	}
 
 	DataSite struct {

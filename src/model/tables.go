@@ -14,14 +14,6 @@ type Server struct {
 	Online   int64 `gorm:"default:1"`
 }
 
-// Site model of Site
-type Site struct {
-	ID     int64  `gorm:"AUTO_INCREMENT"`
-	Name   string `json:"name" xml:"name" form:"name" query:"name"`
-	Config string `json:"config" xml:"config" form:"config" query:"config"`
-	Cer    int64  `json:"cer" xml:"cer" form:"cer" query:"cer"`
-}
-
 // User model of user
 type User struct {
 	ID       int64  `gorm:"AUTO_INCREMENT"`
