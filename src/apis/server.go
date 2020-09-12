@@ -262,8 +262,10 @@ func ChangeDockerStatus(c echo.Context) error {
 func AddClientEvent(c echo.Context) error {
 	user := CheckAuth(c)
 	if user.Level <= 1 {
+
 		action, _ := strconv.ParseInt(c.Param("action"), 10, 64)
 		serverID, _ := strconv.ParseInt(c.Param("serverid"), 10, 64)
+		fmt.Println(database.AddEvent(1, serverID, action, "OK"))
 		if len(database.GetServer(model.Server{ID: serverID, UID: database.GetUser(model.User{Mail: user.Mail})[0].ID})) == 1 {
 			if database.AddEvent(1, serverID, action, "OK") == false {
 				log.Print("AddEvent Fail:" + c.Path())

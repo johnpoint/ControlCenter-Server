@@ -89,7 +89,7 @@ func UpdateServer(where model.Server, server model.Server) bool {
 	}
 	_ = tx.AutoMigrate(&model.Server{})
 	//if err := tx.Model(&where).Updates(server).Error; err != nil {
-	if err := tx.Model(&where).Updates(server).Error; err != nil {
+	if err := tx.Model(&model.Server{}).Where(where).Update(server).Error; err != nil {
 		tx.Rollback()
 		return false
 	}
@@ -163,7 +163,7 @@ func UpdateUser(where model.User, user model.User) bool {
 		return false
 	}
 	_ = tx.AutoMigrate(&model.User{})
-	if err := tx.Model(&where).Updates(user).Error; err != nil {
+	if err := tx.Model(&model.User{}).Where(where).Update(user).Error; err != nil {
 		tx.Rollback()
 		return false
 	}
@@ -257,7 +257,7 @@ func UpdateCer(where model.Certificate, certificate model.Certificate) bool {
 		return false
 	}
 	_ = tx.AutoMigrate(&model.Certificate{})
-	if err := tx.Model(&where).Updates(certificate).Error; err != nil {
+	if err := tx.Model(&model.Certificate{}).Where(where).Update(certificate).Error; err != nil {
 		tx.Rollback()
 		return false
 	}
@@ -343,7 +343,7 @@ func SetConfig(config model.SysConfig) bool {
 		return false
 	}
 	_ = tx.AutoMigrate(&model.SysConfig{})
-	if err := tx.Model(&model.SysConfig{Name: config.Name}).Updates(config).Error; err != nil {
+	if err := tx.Model(&model.SysConfig{}).Where(model.SysConfig{Name: config.Name}).Update(config).Error; err != nil {
 		tx.Rollback()
 		return false
 	}
@@ -417,7 +417,7 @@ func AddEvent(eventType int64, target int64, code int64, info string) bool {
 	}
 	_ = tx.AutoMigrate(&model.Event{})
 	if len(GetEvent(eventType, target, code, info, 0)) != 0 {
-		if err := tx.Model(&model.Event{Type: eventType, TargetID: target, Code: code, Info: info}).Updates(model.Event{Active: 1}).Error; err != nil {
+		if err := tx.Model(&model.Event{}).Where(model.Event{Type: eventType, TargetID: target, Code: code, Info: info}).Update(model.Event{Active: 1}).Error; err != nil {
 			tx.Rollback()
 			return false
 		}
@@ -455,7 +455,7 @@ func FinishEvent(id int64) bool {
 	}
 	_ = tx.AutoMigrate(&model.Event{})
 	event := model.Event{Active: 2}
-	if err := tx.Model(&model.Event{ID: id, Active: 1}).Updates(event).Error; err != nil {
+	if err := tx.Model(&model.Event{}).Where(model.Event{ID: id, Active: 1}).Update(event).Error; err != nil {
 		tx.Rollback()
 		return false
 	}
@@ -528,7 +528,7 @@ func UpdateConfiguration(conf model.Configuration, where model.Configuration) bo
 		return false
 	}
 	_ = tx.AutoMigrate(&model.Configuration{})
-	if err := tx.Model(&where).Updates(conf).Error; err != nil {
+	if err := tx.Model(&model.Configuration{}).Where(where).Update(conf).Error; err != nil {
 		tx.Rollback()
 		return false
 	}
