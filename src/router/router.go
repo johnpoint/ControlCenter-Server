@@ -47,28 +47,31 @@ func Run() {
 	w := e.Group("/web")
 	w.Use(middleware.JWTWithConfig(jwtConfig))
 	w.POST("/debug/check", apis.CheckPower)
-	w.GET("/ServerInfo", apis.GetServerInfo)                                //获取服务器信息
-	w.PUT("/ServerInfo", apis.UpdateServerInfo)                             //编辑服务器
-	w.POST("/Server/:serverid/Server/:action", apis.AddClientEvent)         //服务器队列添加任务
-	w.POST("/Server/:serverid/Docker/:action/:id", apis.ChangeDockerStatus) //服务器队列添加任务-docker管理
-	w.GET("/ServerInfo/Certificate", apis.GetCertificateLinked)             //获取服务器证书列表
-	w.GET("/ServerInfo/Task", apis.GetServerEvents)                         //获取服务器任务队列
-	w.DELETE("/Server/:id", apis.RemoveServer)                              //删除服务器
-	w.PATCH("/UserInfo/:id/:key/:value", apis.UpdateUserInfo)               //更新用户信息
-	w.PUT("/Certificate", apis.AddCertificateInfo)                          //添加SSL证书
-	w.GET("/Certificate", apis.GetCertificateInfo)                          //获取SSL证书信息
-	w.POST("/Certificate", apis.UpdateCertificateInfo)                      //更新SSL证书信息
-	w.DELETE("/Certificate/:id", apis.DeleteCertificateInfo)                //删除SSL证书
-	w.GET("/Configuration", apis.GetConfigurationInfo)                      //获取配置文件信息
-	w.PUT("/Configuration", apis.AddConfigurationInfo)                      //新增配置文件
-	w.PATCH("/Configuration/:id", apis.UpdataConfigurationInfo)             //更新配置文件
-	w.DELETE("/Configuration/:id", apis.DeleteConfigurationInfo)            //删除配置文件
-	w.PUT("/link/Certificate/:ServerID/:CerID", apis.LinkServerCer)         //分配证书给服务器
-	w.DELETE("/link/Certificate/:ServerID/:CerID", apis.UnLinkServerCer)    //将证书的分配记录删除
-	w.POST("/backup", apis.SetBackupFile)                                   //获取系统数据库
-	w.POST("/Setting/:name/:value", apis.SetSetting)                        //更改个人设置
-	w.GET("/Setting/:name", apis.GetSetting)                                //获取个人设置
-	e.GET("/web/:token/backup", apis.GetBackupFile)                         //上传数据库并覆盖
+	w.GET("/ServerInfo", apis.GetServerInfo)                                 //获取服务器信息
+	w.PUT("/ServerInfo", apis.UpdateServerInfo)                              //编辑服务器
+	w.POST("/Server/:serverid/Server/:action", apis.AddClientEvent)          //服务器队列添加任务
+	w.POST("/Server/:serverid/Docker/:action/:id", apis.ChangeDockerStatus)  //服务器队列添加任务-docker管理
+	w.GET("/ServerInfo/Certificate", apis.GetCertificateLinked)              //获取服务器证书列表
+	w.GET("/ServerInfo/Configuration", apis.GetConfigurationLinked)          //获取服务器证书列表
+	w.GET("/ServerInfo/Task", apis.GetServerEvents)                          //获取服务器任务队列
+	w.DELETE("/Server/:id", apis.RemoveServer)                               //删除服务器
+	w.PATCH("/UserInfo/:id/:key/:value", apis.UpdateUserInfo)                //更新用户信息
+	w.PUT("/Certificate", apis.AddCertificateInfo)                           //添加SSL证书
+	w.GET("/Certificate", apis.GetCertificateInfo)                           //获取SSL证书信息
+	w.POST("/Certificate", apis.UpdateCertificateInfo)                       //更新SSL证书信息
+	w.DELETE("/Certificate/:id", apis.DeleteCertificateInfo)                 //删除SSL证书
+	w.GET("/Configuration", apis.GetConfigurationInfo)                       //获取配置文件信息
+	w.PUT("/Configuration", apis.AddConfigurationInfo)                       //新增配置文件
+	w.PATCH("/Configuration/:id", apis.UpdataConfigurationInfo)              //更新配置文件
+	w.DELETE("/Configuration/:id", apis.DeleteConfigurationInfo)             //删除配置文件
+	w.PUT("/link/Configuration/:ServerID/:FileID", apis.LinkServerConf)      //分配配置文件给服务器
+	w.DELETE("/link/Configuration/:ServerID/:FileID", apis.UnLinkServerConf) //将配置文件的分配记录删除
+	w.PUT("/link/Certificate/:ServerID/:CerID", apis.LinkServerCer)          //分配证书给服务器
+	w.DELETE("/link/Certificate/:ServerID/:CerID", apis.UnLinkServerCer)     //将证书的分配记录删除
+	w.POST("/backup", apis.SetBackupFile)                                    //获取系统数据库
+	w.POST("/Setting/:name/:value", apis.SetSetting)                         //更改个人设置
+	w.GET("/Setting/:name", apis.GetSetting)                                 //获取个人设置
+	e.GET("/web/:token/backup", apis.GetBackupFile)                          //上传数据库并覆盖
 
 	//用户信息相关api
 	user := w.Group("/UserInfo")
