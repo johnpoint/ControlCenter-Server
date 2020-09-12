@@ -68,14 +68,14 @@ func GetServerUpdate(c echo.Context) error {
 		}
 		getConfID := database.GetServerLinkedItem(model.ServerLink{ServerID: check[0].ID, Type: "File"})
 		if len(getConfID) != 0 {
-			confFile := []model.File{}
-			for i := 0; i < len(getCerID); i++ {
-				if getCerID[i].ItemID != 0 {
-					conf := database.GetConfiguration(model.Configuration{ID: getCerID[i].ItemID})[0]
-					confFile = append(confFile, model.File{Name: conf.Name, Value: conf.Value, Path: conf.Path})
+			ConfFile := []model.File{}
+			for i := 0; i < len(getConfID); i++ {
+				if getConfID[i].ItemID != 0 {
+					conf := database.GetConfiguration(model.Configuration{ID: getConfID[i].ItemID})[0]
+					ConfFile = append(ConfFile, model.File{Name: conf.Name, Value: conf.Value, Path: conf.Path})
 				}
 			}
-			data.ConfFile = confFile
+			data.ConfFile = ConfFile
 		}
 		data.Code = 200
 	}
