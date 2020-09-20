@@ -1,11 +1,11 @@
 package apis
 
 import (
+	"ControlCenter-Server/src/database"
+	"ControlCenter-Server/src/model"
+	"ControlCenter-Server/src/push"
 	"crypto/md5"
 	"fmt"
-	"github.com/johnpoint/ControlCenter-Server/src/database"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
-	"github.com/johnpoint/ControlCenter-Server/src/push"
 	"log"
 	"net/http"
 	"strconv"

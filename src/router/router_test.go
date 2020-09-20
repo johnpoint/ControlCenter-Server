@@ -1,13 +1,11 @@
 package router
 
 import (
+	"ControlCenter-Server/src/apis"
+	"ControlCenter-Server/src/database"
+	"ControlCenter-Server/src/model"
 	"encoding/json"
 	"fmt"
-	"github.com/johnpoint/ControlCenter-Server/src/apis"
-	"github.com/johnpoint/ControlCenter-Server/src/database"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
-	"github.com/labstack/echo"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -15,6 +13,9 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/labstack/echo"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {

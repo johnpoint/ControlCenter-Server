@@ -1,10 +1,10 @@
 package apis
 
 import (
+	"ControlCenter-Server/src/config"
+	"ControlCenter-Server/src/database"
+	"ControlCenter-Server/src/model"
 	"encoding/json"
-	"github.com/johnpoint/ControlCenter-Server/src/config"
-	"github.com/johnpoint/ControlCenter-Server/src/database"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"io"
 	"net/http"
 	"os"

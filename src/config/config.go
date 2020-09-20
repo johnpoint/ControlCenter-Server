@@ -1,9 +1,9 @@
 package config
 
 import (
+	"ControlCenter-Server/src/model"
 	"encoding/json"
 	"fmt"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"os"
 )
 

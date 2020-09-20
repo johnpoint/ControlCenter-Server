@@ -1,8 +1,8 @@
 package config
 
 import (
+	"ControlCenter-Server/src/model"
 	"encoding/json"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"io"
 	"os"
 	"reflect"

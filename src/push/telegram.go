@@ -1,9 +1,9 @@
 package push
 
 import (
+	"ControlCenter-Server/src/database"
+	"ControlCenter-Server/src/model"
 	"fmt"
-	"github.com/johnpoint/ControlCenter-Server/src/database"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"net/http"
 	"net/url"
 )
