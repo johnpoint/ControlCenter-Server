@@ -1,8 +1,9 @@
 package router
 
 import (
-	"github.com/johnpoint/ControlCenter-Server/src/apis"
-	"github.com/johnpoint/ControlCenter-Server/src/config"
+	"ControlCenter-Server/src/apis"
+	"ControlCenter-Server/src/config"
+
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )

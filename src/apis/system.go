@@ -1,10 +1,10 @@
 package apis
 
 import (
+	"ControlCenter-Server/src/config"
+	"ControlCenter-Server/src/database"
+	"ControlCenter-Server/src/model"
 	"encoding/json"
-	"github.com/johnpoint/ControlCenter-Server/src/config"
-	"github.com/johnpoint/ControlCenter-Server/src/database"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"io"
 	"net/http"
 	"os"
@@ -19,7 +19,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const VERSION = "2.0.12"
+const VERSION = "2.0.13"
 
 func SysRestart(c echo.Context) error {
 	return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: ""})

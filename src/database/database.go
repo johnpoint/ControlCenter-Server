@@ -1,16 +1,18 @@
 package database
 
 import (
+	"ControlCenter-Server/src/config"
+	"ControlCenter-Server/src/model"
 	"fmt"
-	"github.com/johnpoint/ControlCenter-Server/src/config"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
+
 	//"gorm.io/driver/sqlite"
 	//"gorm.io/gorm"
 	//"gorm.io/gorm/logger"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"log"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 // var mutex sync.Mutex

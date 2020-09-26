@@ -1,11 +1,12 @@
 package apis
 
 import (
-	"github.com/johnpoint/ControlCenter-Server/src/database"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
-	"github.com/labstack/echo"
+	"ControlCenter-Server/src/database"
+	"ControlCenter-Server/src/model"
 	"net/http"
 	"strconv"
+
+	"github.com/labstack/echo"
 )
 
 func GetConfigurationInfo(c echo.Context) error {

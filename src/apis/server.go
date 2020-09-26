@@ -1,11 +1,11 @@
 package apis
 
 import (
+	"ControlCenter-Server/src/database"
+	"ControlCenter-Server/src/model"
+	"ControlCenter-Server/src/push"
 	"crypto/md5"
 	"fmt"
-	"github.com/johnpoint/ControlCenter-Server/src/database"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
-	"github.com/johnpoint/ControlCenter-Server/src/push"
 	"log"
 	"net/http"
 	"strconv"
@@ -72,7 +72,7 @@ func GetServerUpdate(c echo.Context) error {
 			for i := 0; i < len(getConfID); i++ {
 				if getConfID[i].ItemID != 0 {
 					conf := database.GetConfiguration(model.Configuration{ID: getConfID[i].ItemID})[0]
-					ConfFile = append(ConfFile, model.File{Name: conf.Name, Value: conf.Value, Path: conf.Path})
+					ConfFile = append(ConfFile, model.File{ID: conf.ID, Name: conf.Name, Value: conf.Value, Path: conf.Path})
 				}
 			}
 			data.ConfFile = ConfFile

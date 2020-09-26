@@ -1,13 +1,14 @@
 package database
 
 import (
+	"ControlCenter-Server/src/model"
 	"encoding/json"
 	"fmt"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {

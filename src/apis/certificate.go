@@ -1,11 +1,11 @@
 package apis
 
 import (
+	"ControlCenter-Server/src/database"
+	"ControlCenter-Server/src/model"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/pem"
-	"github.com/johnpoint/ControlCenter-Server/src/database"
-	"github.com/johnpoint/ControlCenter-Server/src/model"
 	"net/http"
 	"strconv"
 

@@ -1,9 +1,9 @@
 package main
 
 import (
+	"ControlCenter-Server/src/config"
+	"ControlCenter-Server/src/router"
 	"fmt"
-	"github.com/johnpoint/ControlCenter-Server/src/config"
-	"github.com/johnpoint/ControlCenter-Server/src/router"
 	"os"
 )
 

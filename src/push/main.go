@@ -1,7 +1,7 @@
 package push
 
 import (
-	"github.com/johnpoint/ControlCenter-Server/src/model"
+	"ControlCenter-Server/src/model"
 )
 
 func PushNotification(servers []model.Server, status int64) bool {
