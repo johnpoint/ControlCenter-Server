@@ -20,10 +20,12 @@ jobs:
           go-version: ${{ matrix.go }}
 
       - name: Test
+      - uses: actions/checkout@v2
       - run: |
           cd src/config && go test && cd ../../
           cd src/database && go test && cd ../../
 
       - name: Build
+      - uses: actions/checkout@v2
       - run: |
           cd src/main && go build
