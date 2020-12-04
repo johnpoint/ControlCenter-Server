@@ -3,7 +3,7 @@ name: Auto_Build
 on:
   push:
     branches:
-      - master
+      - dev
 
 jobs:
   build:
