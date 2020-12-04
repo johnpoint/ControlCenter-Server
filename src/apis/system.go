@@ -19,7 +19,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-const VERSION = "2.0.13"
+const VERSION = "2.0.20"
 
 func SysRestart(c echo.Context) error {
 	return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: ""})
@@ -85,8 +85,8 @@ func SetSetting(c echo.Context) error {
 	user := CheckAuth(c)
 	name := c.Param("name")
 	value := c.Param("value")
-	config := model.SysConfig{Name: name, Value: value, UID: database.GetUser(model.User{Mail: user.Mail})[0].ID}
-	if database.SetConfig(config) {
+	gotConfig := model.SysConfig{Name: name, Value: value, UID: database.GetUser(model.User{Mail: user.Mail})[0].ID}
+	if database.SetConfig(gotConfig) {
 		database.AddLog("System", "setSetting:{user:{mail:'"+user.Mail+"'},settings:{name:'"+name+"',value:'"+value+"'}}", 1)
 		return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: "OK"})
 	}
@@ -96,8 +96,8 @@ func SetSetting(c echo.Context) error {
 func GetSetting(c echo.Context) error {
 	user := CheckAuth(c)
 	name := c.Param("name")
-	config := model.SysConfig{Name: name, UID: database.GetUser(model.User{Mail: user.Mail})[0].ID}
-	return c.JSON(http.StatusOK, database.GetConfig(config))
+	gotConfig := model.SysConfig{Name: name, UID: database.GetUser(model.User{Mail: user.Mail})[0].ID}
+	return c.JSON(http.StatusOK, database.GetConfig(gotConfig))
 }
 
 func Accessible(c echo.Context) error {

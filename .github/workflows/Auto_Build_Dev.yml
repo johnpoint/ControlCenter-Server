@@ -1,4 +1,4 @@
-name: Auto_Build
+name: Auto_Build_Dev
 
 on:
   push:
