@@ -13,19 +13,19 @@ jobs:
         go: [ '1.14', '1.13' ]
     name: Go ${{ matrix.go }} build
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Setup go
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go }}
 
       - name: Test
-      - uses: actions/checkout@v2
       - run: |
           cd src/config && go test && cd ../../
           cd src/database && go test && cd ../../
 
       - name: Build
-      - uses: actions/checkout@v2
       - run: |
           cd src/main && go build
