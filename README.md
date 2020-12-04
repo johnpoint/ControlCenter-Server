@@ -1,8 +1,6 @@
 # ControlCenter-Server
 
-<div style="text-align: center">
-<img src="https://travis-ci.org/johnpoint/ControlCenter-Server.svg?branch=master">
-</div>
+![](https://github.com/johnpoint/ControlCenter-Server/workflows/Auto_Build_Dev/badge.svg) ![](https://github.com/johnpoint/ControlCenter-Server/workflows/Auto_Build_Master/badge.svg)
 
 ## 项目仓库列表
 
@@ -12,4 +10,4 @@
 
 ## 当前版本
 
-ver 2.0.13
+2.0.20
