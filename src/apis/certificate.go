@@ -71,7 +71,7 @@ func UpdateCertificateInfo(c echo.Context) error {
 		if err := c.Bind(&certificate); err != nil {
 			panic(err)
 		}
-		var certPEMBlock []byte = []byte(certificate.Fullchain)
+		var certPEMBlock []byte = []byte(certificate.Fullchain) // TODO:验证私钥
 		var cert tls.Certificate
 		certDERBlock, restPEMBlock := pem.Decode(certPEMBlock)
 		cert.Certificate = append(cert.Certificate, certDERBlock.Bytes)
