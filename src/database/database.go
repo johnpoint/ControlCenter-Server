@@ -465,6 +465,27 @@ func FinishEvent(id int64) bool {
 	return true
 }
 
+func DeleteEvent(id int64) bool {
+	db := initDatabase()
+	defer db.Close()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		return false
+	}
+	_ = tx.AutoMigrate(&model.Event{})
+	if err := tx.Model(&model.Event{}).Delete(model.Event{ID: id, Active: 2}).Error; err != nil {
+		tx.Rollback()
+		return false
+	}
+	tx.Commit()
+	return true
+}
+
 //Configuration
 func AddConfiguration(conf model.Configuration) bool {
 	db := initDatabase()
