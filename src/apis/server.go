@@ -7,7 +7,6 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/labstack/echo"
 	"golang.org/x/net/websocket"
 	"log"
