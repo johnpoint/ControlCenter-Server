@@ -56,58 +56,7 @@ func APIv2(c echo.Context) error {
 					c.Logger().Error(err)
 					break
 				}
-				returnData := ""
-				if msg == "serverList" {
-					list := GetServerList(users[0], 0)
-					data, err := json.Marshal(list)
-					if err != nil {
-						returnData = "[]"
-					} else {
-						returnData = string(data)
-					}
-				} else if msg == "overView" {
-					list := GetOverView(users[0])
-					data, err := json.Marshal(list)
-					if err != nil {
-						returnData = "[]"
-					} else {
-						returnData = string(data)
-					}
-				} else if strings.Contains(msg, "serverStatus") {
-					msgSlice := strings.Split(msg, "#")
-					if len(msgSlice) != 2 {
-						returnData = "{}"
-					} else {
-						id, err := strconv.ParseInt(msgSlice[1], 10, 64)
-						if err == nil {
-							list := GetServerStatus(users[0], id)
-							data, err := json.Marshal(list)
-							if err != nil {
-								returnData = "[]"
-							} else {
-								returnData = "serverStatus" + string(data)
-							}
-						}
-					}
-				} else if msg == "ConfigurationList" {
-					list := GetConfigurationList(users[0])
-					data, err := json.Marshal(list)
-					if err != nil {
-						returnData = "[]"
-					} else {
-						returnData = string(data)
-					}
-				} else if msg == "CertificateList" {
-					list := GetCertificateList(users[0])
-					data, err := json.Marshal(list)
-					if err != nil {
-						returnData = "[]"
-					} else {
-						returnData = string(data)
-					}
-				} else {
-					returnData = "[]"
-				}
+				returnData := parseCommand(msg, users[0])
 				err = websocket.Message.Send(ws, returnData)
 				if err != nil {
 					c.Logger().Error(err)
@@ -116,6 +65,69 @@ func APIv2(c echo.Context) error {
 		}
 	}).ServeHTTP(c.Response(), c.Request())
 	return nil
+}
+
+func parseCommand(msg string, u model.User) string {
+	returnData := "[]"
+	msgSlice := strings.Split(msg, "@")
+	if len(msgSlice) < 2 {
+		returnData = "[]"
+		return returnData
+	}
+	if msgSlice[0] == "get" {
+		msg = msgSlice[1]
+		if msg == "serverList" {
+			list := GetServerList(u, 0)
+			data, err := json.Marshal(list)
+			if err != nil {
+				returnData = "[]"
+			} else {
+				returnData = string(data)
+			}
+		} else if msg == "overView" {
+			list := GetOverView(u)
+			data, err := json.Marshal(list)
+			if err != nil {
+				returnData = "[]"
+			} else {
+				returnData = string(data)
+			}
+		} else if strings.Contains(msg, "serverStatus") {
+			msgSlice := strings.Split(msg, "#")
+			if len(msgSlice) != 2 {
+				returnData = "{}"
+			} else {
+				id, err := strconv.ParseInt(msgSlice[1], 10, 64)
+				if err == nil {
+					list := GetServerStatus(u, id)
+					data, err := json.Marshal(list)
+					if err != nil {
+						returnData = "[]"
+					} else {
+						returnData = "serverStatus" + string(data)
+					}
+				}
+			}
+		} else if msg == "ConfigurationList" {
+			list := GetConfigurationList(u)
+			data, err := json.Marshal(list)
+			if err != nil {
+				returnData = "[]"
+			} else {
+				returnData = string(data)
+			}
+		} else if msg == "CertificateList" {
+			list := GetCertificateList(u)
+			data, err := json.Marshal(list)
+			if err != nil {
+				returnData = "[]"
+			} else {
+				returnData = string(data)
+			}
+		}
+	}
+
+	return returnData
 }
 
 func GetCertificateList(u model.User) interface{} {
