@@ -89,6 +89,24 @@ func APIv2(c echo.Context) error {
 							}
 						}
 					}
+				} else if msg == "ConfigurationList" {
+					list := GetConfigurationList(users[0])
+					data, err := json.Marshal(list)
+					if err != nil {
+						returnData = "[]"
+					} else {
+						returnData = string(data)
+					}
+				} else if msg == "CertificateList" {
+					list := GetCertificateList(users[0])
+					data, err := json.Marshal(list)
+					if err != nil {
+						returnData = "[]"
+					} else {
+						returnData = string(data)
+					}
+				} else {
+					returnData = "[]"
 				}
 				err = websocket.Message.Send(ws, returnData)
 				if err != nil {
@@ -98,6 +116,48 @@ func APIv2(c echo.Context) error {
 		}
 	}).ServeHTTP(c.Response(), c.Request())
 	return nil
+}
+
+func GetCertificateList(u model.User) interface{} {
+	type data struct {
+		ID        int64
+		Issuer    string
+		DNSNames  string
+		NotBefore int64
+		NotAfter  int64
+	}
+	d := []data{}
+	cerList := database.GetCer(model.Certificate{UID: u.ID})
+	for _, i := range cerList {
+		d = append(d, struct {
+			ID        int64
+			Issuer    string
+			DNSNames  string
+			NotBefore int64
+			NotAfter  int64
+		}{ID: i.ID, Issuer: i.Issuer, DNSNames: i.DNSNames, NotBefore: i.NotBefore, NotAfter: i.NotAfter})
+	}
+	return d
+}
+
+func GetConfigurationList(u model.User) interface{} {
+	type data struct {
+		ID   int64
+		Type string
+		Name string
+		Path string
+	}
+	d := []data{}
+	list := database.GetConfiguration(model.Configuration{UID: u.ID})
+	for _, i := range list {
+		d = append(d, struct {
+			ID   int64
+			Type string
+			Name string
+			Path string
+		}{ID: i.ID, Type: i.Type, Name: i.Name, Path: i.Path})
+	}
+	return d
 }
 
 func GetServerStatus(u model.User, id int64) interface{} {
