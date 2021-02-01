@@ -5,10 +5,9 @@ import (
 	"ControlCenter-Server/src/model"
 	"ControlCenter-Server/src/push"
 	"crypto/md5"
-	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/labstack/echo"
-	"golang.org/x/net/websocket"
 	"log"
 	"net/http"
 	"strconv"
@@ -81,69 +80,6 @@ func GetServerUpdate(c echo.Context) error {
 		data.Code = 200
 	}
 	return c.JSON(http.StatusOK, data)
-}
-
-func APIv2(c echo.Context) error {
-	flag := 0
-	token := c.Param("token")
-	u := model.User{Token: token}
-	users := database.GetUser(u)
-	if len(users) != 1 {
-		flag = 1
-	}
-	websocket.Handler(func(ws *websocket.Conn) {
-		defer ws.Close()
-		if flag != 0 {
-			err := websocket.Message.Send(ws, "Unauthorized, Bye")
-			if err != nil {
-				c.Logger().Error(err)
-			}
-			ws.Close()
-		} else {
-			err := websocket.Message.Send(ws, "Certified, Welcome")
-			if err != nil {
-				c.Logger().Error(err)
-			}
-			for {
-				// Read
-				msg := ""
-				err = websocket.Message.Receive(ws, &msg)
-				if err != nil {
-					ws.Close()
-					c.Logger().Error(err)
-					break
-				}
-
-				switch msg {
-				case "serverList":
-					list := GetServerList(users[0])
-					data, err := json.Marshal(list)
-					if err != nil {
-						err := websocket.Message.Send(ws, "[]")
-						if err != nil {
-							c.Logger().Error(err)
-						}
-						break
-					}
-					err = websocket.Message.Send(ws, string(data))
-					if err != nil {
-						c.Logger().Error(err)
-					}
-					break
-				}
-			}
-		}
-	}).ServeHTTP(c.Response(), c.Request())
-	return nil
-}
-
-func GetServerList(u model.User) []model.Server {
-	if u.Level <= 1 {
-		server := model.Server{}
-		server.UID = u.ID
-		return database.GetServer(server)
-	}
-	return []model.Server{}
 }
 
 func GetServerInfo(c echo.Context) error {

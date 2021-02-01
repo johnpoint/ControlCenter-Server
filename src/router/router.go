@@ -44,7 +44,10 @@ func Run() {
 	sys.POST("/restart", apis.SysRestart) //重启服务端 TODO
 	sys.GET("/info", apis.GetSystemInfo)  //获取服务端服务器性能信息
 
-	e.GET("/api/v2/:token", apis.APIv2) // API v2
+	e.GET("/api/v2", apis.APIv2) // API v2
+	j := e.Group("")
+	j.Use(middleware.JWTWithConfig(jwtConfig))
+	j.GET("/api/v2/token", apis.PushToken) // API v2
 
 	//前端调用部分
 	w := e.Group("/web")
