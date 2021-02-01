@@ -280,3 +280,22 @@ func AddClientEvent(c echo.Context) error {
 	}
 	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
 }
+
+func OpenTerminal(c echo.Context) error {
+	user := CheckAuth(c)
+	if user.Level <= 1 {
+		action, _ := strconv.ParseInt(c.Param("action"), 10, 64)
+		serverID, _ := strconv.ParseInt(c.Param("serverid"), 10, 64)
+		//fmt.Println(database.AddEvent(1, serverID, action, "OK"))
+		if len(database.GetServer(model.Server{ID: serverID, UID: database.GetUser(model.User{Mail: user.Mail})[0].ID})) == 1 {
+			d := uuid.New().String()
+			if database.AddEvent(1, serverID, action, d) == false {
+				log.Print("AddEvent Fail:" + c.Path())
+				database.AddLog("Event", c.Path()+"|From:"+c.RealIP(), 2)
+				return c.JSON(http.StatusOK, model.Callback{Code: 500, Info: "Internal Server Error"})
+			}
+			return c.JSON(http.StatusOK, model.Callback{Code: 200, Info: d})
+		}
+	}
+	return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "Unauthorized"})
+}

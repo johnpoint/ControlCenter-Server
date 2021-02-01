@@ -56,6 +56,7 @@ func Run() {
 	w.GET("/ServerInfo", apis.GetServerInfo)                                 //获取服务器信息
 	w.PUT("/ServerInfo", apis.UpdateServerInfo)                              //编辑服务器
 	w.POST("/Server/:serverid/Server/:action", apis.AddClientEvent)          //服务器队列添加任务
+	w.POST("/Server/:serverid/Terminal/:action", apis.OpenTerminal)          //服务器队列添加任务-打开Terminal
 	w.POST("/Server/:serverid/Docker/:action/:id", apis.ChangeDockerStatus)  //服务器队列添加任务-docker管理
 	w.GET("/ServerInfo/Certificate", apis.GetCertificateLinked)              //获取服务器证书列表
 	w.GET("/ServerInfo/Configuration", apis.GetConfigurationLinked)          //获取服务器证书列表
