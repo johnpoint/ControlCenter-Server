@@ -20,7 +20,6 @@ func PushToken(c echo.Context) error {
 }
 
 func APIv2(c echo.Context) error {
-	flag := 0
 	websocket.Handler(func(ws *websocket.Conn) {
 		defer ws.Close()
 		msg := ""
@@ -32,35 +31,26 @@ func APIv2(c echo.Context) error {
 		u := model.User{Token: msg}
 		users := database.GetUser(u)
 		if len(users) != 1 {
-			flag = 1
 			ws.Close()
 			return
 		}
-		if flag != 0 {
-			err := websocket.Message.Send(ws, "Unauthorized, Bye")
+		err = websocket.Message.Send(ws, "Certified, Welcome")
+		if err != nil {
+			c.Logger().Error(err)
+		}
+		for {
+			// Read
+			msg := ""
+			err = websocket.Message.Receive(ws, &msg)
+			if err != nil {
+				ws.Close()
+				c.Logger().Error(err)
+				break
+			}
+			returnData := parseCommand(msg, users[0])
+			err = websocket.Message.Send(ws, returnData)
 			if err != nil {
 				c.Logger().Error(err)
-			}
-			ws.Close()
-		} else {
-			err := websocket.Message.Send(ws, "Certified, Welcome")
-			if err != nil {
-				c.Logger().Error(err)
-			}
-			for {
-				// Read
-				msg := ""
-				err = websocket.Message.Receive(ws, &msg)
-				if err != nil {
-					ws.Close()
-					c.Logger().Error(err)
-					break
-				}
-				returnData := parseCommand(msg, users[0])
-				err = websocket.Message.Send(ws, returnData)
-				if err != nil {
-					c.Logger().Error(err)
-				}
 			}
 		}
 	}).ServeHTTP(c.Response(), c.Request())
