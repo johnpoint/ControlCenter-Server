@@ -12,6 +12,7 @@ type Server struct {
 	UID      int64  `json:"uid" xml:"uid" form:"uid" query:"uid"`
 	Token    string
 	Online   int64 `gorm:"default:1"`
+	Ps       string
 }
 
 // User model of user
