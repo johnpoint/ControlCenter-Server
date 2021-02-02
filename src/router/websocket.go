@@ -4,7 +4,6 @@ import (
 	"ControlCenter-Server/src/apis"
 	"ControlCenter-Server/src/database"
 	"ControlCenter-Server/src/model"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo"
@@ -55,7 +54,6 @@ func ServerV2(c echo.Context) error {
 		c.Logger().Error(err)
 	}
 	token := string(msg)
-	fmt.Println(token)
 	server := model.Server{Token: token}
 	serverList := database.GetServer(server)
 	if len(serverList) != 0 {
@@ -64,6 +62,7 @@ func ServerV2(c echo.Context) error {
 		ws.Close()
 		return nil
 	}
+	log.Println("[Websocket]", server.Ipv4, "connected")
 	go func() {
 		lock.Add(1)
 		for {
@@ -73,6 +72,7 @@ func ServerV2(c echo.Context) error {
 			default:
 				_, msg, err := ws.ReadMessage()
 				if err != nil {
+					log.Println("[Websocket]", server.Ipv4, "Disconnected")
 					lock.Done()
 					return
 				}
