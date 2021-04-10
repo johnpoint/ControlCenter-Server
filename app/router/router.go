@@ -1,8 +1,8 @@
 package router
 
 import (
-	"ControlCenter-Server/src/apis"
-	"ControlCenter-Server/src/config"
+	"ControlCenter-Server/app/apis"
+	"ControlCenter-Server/app/config"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -10,7 +10,7 @@ import (
 
 func Run() {
 	go checkOnlineI()
-	conf := config.LoadConfig()
+	conf := config.Cfg
 	e := echo.New()
 	e.Debug = conf.Debug
 	e.HideBanner = true

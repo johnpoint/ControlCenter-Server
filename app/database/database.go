@@ -1,8 +1,8 @@
 package database
 
 import (
-	"ControlCenter-Server/src/config"
-	"ControlCenter-Server/src/model"
+	"ControlCenter-Server/app/config"
+	"ControlCenter-Server/app/model"
 	"fmt"
 
 	//"gorm.io/driver/sqlite"
@@ -18,7 +18,7 @@ import (
 // var mutex sync.Mutex
 
 func initDatabase() *gorm.DB {
-	conf := config.LoadConfig()
+	conf := config.Cfg
 	var err error
 	var db *gorm.DB
 	db, err = gorm.Open("sqlite3", conf.Database)

@@ -1,8 +1,8 @@
 package push
 
 import (
-	"ControlCenter-Server/src/database"
-	"ControlCenter-Server/src/model"
+	"ControlCenter-Server/app/database"
+	"ControlCenter-Server/app/model"
 	"fmt"
 	"net/http"
 	"net/url"

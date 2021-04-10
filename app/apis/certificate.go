@@ -1,8 +1,8 @@
 package apis
 
 import (
-	"ControlCenter-Server/src/database"
-	"ControlCenter-Server/src/model"
+	"ControlCenter-Server/app/database"
+	"ControlCenter-Server/app/model"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/pem"

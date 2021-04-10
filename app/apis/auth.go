@@ -1,9 +1,9 @@
 package apis
 
 import (
-	"ControlCenter-Server/src/config"
-	"ControlCenter-Server/src/database"
-	"ControlCenter-Server/src/model"
+	"ControlCenter-Server/app/config"
+	"ControlCenter-Server/app/database"
+	"ControlCenter-Server/app/model"
 	"crypto/md5"
 	"fmt"
 	"net/http"
@@ -22,7 +22,7 @@ type JwtCustomClaims struct {
 }
 
 func OaLogin(c echo.Context) error {
-	conf := config.LoadConfig()
+	conf := config.Cfg
 	salt := conf.Salt
 	u := model.User{}
 	if err := c.Bind(&u); err != nil {
@@ -59,7 +59,7 @@ func OaLogin(c echo.Context) error {
 }
 
 func OaRegister(c echo.Context) error {
-	conf := config.LoadConfig()
+	conf := config.Cfg
 	salt := conf.Salt
 	u := model.User{}
 	var re model.Callback

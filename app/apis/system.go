@@ -1,9 +1,9 @@
 package apis
 
 import (
-	"ControlCenter-Server/src/config"
-	"ControlCenter-Server/src/database"
-	"ControlCenter-Server/src/model"
+	"ControlCenter-Server/app/config"
+	"ControlCenter-Server/app/database"
+	"ControlCenter-Server/app/model"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -27,7 +27,7 @@ func SysRestart(c echo.Context) error {
 
 func SetBackupFile(c echo.Context) error {
 	user := CheckAuth(c)
-	conf := config.LoadConfig()
+	conf := config.Cfg
 	if user != nil {
 		if user.Level <= 0 {
 			file, err := c.FormFile("file")
@@ -61,7 +61,7 @@ func SetBackupFile(c echo.Context) error {
 }
 
 func GetBackupFile(c echo.Context) error {
-	conf := config.LoadConfig()
+	conf := config.Cfg
 	token := c.Param("token")
 	if token == "" {
 		return c.JSON(http.StatusUnauthorized, model.Callback{Code: 0, Info: "ERROR"})

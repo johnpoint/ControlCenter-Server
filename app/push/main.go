@@ -1,7 +1,7 @@
 package push
 
 import (
-	"ControlCenter-Server/src/model"
+	"ControlCenter-Server/app/model"
 )
 
 func PushNotification(servers []model.Server, status int64) bool {

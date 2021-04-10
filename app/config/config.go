@@ -1,22 +1,24 @@
 package config
 
 import (
-	"ControlCenter-Server/src/model"
+	"ControlCenter-Server/app/model"
 	"encoding/json"
 	"fmt"
 	"os"
 )
 
-func LoadConfig() model.Config {
-	file, _ := os.Open("config.json")
+var Cfg model.Config
+
+func LoadConfig(cfgFile string) error {
+	file, _ := os.Open(cfgFile)
 	defer file.Close()
 	decoder := json.NewDecoder(file)
-	conf := model.Config{}
-	err := decoder.Decode(&conf)
+	err := decoder.Decode(&Cfg)
 	if err != nil {
 		fmt.Println("Error:", err)
+		return err
 	}
-	return conf
+	return nil
 }
 
 func InitServer() {

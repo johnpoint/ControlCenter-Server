@@ -1,9 +1,9 @@
 package apis
 
 import (
-	"ControlCenter-Server/src/config"
-	"ControlCenter-Server/src/database"
-	"ControlCenter-Server/src/model"
+	"ControlCenter-Server/app/config"
+	"ControlCenter-Server/app/database"
+	"ControlCenter-Server/app/model"
 	"crypto/md5"
 	"fmt"
 	"io"
@@ -32,7 +32,7 @@ func UpdateUserInfo(c echo.Context) error {
 }
 
 func ReSetPassword(c echo.Context) error {
-	conf := config.LoadConfig()
+	conf := config.Cfg
 	salt := conf.Salt
 	user := CheckAuth(c)
 	Getdata := model.ReSetPassword{}
