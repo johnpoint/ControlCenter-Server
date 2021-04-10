@@ -6,3 +6,4 @@ dev/
 /app/config/c.out
 /app/database/config.json
 config.json
+/go.sum
