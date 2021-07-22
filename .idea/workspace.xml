@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="64906f17-d5f6-4048-9a82-7d768cdf2317" name="Default Changelist" comment="feat: 新一代系统框架搭建">
-      <change afterPath="$PROJECT_DIR$/initHelper/depend/api.go" afterDir="false" />
+    <list default="true" id="64906f17-d5f6-4048-9a82-7d768cdf2317" name="Default Changelist" comment="feat: 配置文件解析">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/http_server.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/http_server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/root_command.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/root_command.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/init/depend/depend.go" beforeDir="false" afterPath="$PROJECT_DIR$/initHelper/depend/depend.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/init/init.go" beforeDir="false" afterPath="$PROJECT_DIR$/initHelper/init.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/initHelper/depend/api.go" beforeDir="false" afterPath="$PROJECT_DIR$/initHelper/depend/api.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/initHelper/init.go" beforeDir="false" afterPath="$PROJECT_DIR$/initHelper/init.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,7 +151,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="update&#10;:: update to 2.0.8&#10;:: 修复获取客户端状态部分逻辑" />
     <MESSAGE value="update&#10;:: update to 2.0.9&#10;:: 修复打开文件数量过多" />
     <MESSAGE value="update&#10;:: update to 2.0.9&#10;:: 降级至 gorm v1" />
     <MESSAGE value="update&#10;:: update to 2.0.10&#10;:: 分发文件至服务器" />
@@ -180,7 +175,8 @@
     <MESSAGE value="rm" />
     <MESSAGE value="update: github action" />
     <MESSAGE value="feat: 新一代系统框架搭建" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 新一代系统框架搭建" />
+    <MESSAGE value="feat: 配置文件解析" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 配置文件解析" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="VgoProject">

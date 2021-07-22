@@ -19,7 +19,7 @@ func (i *Helper) Init(ctx context.Context) error {
 	fmt.Println("[init] Start")
 	for j := range i.Depends {
 		if i.Depends[j].GetEnable() {
-			fmt.Println(fmt.Sprintf("[init] %s", i.Depends[j].GetName()))
+			fmt.Printf("[init] \u001B[1;32;40m%s\u001B[0m\n", i.Depends[j].GetName())
 			err := i.Depends[j].Init(ctx)
 			if err != nil {
 				return err

@@ -37,5 +37,5 @@ func initConfig() {
 	if err := config.Config.ReadConfig(); err != nil {
 		panic(err)
 	}
-	fmt.Printf("[init] Env = \u001B[1;32;40m%s\u001B[0m\n", config.Config.Environment)
+	fmt.Printf("[init] Env = \033[1;32;40m%s\033[0m\n", config.Config.Environment)
 }

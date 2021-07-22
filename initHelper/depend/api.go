@@ -1,7 +1,9 @@
 package depend
 
 import (
+	"ControlCenter-Server/config"
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,10 +15,13 @@ func (r *Api) Init(ctx context.Context) error {
 	gin.SetMode(gin.ReleaseMode)
 	routerGin := gin.New()
 
-	err := routerGin.Run()
-	if err != nil {
-		panic(err)
-	}
+	go func() {
+		fmt.Println("[init] HTTP Listen at " + config.Config.HttpServerListen)
+		err := routerGin.Run(config.Config.HttpServerListen)
+		if err != nil {
+			panic(err)
+		}
+	}()
 	return nil
 }
 
