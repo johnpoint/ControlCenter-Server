@@ -1,4 +1,8 @@
 {
   "http_server_listen": "0.0.0.0:8888",
-  "environment": "local"
+  "environment": "local",
+  "mongo_db_config": {
+    "url": "",
+    "database": ""
+  }
 }
