@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="64906f17-d5f6-4048-9a82-7d768cdf2317" name="Default Changelist" comment="update: github action">
+      <change afterPath="$PROJECT_DIR$/cmd/http_server.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/init/depend/depend.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/init/init.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/Auto_Build_Dev.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/Auto_Build_Master.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.travis.yml.disable" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ControlCenter-Server.go" beforeDir="false" afterPath="$PROJECT_DIR$/ControlCenter-Server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/apis/apiV2.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/apis/auth.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/apis/certificate.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/apis/configuration.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/apis/server.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/apis/serverV2.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/apis/system.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/apis/user.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/cmd/newServerCmd.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/cmd/rootCmd.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config/config.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/database/database.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/model/model.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/model/tables.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/push/main.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/push/telegram.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/router/router.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.example.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/Client.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/Docker.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/api.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go Application" />
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" path="/usr/lib/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="ProjectId" id="1aUP6Ek48mQXT1XYsznNCxhw7GD" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="DatabaseDriversLRU" value="sqlite" />
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ControlCenter-Client" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="http.proxy" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/.github/workflows" />
+      <recent name="$PROJECT_DIR$/src/tool" />
+      <recent name="$PROJECT_DIR$/src/router" />
+      <recent name="$PROJECT_DIR$/src/database" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/app" />
+      <recent name="$PROJECT_DIR$/src/config" />
+      <recent name="$PROJECT_DIR$/src/router" />
+      <recent name="$PROJECT_DIR$/src/Push" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Go Build.Server">
+    <configuration name="Client" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="ControlCenter" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <go_parameters value="-i" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$/src/Client" />
+      <filePath value="$PROJECT_DIR$/" />
+      <option name="run" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Server" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="ControlCenter" />
+      <working_directory value="$PROJECT_DIR$" />
+      <go_parameters value="-i" />
+      <parameters value="start" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$/src/main" />
+      <filePath value="$PROJECT_DIR$/src/Server/" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build github.com/johnpoint/ControlCenter-Server/src/tool" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="ControlCenter" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/johnpoint/ControlCenter-Server/src/tool" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/src/tool/reSetConfig.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="ControlCenter" />
+      <working_directory value="$PROJECT_DIR$/src/Client" />
+      <parameters value="poll" />
+      <kind value="DIRECTORY" />
+      <package value="main" />
+      <directory value="$PROJECT_DIR$/src/Client" />
+      <filePath value="$PROJECT_DIR$/src/Client/main.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestLoadData in main" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="ControlCenter" />
+      <working_directory value="$PROJECT_DIR$/src/Client" />
+      <kind value="PACKAGE" />
+      <package value="main" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <framework value="gotest" />
+      <pattern value="^TestLoadData$" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Go Build.Client" />
+      <item itemvalue="Go Build.Server" />
+      <item itemvalue="Go Build.go build github.com/johnpoint/ControlCenter-Server/src/tool" />
+      <item itemvalue="Go Build.go build main" />
+      <item itemvalue="Go Test.TestLoadData in main" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.TestLoadData in main" />
+        <item itemvalue="Go Build.go build main" />
+        <item itemvalue="Go Build.go build github.com/johnpoint/ControlCenter-Server/src/tool" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update&#10;:: update to 2.0.7&#10;:: 输出日志选项修复" />
+    <MESSAGE value="update&#10;:: update to 2.0.8&#10;:: 修复获取客户端状态部分逻辑" />
+    <MESSAGE value="update&#10;:: update to 2.0.9&#10;:: 修复打开文件数量过多" />
+    <MESSAGE value="update&#10;:: update to 2.0.9&#10;:: 降级至 gorm v1" />
+    <MESSAGE value="update&#10;:: update to 2.0.10&#10;:: 分发文件至服务器" />
+    <MESSAGE value="update&#10;:: update to 2.0.11&#10;:: 分发文件至服务器bug修复" />
+    <MESSAGE value="update&#10;:: update to 2.0.12&#10;:: 数据库操作 bug 修复&#10;:: 注释掉未使用的单元测试代码" />
+    <MESSAGE value="update&#10;:: 添加 Github Action 配置&#10;:: 添加 TODO" />
+    <MESSAGE value="update&#10;:: 更新 Github Action 配置" />
+    <MESSAGE value="update&#10;:: 更新 Github Action 配置&#10;:: 更新 README" />
+    <MESSAGE value="update&#10;:: 添加 v2 websocket API 接口" />
+    <MESSAGE value="update&#10;:: 更新 action go 版本号" />
+    <MESSAGE value="update&#10;:: 修复未使用库" />
+    <MESSAGE value="update&#10;:: 修改路径" />
+    <MESSAGE value="update&#10;:: 分离 v2 api 代码&#10;:: 完善获取服务器信息 v2 api" />
+    <MESSAGE value="update&#10;:: 控制台前期代码" />
+    <MESSAGE value="update&#10;:: 将获取列表 api 调整为 websockets" />
+    <MESSAGE value="update&#10;:: 修改 API 指令" />
+    <MESSAGE value="update&#10;:: 添加受控服务器 websocket 上报通道" />
+    <MESSAGE value="update&#10;:: 添加连接断开提示" />
+    <MESSAGE value="update&#10;:: 添加进程信息存储" />
+    <MESSAGE value="feat: 替换命令行解析方式" />
+    <MESSAGE value="update: 忽略 go.sum" />
+    <MESSAGE value="rm" />
+    <MESSAGE value="update: github action" />
+    <option name="LAST_COMMIT_MESSAGE" value="update: github action" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+</project>

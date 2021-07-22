@@ -1,9 +1,0 @@
-.idea/
-dev/
-/src/updatetool/tool
-/src/updatetool/config.json
-/app/router/config.json
-/app/config/c.out
-/app/database/config.json
-config.json
-/go.sum
