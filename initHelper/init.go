@@ -1,7 +1,7 @@
-package init
+package initHelper
 
 import (
-	"ControlCenter-Server/init/depend"
+	"ControlCenter-Server/initHelper/depend"
 	"context"
 	"fmt"
 	"log"

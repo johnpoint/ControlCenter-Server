@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"ControlCenter-Server/init"
+	"ControlCenter-Server/initHelper"
 	"context"
 	"github.com/spf13/cobra"
 )
@@ -11,7 +11,7 @@ var httpServerCommand = &cobra.Command{
 	Short: "Start http server",
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
-		i := init.Helper{}
+		i := initHelper.Helper{}
 		err := i.Init(ctx)
 		if err != nil {
 			panic(err)
