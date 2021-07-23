@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="64906f17-d5f6-4048-9a82-7d768cdf2317" name="Default Changelist" comment="feat: 初始化">
-      <change afterPath="$PROJECT_DIR$/dao/mongoDao/mongo.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/initHelper/depend/mongodb.go" afterDir="false" />
+    <list default="true" id="64906f17-d5f6-4048-9a82-7d768cdf2317" name="Default Changelist" comment="feat: 初始化mongodb">
+      <change afterPath="$PROJECT_DIR$/app/controller/ping_controller.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mdoel/mongodb/model.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mdoel/mongodb/user.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config_local.json" beforeDir="false" afterPath="$PROJECT_DIR$/config_local.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/initHelper/depend/api.go" beforeDir="false" afterPath="$PROJECT_DIR$/initHelper/depend/api.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,11 +61,11 @@
       <recent name="$PROJECT_DIR$/src/database" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/mdoel/mongodb" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/app" />
       <recent name="$PROJECT_DIR$/src/config" />
       <recent name="$PROJECT_DIR$/src/router" />
-      <recent name="$PROJECT_DIR$/src/Push" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.Server">
@@ -153,7 +151,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="update&#10;:: update to 2.0.9&#10;:: 降级至 gorm v1" />
     <MESSAGE value="update&#10;:: update to 2.0.10&#10;:: 分发文件至服务器" />
     <MESSAGE value="update&#10;:: update to 2.0.11&#10;:: 分发文件至服务器bug修复" />
     <MESSAGE value="update&#10;:: update to 2.0.12&#10;:: 数据库操作 bug 修复&#10;:: 注释掉未使用的单元测试代码" />
@@ -178,7 +175,8 @@
     <MESSAGE value="feat: 新一代系统框架搭建" />
     <MESSAGE value="feat: 配置文件解析" />
     <MESSAGE value="feat: 初始化" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 初始化" />
+    <MESSAGE value="feat: 初始化mongodb" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 初始化mongodb" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="VgoProject">

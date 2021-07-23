@@ -1,6 +1,7 @@
 package depend
 
 import (
+	"ControlCenter-Server/app/controller"
 	"ControlCenter-Server/config"
 	"context"
 	"fmt"
@@ -14,6 +15,7 @@ type Api struct {
 func (r *Api) Init(ctx context.Context) error {
 	gin.SetMode(gin.ReleaseMode)
 	routerGin := gin.New()
+	routerGin.GET("/ping", controller.Pong)
 
 	go func() {
 		fmt.Println("[init] HTTP Listen at " + config.Config.HttpServerListen)
