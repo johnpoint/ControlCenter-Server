@@ -1,6 +1,6 @@
 package main
 
-import "ControlCenter-Server/cmd"
+import "ControlCenter/cmd"
 
 func main() {
 	cmd.Execute()

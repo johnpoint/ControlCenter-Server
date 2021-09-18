@@ -1,8 +1,8 @@
 package depend
 
 import (
-	"ControlCenter-Server/config"
-	"ControlCenter-Server/dao/mongoDao"
+	"ControlCenter/config"
+	"ControlCenter/dao/mongoDao"
 	"context"
 )
 
@@ -10,8 +10,8 @@ type MongoDB struct {
 	Enable bool
 }
 
-func (r *MongoDB) Init(ctx context.Context) error {
-	mongoDao.InitMongoClient(&config.Config.MongoDBConfig)
+func (r *MongoDB) Init(ctx context.Context, cfg *config.ServiceConfig) error {
+	mongoDao.InitMongoClient(cfg.MongoDBConfig)
 	return nil
 }
 

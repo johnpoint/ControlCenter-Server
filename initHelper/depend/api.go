@@ -1,8 +1,8 @@
 package depend
 
 import (
-	"ControlCenter-Server/app/controller"
-	"ControlCenter-Server/config"
+	"ControlCenter/app/controller"
+	"ControlCenter/config"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -12,14 +12,14 @@ type Api struct {
 	Enable bool
 }
 
-func (r *Api) Init(ctx context.Context) error {
+func (r *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	gin.SetMode(gin.ReleaseMode)
 	routerGin := gin.New()
 	routerGin.GET("/ping", controller.Pong)
 
 	go func() {
-		fmt.Println("[init] HTTP Listen at " + config.Config.HttpServerListen)
-		err := routerGin.Run(config.Config.HttpServerListen)
+		fmt.Println("[init] HTTP Listen at " + cfg.HttpServerListen)
+		err := routerGin.Run(cfg.HttpServerListen)
 		if err != nil {
 			panic(err)
 		}

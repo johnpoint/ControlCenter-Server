@@ -1,7 +1,7 @@
 package mongodb
 
 import (
-	"ControlCenter-Server/dao/mongoDao"
+	"ControlCenter/dao/mongoDao"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 )

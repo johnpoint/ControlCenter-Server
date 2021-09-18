@@ -1,13 +1,16 @@
 package mongoDao
 
 import (
-	"ControlCenter-Server/config"
+	"ControlCenter/config"
 	"context"
+	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"time"
 )
+
+var MongoClientNotInit = errors.New("mongo client not init")
 
 var MongoClient *mongo.Client
 
@@ -23,13 +26,17 @@ func InitMongoClient(config *config.MongoDBConfig) {
 	}
 }
 
-func getMongoClient() *mongo.Client {
+func getMongoClient() (*mongo.Client, error) {
 	if MongoClient == nil {
-		InitMongoClient(&config.Config.MongoDBConfig)
+		return nil, MongoClientNotInit
 	}
-	return MongoClient
+	return MongoClient, nil
 }
 
 func Client(collection string) *mongo.Collection {
-	return getMongoClient().Database(config.Config.MongoDBConfig.Database).Collection(collection)
+	if client, err := getMongoClient(); err == nil {
+		return client.Database(config.Config.MongoDBConfig.Database).Collection(collection)
+	} else {
+		panic(err)
+	}
 }

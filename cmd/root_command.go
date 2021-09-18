@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"ControlCenter-Server/config"
+	"ControlCenter/config"
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
@@ -25,7 +25,9 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "config_local.json", "config file (default is ./config_local.json)")
-	rootCmd.AddCommand(httpServerCommand)
+	rootCmd.AddCommand(httpServerCommand) // API服务
+	rootCmd.AddCommand(clientCommand)     // 上报客户端
+	rootCmd.AddCommand(genConfigCommand)  // 生成空配置文件
 }
 
 func initConfig() {
