@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package server_info;
+
+
+option go_package = "ControlCenter-Server/proto/server_info";
+
+enum ServerCommand {
+    UPDATE_SERVER_INFO = 0;
+}
+
+message ServerReport {
+    string        server_id = 1;
+    bytes         server_token = 2;
+    ServerCommand command = 3;
+    bytes         command_buf = 4;
+}
+
+message ServerInfo {
+    string process = 1; // 进程信息
+    string ipv4 = 2;
+    string ipv6 = 3;
+}
+
+message SystemInfo {
+    repeated CPU     cpu = 1;
+    Load    load = 2;
+    Mem     memory = 3;
+    repeated Network network = 4;
+    Percent Percent = 5;
+}
+
+message CPU {
+    int32  cores = 1;
+    string model_name = 2;
+}
+
+message Load {
+    float load1 = 1;
+    float load5 = 2;
+    float load15 = 3;
+}
+
+message Mem {
+    int64 available = 1;
+    int64 total = 2;
+    int64 used = 3;
+}
+
+message Network {
+    string interface = 1;
+    repeated string address = 2;
+    int64  byte_recv = 3;
+    int64  byte_sent = 4;
+}
+
+message Percent {
+    float cpu = 1;
+    float disk = 2;
+    float memory = 3;
+    float swap = 4;
+}
