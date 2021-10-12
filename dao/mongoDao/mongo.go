@@ -2,7 +2,6 @@ package mongoDao
 
 import (
 	"ControlCenter/config"
-	"ControlCenter/model/mongodb"
 	"context"
 	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -34,9 +33,9 @@ func getMongoClient() (*mongo.Client, error) {
 	return MongoClient, nil
 }
 
-func Client(model mongodb.Model) *mongo.Collection {
+func Client(name string) *mongo.Collection {
 	if client, err := getMongoClient(); err == nil {
-		return client.Database(config.Config.MongoDBConfig.Database).Collection(model.CollectionName())
+		return client.Database(config.Config.MongoDBConfig.Database).Collection(name)
 	} else {
 		panic(err)
 	}
