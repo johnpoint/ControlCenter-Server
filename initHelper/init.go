@@ -19,6 +19,11 @@ type Helper struct {
 
 func (i *Helper) Init(ctx context.Context) error {
 	rand.Seed(time.Now().UnixNano())
+	fmt.Printf("[init] Config = %s\n", config.Config.ConfigFile)
+	if err := config.Config.ReadConfig(); err != nil {
+		panic(err)
+	}
+	fmt.Printf("[init] Env = %s\n", config.Config.Environment)
 	fmt.Println("[depend] Start")
 	for j := range i.Depends {
 		fmt.Println(strings.Replace(fmt.Sprintf("[depend] %s", reflect.TypeOf(i.Depends[j])), "*depend.", "", 1))

@@ -16,7 +16,7 @@ type ServiceConfig struct {
 	Environment      string           `json:"environment"`
 	MongoDBConfig    *MongoDBConfig   `json:"mongo_db_config"`
 	RedisConfig      *RedisConfig     `json:"redis_config"`
-	TaskProducer     *rabbitmq.Config `json:"task_producer"`
+	TaskQueue        *rabbitmq.Config `json:"task_producer"`
 	GrpcClientServer string           `json:"grpc_client_server"`
 }
 

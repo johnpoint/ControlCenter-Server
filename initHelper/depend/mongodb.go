@@ -6,6 +6,7 @@ import (
 	"context"
 )
 
+// MongoDB 初始化 MongoDB 客户端
 type MongoDB struct {
 	Enable bool
 }

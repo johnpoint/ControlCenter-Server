@@ -25,9 +25,10 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "config_local.json", "config file (default is ./config_local.json)")
-	rootCmd.AddCommand(httpServerCommand) // API服务
-	rootCmd.AddCommand(clientCommand)     // 上报客户端
-	rootCmd.AddCommand(genConfigCommand)  // 生成空配置文件
+	rootCmd.AddCommand(httpServerCommand)   // API服务
+	rootCmd.AddCommand(clientCommand)       // 上报客户端
+	rootCmd.AddCommand(genConfigCommand)    // 生成空配置文件
+	rootCmd.AddCommand(taskConsumerCommand) // 下发任务消费者
 }
 
 func initConfig() {
@@ -35,9 +36,4 @@ func initConfig() {
 		cfgFile = "config_local.json"
 	}
 	config.Config = &config.ServiceConfig{ConfigFile: cfgFile}
-	fmt.Printf("[init] Config = %s\n", cfgFile)
-	if err := config.Config.ReadConfig(); err != nil {
-		panic(err)
-	}
-	fmt.Printf("[init] Env = %s\n", config.Config.Environment)
 }

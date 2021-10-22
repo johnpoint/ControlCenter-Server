@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Api api服务
 type Api struct {
 	Enable bool
 }

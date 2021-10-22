@@ -7,6 +7,7 @@ import (
 	goRedis "github.com/go-redis/redis/v8"
 )
 
+// Redis 初始化 Redis 客户端
 type Redis struct {
 	Enable bool
 }
