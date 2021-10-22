@@ -34,19 +34,3 @@ func (r *Redis) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	})
 	return nil
 }
-
-func (r *Redis) GetEnable() bool {
-	return r.Enable
-}
-
-func (r *Redis) SetEnable(enable bool) {
-	r.Enable = enable
-}
-
-func (r *Redis) GetName() string {
-	return "Redis"
-}
-
-func (r *Redis) GetDesc() string {
-	return "初始化 Redis 连接"
-}

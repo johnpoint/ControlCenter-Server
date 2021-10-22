@@ -1,6 +1,7 @@
 package config
 
 import (
+	"ControlCenter/initHelper/depend/rabbitmq"
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -10,11 +11,13 @@ import (
 var Config = &ServiceConfig{}
 
 type ServiceConfig struct {
-	ConfigFile       string         `json:"config_file"`
-	HttpServerListen string         `json:"http_server_listen"`
-	Environment      string         `json:"environment"`
-	MongoDBConfig    *MongoDBConfig `json:"mongo_db_config"`
-	RedisConfig      *RedisConfig   `json:"redis_config"`
+	ConfigFile       string           `json:"config_file"`
+	HttpServerListen string           `json:"http_server_listen"`
+	Environment      string           `json:"environment"`
+	MongoDBConfig    *MongoDBConfig   `json:"mongo_db_config"`
+	RedisConfig      *RedisConfig     `json:"redis_config"`
+	TaskProducer     *rabbitmq.Config `json:"task_producer"`
+	GrpcClientServer string           `json:"grpc_client_server"`
 }
 
 func (c *ServiceConfig) ReadConfig() error {

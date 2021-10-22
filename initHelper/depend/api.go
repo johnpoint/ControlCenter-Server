@@ -3,7 +3,7 @@ package depend
 import (
 	"ControlCenter/app/controller"
 	"ControlCenter/config"
-	"ControlCenter/initHelper/depend/middleware"
+	"ControlCenter/initHelper/depend/apiMiddleware"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -31,8 +31,8 @@ func (r *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 
 	api := routerGin.Group("/api")
 	{
-		api.GET("")                                        // 获取首页详情
-		api.POST("/token", middleware.JWTAuthMiddleware()) // 更新 jwt
+		api.GET("")                                           // 获取首页详情
+		api.POST("/token", apiMiddleware.JWTAuthMiddleware()) // 更新 jwt
 	}
 
 	user := api.Group("/user") // 用户模块
@@ -67,20 +67,4 @@ func (r *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 		}
 	}()
 	return nil
-}
-
-func (r *Api) GetEnable() bool {
-	return r.Enable
-}
-
-func (r *Api) SetEnable(enable bool) {
-	r.Enable = enable
-}
-
-func (r *Api) GetName() string {
-	return "API"
-}
-
-func (r *Api) GetDesc() string {
-	return "个号日志API"
 }

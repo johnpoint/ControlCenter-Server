@@ -1,4 +1,4 @@
-package middleware
+package apiMiddleware
 
 import (
 	protoCommon "ControlCenter/proto/common"

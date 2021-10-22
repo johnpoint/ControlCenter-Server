@@ -13,9 +13,12 @@ var httpServerCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
 		i := initHelper.Helper{}
-		i.AddDepend(&depend.MongoDB{})
-		i.AddDepend(&depend.Redis{})
-		i.AddDepend(&depend.Api{})
+		i.AddDepend(
+			&depend.MongoDB{},
+			&depend.Redis{},
+			&depend.TaskProducer{},
+			&depend.Api{},
+		)
 		err := i.Init(ctx)
 		if err != nil {
 			panic(err)
