@@ -12,6 +12,8 @@ type Redis struct {
 	Enable bool
 }
 
+var _ Depend = (*Redis)(nil)
+
 func (r *Redis) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	redisDao.InitClient(&goRedis.Options{
 		Network:            cfg.RedisConfig.Network,

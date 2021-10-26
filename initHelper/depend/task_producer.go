@@ -10,6 +10,8 @@ import (
 // TaskProducer 下发任务生产者
 type TaskProducer struct{}
 
+var _ Depend = (*TaskProducer)(nil)
+
 func (t *TaskProducer) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	var err error
 	producer.TaskProducer, err = new(rabbitmq.RabbitMQ).

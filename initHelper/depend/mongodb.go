@@ -11,6 +11,8 @@ type MongoDB struct {
 	Enable bool
 }
 
+var _ Depend = (*MongoDB)(nil)
+
 func (r *MongoDB) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	mongoDao.InitMongoClient(cfg.MongoDBConfig)
 	return nil
