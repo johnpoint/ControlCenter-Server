@@ -1,0 +1,24 @@
+{
+  "http_server_listen": "0.0.0.0:8888",
+  "environment": "dev",
+  "mongo_db_config": {
+    "url": "mongodb://admin:admin@control_center_database:27017/control_center",
+    "database": "control_center"
+  },
+  "redis_config": {
+    "addr": "control_center_redis:6379"
+  },
+  "task_producer": {
+    "Address": "amqp://admin:admin@control_center_mq:5672/",
+    "ExchangeName": "control_center",
+    "ExchangeKind": "topic",
+    "ExchangeDurable": true,
+    "QueueName": "control_center",
+    "QueueDurable": true,
+    "BindKey": "control_center",
+    "DeliveryMode": 2,
+    "PrefetchCount": 5,
+    "Args": null
+  },
+  "grpc_client_server": ""
+}

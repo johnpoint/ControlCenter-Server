@@ -2,12 +2,13 @@ BIN_FILE=ControlCenter
 PROJECTNAME=ControlCenter
 
 ## make: 格式化 go 代码，并编译生成二进制文件
-all: check build
+all: check build clean
 
 ## build: 编译go代码生成二进制文件
 build:
 	@go mod tidy
 	@go build -o "${BIN_FILE}" ControlCenter.go
+	@docker build -t control-center:latest .
 
 ## clean: 清理中间目标文件
 clean:
