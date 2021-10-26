@@ -34,10 +34,6 @@ services:
     image: control-center:latest
     container_name: control_center_api
     restart: on-failure
-    depends_on:
-      - "control_center_mq"
-      - "control_center_database"
-      - "control_center_redis"
     networks:
       - local_server
     volumes:
