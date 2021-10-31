@@ -10,4 +10,4 @@ while ! nc -z control_center_redis 6379; do
   echo "wait for redis"
   sleep 1
 done
-/usr/src/ControlCenter api --config /usr/src/config_dev.json
+/usr/src/ControlCenter $1 --config /usr/src/config_dev.json

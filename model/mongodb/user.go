@@ -13,7 +13,7 @@ type ModelUser struct {
 }
 
 func (m *ModelUser) CollectionName() string {
-	return "model_user"
+	return "user"
 }
 
 func (m *ModelUser) InsertOne(ctx context.Context) error {

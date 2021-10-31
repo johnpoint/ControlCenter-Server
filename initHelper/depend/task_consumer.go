@@ -12,7 +12,7 @@ type TaskConsumer struct{}
 
 var _ Depend = (*TaskConsumer)(nil)
 
-func (t *TaskConsumer) Init(ctx context.Context, cfg *config.ServiceConfig) error {
+func (d *TaskConsumer) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	new(rabbitmq.RabbitMQ).
 		SetAlarm(&rabbitmq.DefaultAlarm{}).
 		SetConfig(cfg.TaskQueue).

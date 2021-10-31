@@ -14,7 +14,7 @@ type Api struct{}
 
 var _ Depend = (*Api)(nil)
 
-func (r *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
+func (d *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	gin.SetMode(gin.ReleaseMode)
 	routerGin := gin.New()
 	routerGin.GET("/ping", controller.Pong)

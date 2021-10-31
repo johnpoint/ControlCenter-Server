@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	rootCmd = &cobra.Command{}
-	cfgFile string
+	rootCmd  = &cobra.Command{}
+	cfgFile  string
+	commands []*cobra.Command
 )
 
 func Execute() {
@@ -29,6 +30,7 @@ func init() {
 	rootCmd.AddCommand(clientCommand)       // 上报客户端
 	rootCmd.AddCommand(genConfigCommand)    // 生成空配置文件
 	rootCmd.AddCommand(taskConsumerCommand) // 下发任务消费者
+	rootCmd.AddCommand(tcpServerCommand)    // tcp
 }
 
 func initConfig() {

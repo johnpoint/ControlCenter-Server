@@ -8,13 +8,11 @@ import (
 )
 
 // Redis 初始化 Redis 客户端
-type Redis struct {
-	Enable bool
-}
+type Redis struct{}
 
 var _ Depend = (*Redis)(nil)
 
-func (r *Redis) Init(ctx context.Context, cfg *config.ServiceConfig) error {
+func (d *Redis) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	redisDao.InitClient(&goRedis.Options{
 		Network:            cfg.RedisConfig.Network,
 		Addr:               cfg.RedisConfig.Addr,

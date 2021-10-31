@@ -1,5 +1,5 @@
 {
-  "http_server_listen": "0.0.0.0:8888",
+  "http_server_listen": "0.0.0.0:80",
   "environment": "dev",
   "mongo_db_config": {
     "url": "mongodb://admin:admin@control_center_database:27017/control_center",

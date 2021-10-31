@@ -40,7 +40,7 @@ services:
       - "./control-center/server/:/usr/src/server"
     ports:
       - "30080:80"
-    command: /bin/bash /usr/src/start.sh
+    command: /bin/bash /usr/src/start.sh api
 
 networks:
   local_server:
