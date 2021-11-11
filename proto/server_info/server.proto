@@ -6,9 +6,10 @@ package server_info;
 option go_package = "ControlCenter-Server/proto/server_info";
 
 enum ServerCommand {
-  HELLO_PING = 0;
-  UPDATE_SERVER_INFO = 1;
-  CLIENT_ACTION = 2;
+  CMD_ID_HELLO = 0;
+  CMD_ID_AUTH = 1;
+  CMD_ID_UPDATE_SERVER_INFO = 2;
+  CMD_ID_CLIENT_ACTION = 3;
 }
 
 message ServerReport {
@@ -16,6 +17,7 @@ message ServerReport {
   bytes         server_token = 2;
   ServerCommand command = 3;
   bytes         command_buf = 4;
+  string SeqID = 5;
 }
 
 message ServerInfo {

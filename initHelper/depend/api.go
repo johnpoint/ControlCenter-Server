@@ -3,7 +3,6 @@ package depend
 import (
 	"ControlCenter/app/controller"
 	"ControlCenter/config"
-	"ControlCenter/initHelper/depend/apiMiddleware"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -32,8 +31,7 @@ func (d *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 
 	api := routerGin.Group("/api")
 	{
-		api.GET("", controller.Pong)                                           // 获取首页详情
-		api.POST("/token", apiMiddleware.JWTAuthMiddleware(), controller.Pong) // 更新 jwt
+		api.GET("", controller.Pong) // 获取首页详情
 	}
 
 	user := api.Group("/user") // 用户模块
@@ -42,22 +40,29 @@ func (d *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 		user.GET("/assets", controller.Pong) // 获取当前用户资产列表
 	}
 
+	assets := api.Group("/assets") // 资产相关(这些是资产的元数据信息，而不包括资产的内容)
+	{
+		assets.GET("/:uuid", controller.Pong)    // 获取资产信息
+		assets.POST("/:uuid", controller.Pong)   // 修改资产相关信息
+		assets.DELETE("/:uuid", controller.Pong) // 删除资产
+	}
+
 	server := api.Group("/server") // 服务器模块
 	{
-		server.POST("", controller.Pong)       // 服务器列表
-		server.POST("/:uuid", controller.Pong) // 服务器详细信息
+		server.GET("", controller.Pong)       // 服务器列表
+		server.GET("/:uuid", controller.Pong) // 服务器详细信息
 	}
 
 	certificate := api.Group("/certificate") // 证书模块
 	{
-		certificate.POST("", controller.Pong)       // 证书列表
-		certificate.POST("/:uuid", controller.Pong) // 证书详细信息
+		certificate.GET("", controller.Pong)       // 证书列表
+		certificate.GET("/:uuid", controller.Pong) // 证书详细信息
 	}
 
 	configuration := api.Group("/configuration") // 配置文件模块
 	{
-		configuration.POST("", controller.Pong)       // 配置文件列表
-		configuration.POST("/:uuid", controller.Pong) // 配置文件详细信息
+		configuration.GET("", controller.Pong)       // 配置文件列表
+		configuration.GET("/:uuid", controller.Pong) // 配置文件详细信息
 	}
 
 	go func() {
