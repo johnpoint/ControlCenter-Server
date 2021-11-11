@@ -2,9 +2,7 @@ package config
 
 import (
 	"ControlCenter/initHelper/depend/rabbitmq"
-	"encoding/json"
-	"io/ioutil"
-	"os"
+	"github.com/spf13/viper"
 	"time"
 )
 
@@ -13,6 +11,7 @@ var Config = &ServiceConfig{}
 type ServiceConfig struct {
 	ConfigFile       string           `json:"config_file"`
 	HttpServerListen string           `json:"http_server_listen"`
+	TcpServerListen  string           `json:"tcp_server_listen"`
 	Environment      string           `json:"environment"`
 	MongoDBConfig    *MongoDBConfig   `json:"mongo_db_config"`
 	RedisConfig      *RedisConfig     `json:"redis_config"`
@@ -21,16 +20,13 @@ type ServiceConfig struct {
 }
 
 func (c *ServiceConfig) ReadConfig() error {
-	f, err := os.Open(c.ConfigFile)
+	viper.SetConfigFile(c.ConfigFile)
+	err := viper.ReadInConfig()
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	data, err := ioutil.ReadAll(f)
+	err = viper.Unmarshal(Config)
 	if err != nil {
-		return err
-	}
-	if err := json.Unmarshal(data, c); err != nil {
 		return err
 	}
 	return nil

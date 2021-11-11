@@ -1,0 +1,62 @@
+package tcpService
+
+import (
+	"context"
+	"github.com/golang/protobuf/proto"
+	"github.com/panjf2000/gnet"
+)
+
+type TcpCodec struct {
+	gnet.ICodec
+}
+
+type DataStruct struct {
+	fullLength   int
+	lenNumLength int
+	fullData     []byte
+}
+
+func (d *TcpCodec) Encode(c gnet.Conn, buf []byte) ([]byte, error) {
+	buf = append(proto.EncodeVarint(uint64(len(buf))), buf...)
+	return buf, nil
+}
+
+func (d *TcpCodec) Decode(c gnet.Conn) ([]byte, error) {
+	ctx, ok := c.Context().(context.Context)
+	if !ok {
+		err := c.Close()
+		if err != nil {
+			return nil, nil
+		}
+	}
+	r, ok := ctx.Value("codec").(DataStruct)
+	if !ok {
+		err := c.Close()
+		if err != nil {
+			return nil, nil
+		}
+	}
+	bytes := c.Read()
+	if len(r.fullData) == 0 {
+		var fullLength uint64
+		fullLength, r.lenNumLength = proto.DecodeVarint(bytes)
+		r.fullLength = int(fullLength)
+		if r.fullLength == 0 {
+			return nil, nil
+		}
+	}
+	fullDataLong := len(r.fullData)
+	r.fullData = append(r.fullData, bytes...)
+	if len(r.fullData) >= r.fullLength+r.lenNumLength {
+		c.ShiftN(r.fullLength + r.lenNumLength - fullDataLong)
+		res := r.fullData[r.lenNumLength : r.fullLength+r.lenNumLength]
+		r.fullData = []byte{}
+		ctx = context.WithValue(ctx, "codec", r)
+		c.SetContext(ctx)
+		return res, nil
+	}
+	c.ShiftN(len(bytes))
+	ctx = context.WithValue(ctx, "codec", r)
+	c.SetContext(ctx)
+	return nil, nil
+}
