@@ -100,6 +100,7 @@ RECONNECT:
 
 	cc := make(chan *amqp.Error)
 	ctx := context.Background()
+	c.channel.Chan.NotifyClose(cc)
 	for {
 		select {
 		case msg, ok := <-delivery:
@@ -122,7 +123,7 @@ RECONNECT:
 				return
 			}
 
-		case <-c.channel.Chan.NotifyClose(cc):
+		case <-cc:
 			if !c.close {
 				fmt.Printf("RabbitMQ-Consumer err: Consumer Close\n")
 				goto RECONNECT
