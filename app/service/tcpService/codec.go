@@ -1,7 +1,6 @@
 package tcpService
 
 import (
-	"context"
 	"github.com/golang/protobuf/proto"
 	"github.com/panjf2000/gnet"
 )
@@ -22,14 +21,7 @@ func (d *TcpCodec) Encode(c gnet.Conn, buf []byte) ([]byte, error) {
 }
 
 func (d *TcpCodec) Decode(c gnet.Conn) ([]byte, error) {
-	ctx, ok := c.Context().(context.Context)
-	if !ok {
-		err := c.Close()
-		if err != nil {
-			return nil, nil
-		}
-	}
-	r, ok := ctx.Value("codec").(DataStruct)
+	r, ok := c.Context().(DataStruct)
 	if !ok {
 		err := c.Close()
 		if err != nil {
@@ -51,12 +43,10 @@ func (d *TcpCodec) Decode(c gnet.Conn) ([]byte, error) {
 		c.ShiftN(r.fullLength + r.lenNumLength - fullDataLong)
 		res := r.fullData[r.lenNumLength : r.fullLength+r.lenNumLength]
 		r.fullData = []byte{}
-		ctx = context.WithValue(ctx, "codec", r)
-		c.SetContext(ctx)
+		c.SetContext(r)
 		return res, nil
 	}
 	c.ShiftN(len(bytes))
-	ctx = context.WithValue(ctx, "codec", r)
-	c.SetContext(ctx)
+	c.SetContext(r)
 	return nil, nil
 }
