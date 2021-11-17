@@ -28,6 +28,7 @@ func (t *TcpServer) OnShutdown(server gnet.Server) {
 }
 
 func (t *TcpServer) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
+	c.SetContext(DataStruct{})
 	return
 }
 

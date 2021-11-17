@@ -10,8 +10,6 @@ import (
 // TaskConsumer 任务队列消费者
 type TaskConsumer struct{}
 
-var _ Depend = (*TaskConsumer)(nil)
-
 func (d *TaskConsumer) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	new(rabbitmq.RabbitMQ).
 		SetAlarm(&rabbitmq.DefaultAlarm{}).

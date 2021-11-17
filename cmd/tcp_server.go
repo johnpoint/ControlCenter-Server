@@ -9,15 +9,12 @@ import (
 
 var tcpServerCommand = &cobra.Command{
 	Use:   "tcp",
-	Short: "Start http server",
+	Short: "Start tcp server",
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
 		i := initHelper.Helper{}
 		i.AddDepend(
-			&depend.MongoDB{},
-			&depend.Redis{},
-			&depend.TaskProducer{},
-			&depend.Api{},
+			&depend.TcpServer{},
 		)
 		err := i.Init(ctx)
 		if err != nil {

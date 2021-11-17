@@ -10,8 +10,6 @@ import (
 // Redis 初始化 Redis 客户端
 type Redis struct{}
 
-var _ Depend = (*Redis)(nil)
-
 func (d *Redis) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	redisDao.InitClient(&goRedis.Options{
 		Network:            cfg.RedisConfig.Network,

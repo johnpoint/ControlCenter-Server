@@ -11,8 +11,6 @@ import (
 // Api api服务
 type Api struct{}
 
-var _ Depend = (*Api)(nil)
-
 func (d *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	gin.SetMode(gin.ReleaseMode)
 	routerGin := gin.New()
