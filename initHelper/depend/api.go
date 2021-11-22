@@ -3,7 +3,9 @@ package depend
 import (
 	"ControlCenter/app/controller"
 	"ControlCenter/config"
+	"ControlCenter/pkg/errorHelper"
 	"context"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
@@ -13,6 +15,7 @@ type Api struct{}
 
 func (d *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	gin.SetMode(gin.ReleaseMode)
+	InitErr() // 初始化错误码
 	routerGin := gin.New()
 	routerGin.GET("/ping", controller.Pong)
 
@@ -71,4 +74,8 @@ func (d *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 		}
 	}()
 	return nil
+}
+
+func InitErr() {
+	errorHelper.New(40001, "需要登录", errors.New("NO AUTH")).AddToMap()
 }
