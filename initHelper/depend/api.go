@@ -4,7 +4,6 @@ import (
 	"ControlCenter/app/controller"
 	"ControlCenter/config"
 	"ControlCenter/pkg/errorHelper"
-	"ControlCenter/pkg/initHelper"
 	"context"
 	"errors"
 	"fmt"
@@ -13,8 +12,6 @@ import (
 
 // Api api服务
 type Api struct{}
-
-var _ initHelper.Depend = (*Api)(nil)
 
 func (d *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	gin.SetMode(gin.ReleaseMode)

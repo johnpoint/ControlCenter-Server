@@ -2,6 +2,7 @@ package initHelper
 
 import (
 	"ControlCenter/config"
+	"ControlCenter/initHelper/depend"
 	"context"
 	"fmt"
 	"log"
@@ -13,7 +14,7 @@ import (
 
 type Helper struct {
 	*log.Logger
-	Depends []Depend
+	Depends []depend.Depend
 }
 
 func (i *Helper) Init(ctx context.Context) error {
@@ -35,7 +36,7 @@ func (i *Helper) Init(ctx context.Context) error {
 	return nil
 }
 
-func (i *Helper) AddDepend(depend ...Depend) *Helper {
+func (i *Helper) AddDepend(depend ...depend.Depend) *Helper {
 	for j := range depend {
 		i.Depends = append(i.Depends, depend[j])
 	}
