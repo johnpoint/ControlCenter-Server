@@ -1,7 +1,7 @@
 package config
 
 import (
-	"ControlCenter/initHelper/depend/rabbitmq"
+	"ControlCenter/pkg/rabbitmq"
 	"github.com/spf13/viper"
 	"time"
 )

@@ -2,7 +2,7 @@ package depend
 
 import (
 	"ControlCenter/config"
-	"ControlCenter/initHelper/depend/grpcClient"
+	"ControlCenter/pkg/grpcClient"
 	"context"
 )
 

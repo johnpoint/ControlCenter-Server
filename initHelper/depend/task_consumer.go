@@ -3,7 +3,7 @@ package depend
 import (
 	"ControlCenter/app/service/consumer"
 	"ControlCenter/config"
-	"ControlCenter/initHelper/depend/rabbitmq"
+	rabbitmq2 "ControlCenter/pkg/rabbitmq"
 	"context"
 )
 
@@ -11,8 +11,8 @@ import (
 type TaskConsumer struct{}
 
 func (d *TaskConsumer) Init(ctx context.Context, cfg *config.ServiceConfig) error {
-	new(rabbitmq.RabbitMQ).
-		SetAlarm(&rabbitmq.DefaultAlarm{}).
+	new(rabbitmq2.RabbitMQ).
+		SetAlarm(&rabbitmq2.DefaultAlarm{}).
 		SetConfig(cfg.TaskQueue).
 		SetHandle(consumer.TaskConsumer).
 		StartConsumer()

@@ -1,7 +1,7 @@
 package grpcClient
 
 import (
-	grpcRetry "ControlCenter/initHelper/depend/grpcClient/grpc_retry"
+	"ControlCenter/pkg/grpcClient/grpc_retry"
 	"context"
 	"errors"
 	"fmt"
@@ -57,13 +57,13 @@ func (c *Client) Init() error {
 	}
 	if c.conn == nil || c.conn.GetState() == connectivity.Shutdown {
 		// 调用 CRM gRPC 接口
-		retryOps := []grpcRetry.CallOption{
-			grpcRetry.WithMax(3),                                        // 设定最大重试次数
-			grpcRetry.WithAlarm(true, connAlarm),                        // 设定重试最后一次仍然失败告警
-			grpcRetry.WithBackoff(grpcRetry.BackoffLinear(time.Second)), // 设置重试间隔
-			grpcRetry.WithCodes(codes.Unavailable),                      // 设置需要重试的状态码
+		retryOps := []grpc_retry.CallOption{
+			grpc_retry.WithMax(3),                                         // 设定最大重试次数
+			grpc_retry.WithAlarm(true, connAlarm),                         // 设定重试最后一次仍然失败告警
+			grpc_retry.WithBackoff(grpc_retry.BackoffLinear(time.Second)), // 设置重试间隔
+			grpc_retry.WithCodes(codes.Unavailable),                       // 设置需要重试的状态码
 		}
-		retryInterceptor := grpcRetry.UnaryClientInterceptor(retryOps...)
+		retryInterceptor := grpc_retry.UnaryClientInterceptor(retryOps...)
 		conn, err := grpc.Dial(
 			c.Address,
 			grpc.WithInsecure(),

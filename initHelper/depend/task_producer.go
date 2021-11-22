@@ -3,7 +3,7 @@ package depend
 import (
 	"ControlCenter/app/service/producer"
 	"ControlCenter/config"
-	"ControlCenter/initHelper/depend/rabbitmq"
+	rabbitmq2 "ControlCenter/pkg/rabbitmq"
 	"context"
 )
 
@@ -12,8 +12,8 @@ type TaskProducer struct{}
 
 func (d *TaskProducer) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	var err error
-	producer.TaskProducer, err = new(rabbitmq.RabbitMQ).
-		SetAlarm(&rabbitmq.DefaultAlarm{}).
+	producer.TaskProducer, err = new(rabbitmq2.RabbitMQ).
+		SetAlarm(&rabbitmq2.DefaultAlarm{}).
 		SetConfig(cfg.TaskQueue).
 		StartProducer()
 	if err != nil {

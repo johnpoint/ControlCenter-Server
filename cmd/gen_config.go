@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"ControlCenter/config"
-	"ControlCenter/initHelper/depend/rabbitmq"
+	"ControlCenter/pkg/rabbitmq"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
