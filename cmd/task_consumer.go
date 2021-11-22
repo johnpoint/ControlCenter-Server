@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"ControlCenter/initHelper"
-	"ControlCenter/initHelper/depend"
+	"ControlCenter/depend"
+	"ControlCenter/pkg/initHelper"
 	"context"
 	"github.com/spf13/cobra"
 )
