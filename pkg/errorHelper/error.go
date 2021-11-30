@@ -1,41 +1,54 @@
 package errorHelper
 
-import "errors"
+import (
+	"fmt"
+)
 
-type Code struct {
-	Code    int
-	Message string
-	Error   error
+var (
+	// 通用错误码
+	OK      = &Err{Code: 0, Message: "OK"}
+	Unknown = &Err{Code: -1, Message: "未知错误"}
+
+	// 认证异常 403xxx
+	ErrNeedLogin      = &Err{Code: 403001, Message: "此区域需要登录访问"}
+	ErrNeedVerifyInfo = &Err{Code: 403002, Message: "请求需要身份认证信息"}
+)
+
+// Err 定义错误
+type Err struct {
+	Code      int    // 错误码
+	Message   string // 展示给用户看的
+	ErrorInfo error  // 保存内部错误信息
 }
 
-var errMsgMap = map[int]string{
-	-1: "Unknown error",
+func (err *Err) Error() string {
+	return fmt.Sprintf("Err - code: %d, message: %s, error: %s", err.Code, err.Message, err.ErrorInfo)
 }
 
-var errCodeMap = map[error]int{
-	errors.New("nil"): -1,
-}
-
-func New(code int, msg string, err error) *Code {
-	return &Code{
-		Code:    code,
-		Message: msg,
-		Error:   err,
+func GetErrCode(err error) int {
+	trueErr, ok := err.(*Err)
+	if !ok {
+		return Unknown.Code
 	}
+	return trueErr.Code
 }
 
-func (e *Code) AddToMap() {
-	if _, has := errMsgMap[e.Code]; has {
-		panic("same err code")
+func GetErrMessage(err error) string {
+	trueErr, ok := err.(*Err)
+	if !ok {
+		return Unknown.Message
 	}
-	errMsgMap[e.Code] = e.Message
-	errCodeMap[e.Error] = e.Code
+	return trueErr.Message
 }
 
-func GetErrMsg(err error) (int, string) {
-	errCode, has := errCodeMap[err]
-	if !has {
-		errCode = -1
+func DecodeErr(err error) (int, string) {
+	if err == nil {
+		return OK.Code, OK.Message
 	}
-	return errCode, errMsgMap[errCode]
+
+	trueErr, ok := err.(*Err)
+	if !ok {
+		return Unknown.Code, Unknown.Message
+	}
+	return trueErr.Code, trueErr.Message
 }

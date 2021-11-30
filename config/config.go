@@ -1,34 +1,48 @@
 package config
 
 import (
+	"ControlCenter/pkg/apiMiddleware/session"
 	"ControlCenter/pkg/rabbitmq"
-	"github.com/spf13/viper"
+	jsoniter "github.com/json-iterator/go"
+	"io"
+	"os"
 	"time"
 )
 
-var Config = &ServiceConfig{}
+var Config = new(ServiceConfig)
 
 type ServiceConfig struct {
-	ConfigFile       string           `json:"config_file"`
-	HttpServerListen string           `json:"http_server_listen"`
-	TcpServerListen  string           `json:"tcp_server_listen"`
-	Environment      string           `json:"environment"`
-	MongoDBConfig    *MongoDBConfig   `json:"mongo_db_config"`
-	RedisConfig      *RedisConfig     `json:"redis_config"`
-	TaskQueue        *rabbitmq.Config `json:"task_producer"`
-	GrpcClientServer string           `json:"grpc_client_server"`
+	configPath       string
+	HttpServerListen string                 `json:"http_server_listen"`
+	TcpServerListen  string                 `json:"tcp_server_listen"`
+	Environment      string                 `json:"environment"`
+	MongoDBConfig    *MongoDBConfig         `json:"mongo_db_config"`
+	RedisConfig      *RedisConfig           `json:"redis_config"`
+	TaskQueue        *rabbitmq.Config       `json:"task_producer"`
+	GrpcClientServer string                 `json:"grpc_client_server"`
+	Session          *session.SessionConfig `json:"session"`
+}
+
+func (c *ServiceConfig) SetPath(path string) *ServiceConfig {
+	c.configPath = path
+	return c
 }
 
 func (c *ServiceConfig) ReadConfig() error {
-	viper.SetConfigFile(c.ConfigFile)
-	err := viper.ReadInConfig()
+	f, err := os.Open(c.configPath)
 	if err != nil {
 		return err
 	}
-	err = viper.Unmarshal(Config)
+	defer f.Close()
+	cfgByte, err := io.ReadAll(f)
 	if err != nil {
 		return err
 	}
+
+	if err = jsoniter.Unmarshal(cfgByte, c); err != nil {
+		return err
+	}
+
 	return nil
 }
 

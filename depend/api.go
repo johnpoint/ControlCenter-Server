@@ -3,9 +3,9 @@ package depend
 import (
 	"ControlCenter/app/controller"
 	"ControlCenter/config"
-	"ControlCenter/pkg/errorHelper"
+	"ControlCenter/pkg/apiMiddleware/session"
+	"ControlCenter/pkg/bootstrap"
 	"context"
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
@@ -13,9 +13,10 @@ import (
 // Api api服务
 type Api struct{}
 
-func (d *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
+var _ bootstrap.Component = (*Api)(nil)
+
+func (d *Api) Init(ctx context.Context) error {
 	gin.SetMode(gin.ReleaseMode)
-	InitErr() // 初始化错误码
 	routerGin := gin.New()
 	routerGin.GET("/ping", controller.Pong)
 
@@ -30,7 +31,7 @@ func (d *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 		auth.POST("/register", controller.Pong) // 注册
 	}
 
-	api := routerGin.Group("/api")
+	api := routerGin.Group("/api", session.SessionMiddleware())
 	{
 		api.GET("", controller.Pong) // 获取首页详情
 	}
@@ -67,15 +68,11 @@ func (d *Api) Init(ctx context.Context, cfg *config.ServiceConfig) error {
 	}
 
 	go func() {
-		fmt.Println("[init] HTTP Listen at " + cfg.HttpServerListen)
-		err := routerGin.Run(cfg.HttpServerListen)
+		fmt.Println("[init] HTTP Listen at " + config.Config.HttpServerListen)
+		err := routerGin.Run(config.Config.HttpServerListen)
 		if err != nil {
 			panic(err)
 		}
 	}()
 	return nil
-}
-
-func InitErr() {
-	errorHelper.New(40001, "需要登录", errors.New("NO AUTH")).AddToMap()
 }

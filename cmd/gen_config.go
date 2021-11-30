@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"ControlCenter/config"
+	"ControlCenter/pkg/apiMiddleware/session"
 	"ControlCenter/pkg/rabbitmq"
 	"encoding/json"
 	"fmt"
@@ -16,6 +17,7 @@ var genConfigCommand = &cobra.Command{
 			MongoDBConfig: &config.MongoDBConfig{},
 			RedisConfig:   &config.RedisConfig{},
 			TaskQueue:     &rabbitmq.Config{},
+			Session:       &session.SessionConfig{},
 		}
 		jsonByte, _ := json.Marshal(&newConfig)
 		fmt.Println(string(jsonByte))

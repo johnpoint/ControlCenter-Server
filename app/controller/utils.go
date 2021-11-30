@@ -6,10 +6,12 @@ import (
 	"net/http"
 )
 
-func returnErrorMsg(c *gin.Context, err error) {
-	errCode, errMsg := errorHelper.GetErrMsg(err)
+func returnErrorMsg(c *gin.Context, err error, errCode int) {
+	var errMsg string
+	errMsg = errorHelper.GetErrMessage(err)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"code":    errCode,
 		"message": errMsg,
 	})
+	c.Abort()
 }

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"ControlCenter/initHelper"
-	"ControlCenter/initHelper/depend"
+	"ControlCenter/depend"
+	"ControlCenter/pkg/bootstrap"
 	"context"
 	"github.com/spf13/cobra"
 )
@@ -12,9 +12,12 @@ var clientCommand = &cobra.Command{
 	Short: "Start client",
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
-		i := initHelper.Helper{}
-		i.AddDepend(
-			&depend.GrpcClientServer{},
+		i := bootstrap.Helper{}
+		i.AddComponent(
+			&depend.Config{
+				Path: configPath,
+			},
+			&depend.TcpClient{},
 		)
 		err := i.Init(ctx)
 		if err != nil {

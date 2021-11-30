@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"ControlCenter/initHelper"
-	"ControlCenter/initHelper/depend"
+	"ControlCenter/depend"
+	"ControlCenter/pkg/bootstrap"
 	"context"
 	"github.com/spf13/cobra"
 )
@@ -12,8 +12,11 @@ var taskConsumerCommand = &cobra.Command{
 	Short: "Start task consumer",
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
-		i := initHelper.Helper{}
-		i.AddDepend(
+		i := bootstrap.Helper{}
+		i.AddComponent(
+			&depend.Config{
+				Path: configPath,
+			},
 			&depend.TaskConsumer{},
 		)
 		err := i.Init(ctx)
