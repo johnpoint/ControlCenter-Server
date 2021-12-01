@@ -2,12 +2,18 @@ package session
 
 import (
 	"context"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 )
 
 var Si = new(Session) // SessionInstance session 实例
+
+var (
+	NeedDriver = errors.New("need driver")
+	NeedConfig = errors.New("need config")
+)
 
 type Session struct {
 	driver Driver
@@ -24,6 +30,24 @@ func (s *Session) SetConfig(config *SessionConfig) *Session {
 	return s
 }
 
+func (s *Session) SetReturnData(data interface{}) *Session {
+	s.config.ReturnData = data
+	return s
+}
+
+func (s *Session) validate() error {
+	if s.driver == nil {
+		return NeedDriver
+	}
+	if s.config == nil {
+		return NeedConfig
+	}
+	if s.config.ReturnData == nil {
+		s.config.ReturnData = gin.H{"msg": "session middleware intercept"}
+	}
+	return nil
+}
+
 type Driver interface {
 	Set(ctx context.Context, uuid string, expire time.Duration)
 	Renew(ctx context.Context, uuid string, expire time.Duration)
@@ -31,7 +55,13 @@ type Driver interface {
 	Del(ctx context.Context, uuid string)
 }
 
-func SessionMiddleware() func(c *gin.Context) {
+func MiddlewareFunc() func(c *gin.Context) {
+	if Si.validate() != nil {
+		return func(c *gin.Context) {
+			c.JSON(http.StatusInternalServerError, gin.H{"msg": "session middleware error"})
+			return
+		}
+	}
 	return func(c *gin.Context) {
 		sessionID := c.GetHeader(
 			Si.config.HeaderName,

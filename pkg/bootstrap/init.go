@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strings"
 )
 
 type Helper struct {
@@ -16,7 +15,7 @@ type Helper struct {
 func (i *Helper) Init(ctx context.Context) error {
 	fmt.Println("[Bootstrap] Start")
 	for j := range i.components {
-		fmt.Println(strings.Replace(fmt.Sprintf("[Bootstrap] %s", reflect.TypeOf(i.components[j])), "*depend.", "", 1))
+		fmt.Println(fmt.Sprintf("[Bootstrap] %s", reflect.TypeOf(i.components[j])))
 		err := i.components[j].Init(ctx)
 		if err != nil {
 			return err
