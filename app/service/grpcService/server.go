@@ -45,6 +45,8 @@ func RunGrpcServer(listen string, addFunc func(grpcServer *grpc.Server)) error {
 
 	grpcServer := grpc.NewServer(servOpts...)
 
+	addFunc(grpcServer)
+
 	reflection.Register(grpcServer)
 	go func() {
 		fmt.Println("[grpcServer] start")
