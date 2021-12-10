@@ -30,7 +30,7 @@ func (t *TcpServer) OnShutdown(server gnet.Server) {
 }
 
 func (t *TcpServer) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
-	c.SetContext(DataStruct{})
+	c.SetContext(&DataStruct{})
 	return
 }
 
@@ -42,8 +42,15 @@ func (t *TcpServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Ac
 	var commandItem serverProto.CommandItem
 	err := proto.Unmarshal(frame, &commandItem)
 	if err != nil {
-		return
+		return nil, gnet.Close
 	}
-
+	r, ok := c.Context().(*DataStruct)
+	if !ok {
+		return nil, gnet.Close
+	}
+	if !r.notNew {
+		r.notNew = true
+		NewListener(c)
+	}
 	return
 }

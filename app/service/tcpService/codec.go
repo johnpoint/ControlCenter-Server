@@ -13,6 +13,7 @@ type DataStruct struct {
 	fullLength   int
 	lenNumLength int
 	fullData     []byte
+	notNew       bool
 }
 
 func (d *TcpCodec) Encode(c gnet.Conn, buf []byte) ([]byte, error) {
