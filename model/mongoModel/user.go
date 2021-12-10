@@ -1,9 +1,10 @@
-package mongodb
+package mongoModel
 
 import (
 	"ControlCenter/dao/mongoDao"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type ModelUser struct {
@@ -14,6 +15,10 @@ type ModelUser struct {
 
 func (m *ModelUser) CollectionName() string {
 	return "user"
+}
+
+func (m *ModelUser) DB() *mongo.Collection {
+	return mongoDao.Client(m.CollectionName())
 }
 
 func (m *ModelUser) InsertOne(ctx context.Context) error {

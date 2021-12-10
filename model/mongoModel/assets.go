@@ -1,4 +1,9 @@
-package mongodb
+package mongoModel
+
+import (
+	"ControlCenter/dao/mongoDao"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type AssetsType int32
 
@@ -17,4 +22,8 @@ type ModelAssets struct {
 
 func (a *ModelAssets) CollectionName() string {
 	return "assets"
+}
+
+func (a *ModelAssets) DB() *mongo.Collection {
+	return mongoDao.Client(a.CollectionName())
 }

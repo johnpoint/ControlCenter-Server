@@ -1,4 +1,4 @@
-package mongodb
+package mongoModel
 
 type ModelServer struct {
 	ID string `json:"_id" bson:"_id"`

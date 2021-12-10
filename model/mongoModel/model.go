@@ -1,13 +1,23 @@
-package mongodb
+package mongoModel
+
+import (
+	"ControlCenter/dao/mongoDao"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type Model interface {
 	CollectionName() string
+	GetDB() *mongo.Collection
 }
 
 type DefaultModel struct{}
 
 func (d *DefaultModel) CollectionName() string {
 	return ""
+}
+
+func (d *DefaultModel) DB() *mongo.Collection {
+	return nil
 }
 
 // 检查是否实现接口

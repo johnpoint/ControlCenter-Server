@@ -12,7 +12,7 @@ enum ServerCommand {
   CMD_ID_CLIENT_ACTION = 3;
 }
 
-message ServerReport {
+message CommandItem {
   string        server_id = 1;
   bytes         server_token = 2;
   ServerCommand command = 3;

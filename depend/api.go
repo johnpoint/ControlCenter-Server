@@ -3,10 +3,12 @@ package depend
 import (
 	"ControlCenter/app/controller"
 	"ControlCenter/config"
+	"ControlCenter/pkg/apiMiddleware"
 	"ControlCenter/pkg/apiMiddleware/session"
 	"ControlCenter/pkg/bootstrap"
 	"context"
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,6 +20,7 @@ var _ bootstrap.Component = (*Api)(nil)
 func (d *Api) Init(ctx context.Context) error {
 	gin.SetMode(gin.ReleaseMode)
 	routerGin := gin.New()
+	routerGin.Use(apiMiddleware.LogPlusMiddleware())
 	routerGin.GET("/ping", controller.Pong)
 
 	report := routerGin.Group("/report") // 数据上报接口
@@ -31,7 +34,7 @@ func (d *Api) Init(ctx context.Context) error {
 		auth.POST("/register", controller.Pong) // 注册
 	}
 
-	api := routerGin.Group("/api", session.SessionMiddleware())
+	api := routerGin.Group("/api", session.MiddlewareFunc())
 	{
 		api.GET("", controller.Pong) // 获取首页详情
 	}

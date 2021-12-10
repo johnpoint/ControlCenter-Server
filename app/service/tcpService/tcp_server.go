@@ -1,6 +1,8 @@
 package tcpService
 
 import (
+	serverProto "ControlCenter/proto/server_info"
+	"github.com/golang/protobuf/proto"
 	"github.com/panjf2000/gnet"
 	"time"
 )
@@ -37,5 +39,11 @@ func (t *TcpServer) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
 }
 
 func (t *TcpServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Action) {
+	var commandItem serverProto.CommandItem
+	err := proto.Unmarshal(frame, &commandItem)
+	if err != nil {
+		return
+	}
+
 	return
 }
