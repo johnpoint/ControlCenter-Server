@@ -5,6 +5,10 @@ package server_info;
 
 option go_package = "ControlCenter-Server/proto/server_info";
 
+service PushToServer {
+  rpc PushTask (CommandItem) returns(CommandItem);
+}
+
 enum ServerCommand {
   CMD_ID_HELLO = 0;
   CMD_ID_AUTH = 1;

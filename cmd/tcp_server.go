@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"ControlCenter/app/service/grpcService"
 	"ControlCenter/depend"
 	"ControlCenter/pkg/bootstrap"
+	serverInfo "ControlCenter/proto/server_info"
 	"context"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 )
 
 var tcpServerCommand = &cobra.Command{
@@ -18,6 +21,12 @@ var tcpServerCommand = &cobra.Command{
 				Path: configPath,
 			},
 			&depend.TcpServer{},
+			&depend.GrpcServer{
+				Name: "push_task",
+				AddFunc: func(grpcServer *grpc.Server) {
+					serverInfo.RegisterPushToServerServer(grpcServer, &grpcService.PushToServerService{})
+				},
+			},
 		)
 		err := i.Init(ctx)
 		if err != nil {

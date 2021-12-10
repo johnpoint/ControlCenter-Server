@@ -1,13 +1,12 @@
 package mongoModel
 
 import (
-	"ControlCenter/dao/mongoDao"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Model interface {
 	CollectionName() string
-	GetDB() *mongo.Collection
+	//GetDB() *mongo.Collection
 }
 
 type DefaultModel struct{}

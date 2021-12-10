@@ -19,8 +19,13 @@ type ServiceConfig struct {
 	MongoDBConfig    *MongoDBConfig         `json:"mongo_db_config"`
 	RedisConfig      *RedisConfig           `json:"redis_config"`
 	TaskQueue        *rabbitmq.Config       `json:"task_producer"`
-	GrpcClientServer string                 `json:"grpc_client_server"`
 	Session          *session.SessionConfig `json:"session"`
+	GrpcConfigMap    map[string]*GrpcConfig `json:"grpc_config_map"`
+}
+
+type GrpcConfig struct {
+	ServerListen  string `json:"server_listen"`
+	ClientAddress string `json:"client_address"`
 }
 
 func (c *ServiceConfig) SetPath(path string) *ServiceConfig {
