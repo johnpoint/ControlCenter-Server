@@ -8,11 +8,6 @@ var (
 	// 通用错误码
 	OK      = &Err{Code: 0, Message: "OK"}
 	Unknown = &Err{Code: -1, Message: "未知错误"}
-
-	// 认证异常 403xxx
-	ErrNeedLogin       = &Err{Code: 403001, Message: "此区域需要登录访问"}
-	ErrNeedVerifyInfo  = &Err{Code: 403002, Message: "请求需要身份认证信息"}
-	ErrAuthInfoInvalid = &Err{Code: 403003, Message: "身份认证失败"}
 )
 
 // Err 定义错误

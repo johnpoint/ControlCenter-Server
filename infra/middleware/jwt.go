@@ -1,6 +1,7 @@
 package apiMiddleware
 
 import (
+	"ControlCenter/infra"
 	"ControlCenter/pkg/errorHelper"
 	"errors"
 	"github.com/gin-gonic/gin"
@@ -59,8 +60,8 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
 		if authHeader == "" {
 			c.JSON(http.StatusOK, gin.H{
-				"code": errorHelper.ErrNeedVerifyInfo,
-				"msg":  errorHelper.GetErrMessage(errorHelper.ErrNeedVerifyInfo),
+				"code": infra.ErrNeedVerifyInfo,
+				"msg":  errorHelper.GetErrMessage(infra.ErrNeedVerifyInfo),
 			})
 			c.Abort()
 			return
@@ -69,8 +70,8 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		parts := strings.SplitN(authHeader, " ", 2)
 		if !(len(parts) == 2 && parts[0] == "Bearer") {
 			c.JSON(http.StatusOK, gin.H{
-				"code": errorHelper.ErrNeedVerifyInfo,
-				"msg":  errorHelper.GetErrMessage(errorHelper.ErrNeedVerifyInfo),
+				"code": infra.ErrNeedVerifyInfo,
+				"msg":  errorHelper.GetErrMessage(infra.ErrNeedVerifyInfo),
 			})
 			c.Abort()
 			return
@@ -79,8 +80,8 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		mc, err := ParseToken(parts[1])
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
-				"code": errorHelper.ErrAuthInfoInvalid,
-				"msg":  errorHelper.GetErrMessage(errorHelper.ErrAuthInfoInvalid),
+				"code": infra.ErrAuthInfoInvalid,
+				"msg":  errorHelper.GetErrMessage(infra.ErrAuthInfoInvalid),
 			})
 			c.Abort()
 			return
