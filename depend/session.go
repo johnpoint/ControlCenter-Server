@@ -31,8 +31,8 @@ var client *goRedis.Client
 
 type SessionDriver struct{}
 
-func (d *SessionDriver) Set(ctx context.Context, uuid string, expire time.Duration) {
-	client.Set(ctx, uuid, "", expire)
+func (d *SessionDriver) Set(ctx context.Context, uuid, value string, expire time.Duration) {
+	client.Set(ctx, uuid, value, expire)
 }
 
 func (d *SessionDriver) Renew(ctx context.Context, uuid string, expire time.Duration) {

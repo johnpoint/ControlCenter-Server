@@ -21,6 +21,8 @@ type ServiceConfig struct {
 	TaskQueue        *rabbitmq.Config       `json:"task_producer"`
 	Session          *session.SessionConfig `json:"session"`
 	GrpcConfigMap    map[string]*GrpcConfig `json:"grpc_config_map"`
+	Salt             string                 `json:"salt"`
+	URL              string                 `json:"url"`
 }
 
 type GrpcConfig struct {

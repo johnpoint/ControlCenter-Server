@@ -30,7 +30,7 @@ func (d *Api) Init(ctx context.Context) error {
 
 	auth := routerGin.Group("/auth")
 	{
-		auth.POST("/login", controller.Pong)    // 登录
+		auth.POST("/login", controller.Login)   // 登录
 		auth.POST("/register", controller.Pong) // 注册
 	}
 

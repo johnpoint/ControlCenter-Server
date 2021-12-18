@@ -48,8 +48,13 @@ func (s *Session) validate() error {
 	return nil
 }
 
+func (s *Session) NewSession(ctx context.Context, uuid, value string) string {
+	s.driver.Set(ctx, uuid, value, time.Duration(s.config.ExpireTime))
+	return uuid
+}
+
 type Driver interface {
-	Set(ctx context.Context, uuid string, expire time.Duration)
+	Set(ctx context.Context, uuid, value string, expire time.Duration)
 	Renew(ctx context.Context, uuid string, expire time.Duration)
 	Get(ctx context.Context, uuid string) string
 	Del(ctx context.Context, uuid string)
