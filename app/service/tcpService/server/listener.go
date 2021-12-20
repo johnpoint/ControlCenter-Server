@@ -1,4 +1,4 @@
-package tcpService
+package server
 
 import (
 	"ControlCenter/pkg/utils"

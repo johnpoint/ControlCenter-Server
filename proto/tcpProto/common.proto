@@ -1,0 +1,7 @@
+syntax = "proto3";
+package tcpProto;
+option go_package = "ControlCenter-Server/proto/tcpProto";
+
+message tcpProtoPack {
+
+}

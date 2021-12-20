@@ -11,7 +11,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.1-0.20190118093823-f849b5445de4
 	github.com/json-iterator/go v1.1.12
-	github.com/panjf2000/gnet v1.5.3
+	github.com/panjf2000/gnet v1.6.0
 	github.com/spf13/cobra v1.2.1
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
@@ -54,7 +54,7 @@ require (
 	go.uber.org/zap v1.19.1 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20211020174200-9d6173849985 // indirect
+	golang.org/x/sys v0.0.0-20211204120058-94396e421777 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20211020151524-b7c3a969101a // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect

@@ -17,6 +17,7 @@ var clientCommand = &cobra.Command{
 			&depend.Config{
 				Path: configPath,
 			},
+			&depend.PerformanceCollector{},
 			&depend.TcpClient{},
 		)
 		err := i.Init(ctx)

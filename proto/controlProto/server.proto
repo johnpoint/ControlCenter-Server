@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package server_info;
+package controlProto;
 
 
-option go_package = "ControlCenter-Server/proto/server_info";
+option go_package = "ControlCenter-Server/proto/controlProto";
 
 service PushToServer {
   rpc PushTask (CommandItem) returns(CommandItem);
@@ -11,9 +11,10 @@ service PushToServer {
 
 enum ServerCommand {
   CMD_ID_HELLO = 0;
-  CMD_ID_AUTH = 1;
-  CMD_ID_UPDATE_SERVER_INFO = 2;
-  CMD_ID_CLIENT_ACTION = 3;
+  CMD_ID_HEARTBEAT = 1;
+  CMD_ID_AUTH = 2;
+  CMD_ID_UPDATE_SERVER_INFO = 3;
+  CMD_ID_CLIENT_ACTION = 4;
 }
 
 message CommandItem {

@@ -1,7 +1,7 @@
 package grpcService
 
 import (
-	serverInfo "ControlCenter/proto/server_info"
+	serverInfo "ControlCenter/proto/controlProto"
 	"context"
 )
 

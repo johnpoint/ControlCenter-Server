@@ -1,8 +1,9 @@
-package tcpService
+package server
 
 import (
+	"ControlCenter/app/service/tcpService"
 	"ControlCenter/pkg/utils"
-	serverProto "ControlCenter/proto/server_info"
+	serverProto "ControlCenter/proto/controlProto"
 	"github.com/golang/protobuf/proto"
 	"github.com/panjf2000/gnet"
 	"sync"
@@ -18,7 +19,7 @@ type connMeta struct {
 
 func RunServer(address string) {
 	go func() {
-		err := gnet.Serve(new(TcpServer), "tcp://"+address, gnet.WithMulticore(true), gnet.WithCodec(&TcpCodec{}),
+		err := gnet.Serve(new(TcpServer), "tcp://"+address, gnet.WithMulticore(true), gnet.WithCodec(&tcpService.TcpCodec{}),
 			gnet.WithReusePort(true), gnet.WithTCPKeepAlive(time.Second))
 		if err != nil {
 			panic(err)
@@ -41,7 +42,7 @@ func (t *TcpServer) OnShutdown(server gnet.Server) {
 
 func (t *TcpServer) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 	cID := utils.RandomString()
-	c.SetContext(&DataStruct{
+	c.SetContext(&tcpService.DataStruct{
 		channelID: cID,
 	})
 	connMap.Store(cID, &connMeta{
@@ -52,7 +53,7 @@ func (t *TcpServer) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 }
 
 func (t *TcpServer) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
-	r, ok := c.Context().(*DataStruct)
+	r, ok := c.Context().(*tcpService.DataStruct)
 	if !ok {
 		return gnet.Close
 	}
@@ -66,7 +67,7 @@ func (t *TcpServer) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Ac
 	if err != nil {
 		return nil, gnet.Close
 	}
-	r, ok := c.Context().(*DataStruct)
+	r, ok := c.Context().(*tcpService.DataStruct)
 	if !ok {
 		return nil, gnet.Close
 	}
