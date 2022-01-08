@@ -1,5 +1,6 @@
 {
   "http_server_listen": "0.0.0.0:80",
+  "tcp_server_listen": "0.0.0.0:8080",
   "environment": "dev",
   "mongo_db_config": {
     "url": "mongodb://admin:password@base_service_mongodb:27017/control_center",
@@ -18,7 +19,37 @@
     "BindKey": "control_center",
     "DeliveryMode": 2,
     "PrefetchCount": 5,
-    "Args": null
+    "ConsumerNum": 5
   },
-  "grpc_client_server": ""
+  "salt": "dev#salt",
+  "url": "",
+  "influx_db": {
+    "address": "http://base_service_influxdb:8086",
+    "token": "HiKQBa1WyKtnZ-WMtqr2XDsjmQ6RDafLwkAg9KpkkhrHtaXtk1oHQJZJVjNVtYmqhxi9Lnnt1SMFLBNoeaDaFA==",
+    "org": "default"
+  },
+  "performance_mq": {
+    "Address": "amqp://admin:password@base_service_mq:5672/",
+    "ExchangeName": "performance_mq",
+    "ExchangeKind": "direct",
+    "ExchangeDurable": true,
+    "QueueName": "performance_mq",
+    "QueueDurable": true,
+    "BindKey": "performance_mq",
+    "DeliveryMode": 2,
+    "PrefetchCount": 5,
+    "ConsumerNum": 5
+  },
+  "tcp_server_mq": {
+    "Address": "amqp://admin:password@base_service_mq:5672/",
+    "ExchangeName": "tcp_server_mq",
+    "ExchangeKind": "direct",
+    "ExchangeDurable": true,
+    "QueueName": "tcp_server_mq",
+    "QueueDurable": true,
+    "BindKey": "tcp_server_mq",
+    "DeliveryMode": 2,
+    "PrefetchCount": 5,
+    "ConsumerNum": 5
+  }
 }
