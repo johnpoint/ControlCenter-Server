@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  base_service_mq:
+    image: rabbitmq:management-alpine
+    container_name: base_service_rabbitmq
+    restart: on-failure
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    ports:
+      #      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - local_server
+    volumes:
+      - ./project_data/base_service/rabbitMQ:/var/lib/rabbitmq/mnesia/
+  base_service_mongodb:
+    image: mongo:latest
+    container_name: base_service_mongodb
+    restart: on-failure
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+    #    ports:
+    #      - "30020:27017"
+    networks:
+      - local_server
+  base_service_redis:
+    image: redis:latest
+    container_name: base_service_redis
+    restart: on-failure
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - local_server
+  base_service_influxdb:
+    image: influxdb:latest
+    ports:
+      - "8086:8086"
+    restart: on-failure
+    networks:
+      - local_server
+    volumes:
+      - ./project_data/base_service/influxdb/var/lib/influxdb2:/var/lib/influxdb2
+      - ./project_data/base_service/influxdb/etc/influxdb2:/etc/influxdb2
+
+networks:
+  local_server:

@@ -2,16 +2,16 @@
   "http_server_listen": "0.0.0.0:80",
   "environment": "dev",
   "mongo_db_config": {
-    "url": "mongodb://admin:admin@control_center_database:27017/control_center",
+    "url": "mongodb://admin:password@base_service_mongodb:27017/control_center",
     "database": "control_center"
   },
   "redis_config": {
     "addr": "control_center_redis:6379"
   },
   "task_producer": {
-    "Address": "amqp://admin:admin@control_center_mq:5672/",
+    "Address": "amqp://admin:password@base_service_mq:5672/",
     "ExchangeName": "control_center",
-    "ExchangeKind": "topic",
+    "ExchangeKind": "direct",
     "ExchangeDurable": true,
     "QueueName": "control_center",
     "QueueDurable": true,

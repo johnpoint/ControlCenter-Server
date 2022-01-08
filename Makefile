@@ -10,6 +10,10 @@ build:
 	@go build -o "${BIN_FILE}" ControlCenter.go
 	@docker build -t control-center:latest .
 
+## build: 启动服务
+run: build
+	@cd deploy/docker-compose && bash deploy.sh down && bash deploy.sh up
+
 ## clean: 清理中间目标文件
 clean:
 	@go clean

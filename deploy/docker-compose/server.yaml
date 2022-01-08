@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  control_center_api:
+    user: "${USERID}:${GROUPID}"
+    image: control-center:latest
+    container_name: control_center_api
+    restart: on-failure
+    networks:
+      - local_server
+    volumes:
+      - "./project_data/server/:/usr/src/server"
+    ports:
+      - "30080:80"
+    command: /bin/bash /usr/src/start.sh api
+  control_center_pc:
+    user: "${USERID}:${GROUPID}"
+    image: control-center:latest
+    container_name: control_center_pc
+    restart: on-failure
+    networks:
+      - local_server
+    volumes:
+      - "./project_data/server/:/usr/src/server"
+    command: /bin/bash /usr/src/start.sh performanceConsumerCommand
+  control_center_tc:
+    user: "${USERID}:${GROUPID}"
+    image: control-center:latest
+    container_name: control_center_tc
+    restart: on-failure
+    networks:
+      - local_server
+    volumes:
+      - "./project_data/server/:/usr/src/server"
+    command: /bin/bash /usr/src/start.sh tcpServerConsumerCommand
+  control_center_tcp:
+    user: "${USERID}:${GROUPID}"
+    image: control-center:latest
+    container_name: control_center_tcp
+    restart: on-failure
+    networks:
+      - local_server
+    ports:
+      - "38080:8080"
+    volumes:
+      - "./project_data/server/:/usr/src/server"
+    command: /bin/bash /usr/src/start.sh tcp
+
+networks:
+  local_server:
