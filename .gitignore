@@ -2,3 +2,5 @@ ControlCenter
 .idea
 control-center
 deploy/project_data
+/deploy/docker-compose/project_data/base_service/
+/config_gen.json
