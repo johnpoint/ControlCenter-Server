@@ -25,11 +25,13 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&configPath, "config", "config_local.json", "config file (default is ./config_local.json)")
-	rootCmd.AddCommand(httpServerCommand)   // API服务
-	rootCmd.AddCommand(clientCommand)       // 上报客户端
-	rootCmd.AddCommand(genConfigCommand)    // 生成空配置文件
-	rootCmd.AddCommand(taskConsumerCommand) // 下发任务消费者
-	rootCmd.AddCommand(tcpServerCommand)    // tcp
+	rootCmd.AddCommand(httpServerCommand)          // API服务
+	rootCmd.AddCommand(clientCommand)              // 上报客户端
+	rootCmd.AddCommand(genConfigCommand)           // 生成空配置文件
+	rootCmd.AddCommand(taskConsumerCommand)        // 下发任务消费者
+	rootCmd.AddCommand(tcpServerCommand)           // tcp
+	rootCmd.AddCommand(performanceConsumerCommand) // 性能信息消费者
+	rootCmd.AddCommand(tcpServerConsumerCommand)   // tcp信息消费者
 }
 
 func initConfig() {

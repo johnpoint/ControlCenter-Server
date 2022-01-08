@@ -1,13 +1,15 @@
 package cmd
 
 import (
-	"ControlCenter/app/service/grpcService"
 	"ControlCenter/depend"
 	"ControlCenter/pkg/bootstrap"
-	"ControlCenter/proto/tcpProto"
 	"context"
+	"fmt"
 	"github.com/spf13/cobra"
-	"google.golang.org/grpc"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 var tcpServerCommand = &cobra.Command{
@@ -20,13 +22,15 @@ var tcpServerCommand = &cobra.Command{
 			&depend.Config{
 				Path: configPath,
 			},
+			&depend.PerformanceProducer{},
+			&depend.TcpServerProducer{},
 			&depend.TcpServer{},
-			&depend.GrpcServer{
-				Name: "tcp_server",
-				AddFunc: func(grpcServer *grpc.Server) {
-					tcpProto.RegisterTcpServerServiceServer(grpcServer, &grpcService.TcpServerService{})
-				},
-			},
+			//&depend.GrpcServer{
+			//	Name: "tcp_server",
+			//	AddFunc: func(grpcServer *grpc.Server) {
+			//		tcpProto.RegisterTcpServerServiceServer(grpcServer, &grpcService.TcpServerService{})
+			//	},
+			//},
 		)
 		err := i.Init(ctx)
 		if err != nil {
@@ -34,7 +38,14 @@ var tcpServerCommand = &cobra.Command{
 			return
 		}
 
-		forever := make(chan struct{})
-		<-forever
+		stopChan := make(chan os.Signal)
+		signal.Notify(stopChan, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
+
+		select {
+		case signal := <-stopChan:
+			fmt.Println("[System] Catch signal:" + signal.String() + ",and wait 30 sec")
+			time.Sleep(30 * time.Second)
+			return
+		}
 	},
 }

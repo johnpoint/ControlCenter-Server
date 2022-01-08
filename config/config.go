@@ -12,17 +12,33 @@ import (
 var Config = new(ServiceConfig)
 
 type ServiceConfig struct {
-	configPath       string
-	HttpServerListen string                 `json:"http_server_listen"`
-	TcpServerListen  string                 `json:"tcp_server_listen"`
-	Environment      string                 `json:"environment"`
-	MongoDBConfig    *MongoDBConfig         `json:"mongo_db_config"`
-	RedisConfig      *RedisConfig           `json:"redis_config"`
-	TaskQueue        *rabbitmq.Config       `json:"task_producer"`
-	Session          *session.SessionConfig `json:"session"`
-	GrpcConfigMap    map[string]*GrpcConfig `json:"grpc_config_map"`
-	Salt             string                 `json:"salt"`
-	URL              string                 `json:"url"`
+	configPath string `json:"-"`
+
+	// 服务端配置
+	HttpServerListen string                 `json:"http_server_listen"` // API 监听
+	TcpServerListen  string                 `json:"tcp_server_listen"`  // tcp 服务器监听
+	Environment      string                 `json:"environment"`        //
+	MongoDBConfig    *MongoDBConfig         `json:"mongo_db_config"`    // mongo 配置
+	RedisConfig      *RedisConfig           `json:"redis_config"`       // redis 配置
+	TaskQueue        *rabbitmq.Config       `json:"task_producer"`      // 任务队列
+	Session          *session.SessionConfig `json:"session"`            // session 配置
+	GrpcConfigMap    map[string]*GrpcConfig `json:"grpc_config_map"`    // grpc 配置
+	Salt             string                 `json:"salt"`               // 加密盐
+	URL              string                 `json:"url"`                // 服务提供网址
+	InfluxDB         *InfluxDBConfig        `json:"influx_db"`          // 时序数据库
+	PerformanceMQ    *rabbitmq.Config       `json:"performance_mq"`     // 性能采集队列
+	TcpServerMQ      *rabbitmq.Config       `json:"tcp_server_mq"`      // tcp 服务器消息队列
+
+	// 客户端 agent 配置
+	ServerID           string `json:"server_id"`           // 服务器ID
+	RemoteAddress      string `json:"remote_address"`      // 远端服务器地址
+	CollectionInterval int64  `json:"collection_interval"` // 性能采集间隔时间(秒)
+}
+
+type InfluxDBConfig struct {
+	Address string `json:"address"`
+	Token   string `json:"token"`
+	Org     string `json:"org"`
 }
 
 type GrpcConfig struct {

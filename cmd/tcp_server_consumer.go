@@ -12,9 +12,9 @@ import (
 	"time"
 )
 
-var clientCommand = &cobra.Command{
-	Use:   "client",
-	Short: "Start client",
+var tcpServerConsumerCommand = &cobra.Command{
+	Use:   "tcpServerConsumerCommand",
+	Short: "Start tcp server consumer",
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
 		i := bootstrap.Helper{}
@@ -22,8 +22,8 @@ var clientCommand = &cobra.Command{
 			&depend.Config{
 				Path: configPath,
 			},
-			&depend.TcpClient{},
-			&depend.PerformanceCollector{},
+			&depend.PerformanceProducer{},
+			&depend.TcpServerConsumer{},
 		)
 		err := i.Init(ctx)
 		if err != nil {

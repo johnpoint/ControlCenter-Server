@@ -6,6 +6,6 @@ import (
 )
 
 func RandomString() string {
-	newUUID, _ := uuid.NewUUID()
+	newUUID, _ := uuid.NewRandom()
 	return strings.Replace(newUUID.String(), "-", "", -1)
 }

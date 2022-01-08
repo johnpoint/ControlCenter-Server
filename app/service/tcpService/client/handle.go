@@ -1,40 +1,53 @@
 package client
 
 import (
+	"ControlCenter/app/service/tcpService"
+	"fmt"
 	"github.com/panjf2000/gnet"
 	"time"
 )
 
-type ClientHandle struct{}
+type Handle struct {
+	*gnet.EventServer
+}
 
-func (h *ClientHandle) OnInitComplete(svr gnet.Server) (action gnet.Action) {
+var ListenerID string
+
+func (h *Handle) OnInitComplete(svr gnet.Server) (action gnet.Action) {
 	return
 }
 
-func (h *ClientHandle) OnShutdown(svr gnet.Server) {
+func (h *Handle) OnShutdown(svr gnet.Server) {
 	return
 }
 
-func (h *ClientHandle) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
+func (h *Handle) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
+	fmt.Println(time.Now().Format("20060102 15:04:05"), fmt.Sprintf("[OnOpened] %s", c.RemoteAddr()))
+	ListenerID = tcpService.NewListener(c).ID()
+	c.SetContext(&tcpService.DataStruct{
+		ChannelID: ListenerID,
+	})
 	return
 }
 
-func (h *ClientHandle) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
+func (h *Handle) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
+	fmt.Println("OnClosed", err)
 	return
 }
 
-func (h *ClientHandle) PreWrite(c gnet.Conn) {
+func (h *Handle) PreWrite(c gnet.Conn) {
+	fmt.Println("PreWrite")
 	return
 }
 
-func (h *ClientHandle) AfterWrite(c gnet.Conn, b []byte) {
+func (h *Handle) AfterWrite(c gnet.Conn, b []byte) {
 	return
 }
 
-func (h *ClientHandle) React(packet []byte, c gnet.Conn) (out []byte, action gnet.Action) {
+func (h *Handle) React(packet []byte, c gnet.Conn) (out []byte, action gnet.Action) {
 	return
 }
 
-func (h *ClientHandle) Tick() (delay time.Duration, action gnet.Action) {
+func (h *Handle) Tick() (delay time.Duration, action gnet.Action) {
 	return
 }

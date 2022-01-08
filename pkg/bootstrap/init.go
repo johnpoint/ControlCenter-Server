@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"reflect"
+	"time"
 )
 
 type Helper struct {
@@ -14,6 +16,7 @@ type Helper struct {
 
 func (i *Helper) Init(ctx context.Context) error {
 	fmt.Println("[Bootstrap] Start")
+	rand.Seed(time.Now().UnixNano())
 	for j := range i.components {
 		fmt.Println(fmt.Sprintf("[Bootstrap] %s", reflect.TypeOf(i.components[j])))
 		err := i.components[j].Init(ctx)

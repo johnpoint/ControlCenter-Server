@@ -4,7 +4,12 @@ import (
 	"ControlCenter/depend"
 	"ControlCenter/pkg/bootstrap"
 	"context"
+	"fmt"
 	"github.com/spf13/cobra"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 var taskConsumerCommand = &cobra.Command{
@@ -25,7 +30,14 @@ var taskConsumerCommand = &cobra.Command{
 			return
 		}
 
-		forever := make(chan struct{})
-		<-forever
+		stopChan := make(chan os.Signal)
+		signal.Notify(stopChan, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
+
+		select {
+		case signal := <-stopChan:
+			fmt.Println("[System] Catch signal:" + signal.String() + ",and wait 30 sec")
+			time.Sleep(30 * time.Second)
+			return
+		}
 	},
 }

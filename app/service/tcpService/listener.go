@@ -1,7 +1,9 @@
-package server
+package tcpService
 
 import (
 	"ControlCenter/pkg/utils"
+	"errors"
+	"fmt"
 	"github.com/panjf2000/gnet"
 	"sync"
 )
@@ -25,6 +27,18 @@ type Listener struct {
 	rev        chan []byte
 }
 
+func (l *Listener) ID() string {
+	return l.listenerID
+}
+
+func (l *Listener) Send(b []byte) error {
+	if l.rev != nil {
+		l.rev <- b
+		return nil
+	}
+	return errors.New("chan is nil")
+}
+
 func NewListener(c gnet.Conn) *Listener {
 	var l Listener
 	l.listenerID = utils.RandomString()
@@ -43,7 +57,10 @@ func (l *Listener) RevLoop() {
 			if !ok {
 				return
 			}
-			l.c.AsyncWrite(b)
+			err := l.c.AsyncWrite(b)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
 		}
 	}
 }

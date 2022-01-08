@@ -31,7 +31,7 @@ func NewPushToServerClient(cc grpc.ClientConnInterface) PushToServerClient {
 
 func (c *pushToServerClient) PushTask(ctx context.Context, in *CommandItem, opts ...grpc.CallOption) (*CommandItem, error) {
 	out := new(CommandItem)
-	err := c.cc.Invoke(ctx, "/server_info.PushToServer/PushTask", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/controlProto.PushToServer/PushTask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func _PushToServer_PushTask_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/server_info.PushToServer/PushTask",
+		FullMethod: "/controlProto.PushToServer/PushTask",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PushToServerServer).PushTask(ctx, req.(*CommandItem))
@@ -86,7 +86,7 @@ func _PushToServer_PushTask_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PushToServer_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "server_info.PushToServer",
+	ServiceName: "controlProto.PushToServer",
 	HandlerType: (*PushToServerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -95,5 +95,5 @@ var PushToServer_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/serverInfo/server.proto",
+	Metadata: "proto/controlProto/server.proto",
 }

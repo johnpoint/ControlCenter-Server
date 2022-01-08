@@ -18,6 +18,9 @@ var genConfigCommand = &cobra.Command{
 			RedisConfig:   &config.RedisConfig{},
 			TaskQueue:     &rabbitmq.Config{},
 			Session:       &session.SessionConfig{},
+			PerformanceMQ: &rabbitmq.Config{},
+			GrpcConfigMap: make(map[string]*config.GrpcConfig),
+			InfluxDB:      &config.InfluxDBConfig{},
 		}
 		jsonByte, _ := json.Marshal(&newConfig)
 		fmt.Println(string(jsonByte))
