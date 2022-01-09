@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -39,22 +40,21 @@ func (w *CustomResponseWriter) WriteString(s string) (int, error) {
 
 func LogPlusMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		var r reqLog
 		r.ReqID = utils.RandomString()
-		c.Set("req_id", r.ReqID)
-		r.In = time.Now()
-		r.Method = c.Request.Method
-		cp := c.Copy()
-		r.Header = cp.Request.Header
-		rawReqData, _ := io.ReadAll(cp.Request.Body)
+		r.Header = c.Request.Header
+		rawReqData, _ := io.ReadAll(c.Request.Body)
+		c.Request.Body.Close()
+		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(rawReqData))
+
 		r.Body = string(rawReqData)
-		r.URL = cp.Request.URL.RequestURI()
+		r.URL = c.Request.URL.RequestURI()
 		customWriter := &CustomResponseWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
 		c.Writer = customWriter
 		// 处理请求
 		c.Next()
 
-		cp = c.Copy()
 		r.Resp = customWriter.body.String()
 		r.Out = time.Now()
 		log(&r)
