@@ -9,6 +9,13 @@
   "redis_config": {
     "addr": "control_center_redis:6379"
   },
+  "session": {
+    "expire_time": 604800,
+    "auto_renew": false,
+    "prefix": "s:ccs-ng:token",
+    "header_name": "token",
+    "ctx_key": "token"
+  },
   "task_producer": {
     "Address": "amqp://admin:password@base_service_mq:5672/",
     "ExchangeName": "control_center",
