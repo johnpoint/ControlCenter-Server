@@ -49,7 +49,7 @@ func (s *Session) validate() error {
 }
 
 func (s *Session) NewSession(ctx context.Context, uuid, value string) string {
-	s.driver.Set(ctx, uuid, value, time.Duration(s.config.ExpireTime))
+	s.driver.Set(ctx, uuid, value, time.Duration(s.config.ExpireTime)*time.Second)
 	return uuid
 }
 
@@ -64,6 +64,7 @@ func MiddlewareFunc() func(c *gin.Context) {
 	if Si.validate() != nil {
 		return func(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"msg": "session middleware error"})
+			c.Abort()
 			return
 		}
 	}
@@ -78,6 +79,8 @@ func MiddlewareFunc() func(c *gin.Context) {
 			return
 		}
 		c.Set(Si.config.CtxKey, sessionData)
-		Si.driver.Renew(c.Request.Context(), sessionID, time.Duration(Si.config.ExpireTime))
+		if Si.config.AutoRenew {
+			Si.driver.Renew(c.Request.Context(), sessionID, time.Duration(Si.config.ExpireTime)*time.Second)
+		}
 	}
 }
