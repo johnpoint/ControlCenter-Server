@@ -12,7 +12,7 @@ build:
 
 ## build: 启动服务
 run: build
-	@cd deploy/docker-compose && bash deploy.sh down && bash deploy.sh up
+	@cd deploy/docker-compose && bash deploy.sh down dev && bash deploy.sh up dev
 
 ## clean: 清理中间目标文件
 clean:
