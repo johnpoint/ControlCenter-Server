@@ -7,7 +7,7 @@ services:
     container_name: control_center_api
     restart: on-failure
     networks:
-      - local_server
+      - NG_network
     volumes:
       - "./project_data/server/:/usr/src/server"
     ports:
@@ -19,7 +19,7 @@ services:
     container_name: control_center_pc
     restart: on-failure
     networks:
-      - local_server
+      - NG_network
     volumes:
       - "./project_data/server/:/usr/src/server"
     command: /bin/bash /usr/src/start.sh performanceConsumerCommand
@@ -29,7 +29,7 @@ services:
     container_name: control_center_tc
     restart: on-failure
     networks:
-      - local_server
+      - NG_network
     volumes:
       - "./project_data/server/:/usr/src/server"
     command: /bin/bash /usr/src/start.sh tcpServerConsumerCommand
@@ -39,7 +39,7 @@ services:
     container_name: control_center_tcp
     restart: on-failure
     networks:
-      - local_server
+      - NG_network
     ports:
       - "38080:8080"
     volumes:
@@ -47,4 +47,5 @@ services:
     command: /bin/bash /usr/src/start.sh tcp
 
 networks:
-  local_server:
+  NG_network:
+    external: true
