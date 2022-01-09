@@ -30,6 +30,9 @@ func returnSuccessMsg(c *gin.Context, message string, data interface{}) {
 	if data == nil {
 		data = gin.H{}
 	}
+	if data == nil {
+		data = struct{}{}
+	}
 	c.JSON(http.StatusOK, ApiResp{
 		Code:    0,
 		Message: message,
