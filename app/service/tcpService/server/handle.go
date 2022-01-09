@@ -28,7 +28,7 @@ func (t *Handle) OnShutdown(server gnet.Server) {
 func (t *Handle) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 	fmt.Println(time.Now().Format("20060102 15:04:05"), fmt.Sprintf("[OnOpened] %s", c.RemoteAddr()))
 	cID := utils.RandomString()
-	c.SetContext(&tcpService.DataStruct{
+	c.SetContext(tcpService.DataStruct{
 		ChannelID: cID,
 	})
 	connMap.Store(cID, &connMeta{
@@ -49,11 +49,9 @@ func (t *Handle) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
 }
 
 func (t *Handle) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Action) {
-	fmt.Println(len(frame))
 	var commandItem controlProto.CommandItem
 	err := proto.Unmarshal(frame, &commandItem)
 	if err != nil {
-		panic(err)
 		return nil, gnet.Close
 	}
 	r, ok := c.Context().(tcpService.DataStruct)

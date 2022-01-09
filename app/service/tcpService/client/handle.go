@@ -24,7 +24,7 @@ func (h *Handle) OnShutdown(svr gnet.Server) {
 func (h *Handle) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 	fmt.Println(time.Now().Format("20060102 15:04:05"), fmt.Sprintf("[OnOpened] %s", c.RemoteAddr()))
 	ListenerID = tcpService.NewListener(c).ID()
-	c.SetContext(&tcpService.DataStruct{
+	c.SetContext(tcpService.DataStruct{
 		ChannelID: ListenerID,
 	})
 	return

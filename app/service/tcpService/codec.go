@@ -29,20 +29,17 @@ func (d *TcpCodec) Encode(c gnet.Conn, buf []byte) ([]byte, error) {
 }
 
 func (d *TcpCodec) Decode(c gnet.Conn) ([]byte, error) {
-	fmt.Println("Decode")
-	r, _ := c.Context().(DataStruct)
-	//if !ok {
-	//	fmt.Println("close")
-	//	err := c.Close()
-	//	if err != nil {
-	//		return nil, nil
-	//	}
-	//}
+	r, ok := c.Context().(DataStruct)
+	if !ok {
+		err := c.Close()
+		if err != nil {
+			return nil, nil
+		}
+	}
 	bytes := c.Read()
 	if len(r.fullData) == 0 {
 		var fullLength uint64
 		fullLength, r.lenNumLength = proto.DecodeVarint(bytes)
-		fmt.Println(fullLength, r.lenNumLength)
 		r.fullLength = int(fullLength)
 		if r.fullLength == 0 {
 			return nil, nil
