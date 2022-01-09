@@ -1,7 +1,6 @@
 package performance
 
 import (
-	"ControlCenter/config"
 	"ControlCenter/dao/influxdbDao"
 	"ControlCenter/model/influxModel"
 	"context"
@@ -50,13 +49,10 @@ func (a *Archiver) Save() error {
 		return err
 	}
 	a.buildPoint()
-	err := influxdbDao.GetClient().WriteAPIBlocking(
-		config.Config.InfluxDB.Org,
-		a.data.BucketName()).
-		WritePoint(
-			a.ctx,
-			a.point,
-		)
+	err := influxdbDao.GetWriteAPIBlocking(a.data).WritePoint(
+		a.ctx,
+		a.point,
+	)
 	if err != nil {
 		return err
 	}

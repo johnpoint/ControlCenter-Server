@@ -2,6 +2,7 @@ package config
 
 import (
 	"ControlCenter/pkg/apiMiddleware/session"
+	"ControlCenter/pkg/influxDB"
 	"ControlCenter/pkg/rabbitmq"
 	jsoniter "github.com/json-iterator/go"
 	"io"
@@ -25,7 +26,7 @@ type ServiceConfig struct {
 	GrpcConfigMap    map[string]*GrpcConfig `json:"grpc_config_map"`    // grpc 配置
 	Salt             string                 `json:"salt"`               // 加密盐
 	URL              string                 `json:"url"`                // 服务提供网址
-	InfluxDB         *InfluxDBConfig        `json:"influx_db"`          // 时序数据库
+	InfluxDB         *influxDB.Config       `json:"influx_db"`          // 时序数据库
 	PerformanceMQ    *rabbitmq.Config       `json:"performance_mq"`     // 性能采集队列
 	TcpServerMQ      *rabbitmq.Config       `json:"tcp_server_mq"`      // tcp 服务器消息队列
 
@@ -33,12 +34,6 @@ type ServiceConfig struct {
 	ServerID           string `json:"server_id"`           // 服务器ID
 	RemoteAddress      string `json:"remote_address"`      // 远端服务器地址
 	CollectionInterval int64  `json:"collection_interval"` // 性能采集间隔时间(秒)
-}
-
-type InfluxDBConfig struct {
-	Address string `json:"address"`
-	Token   string `json:"token"`
-	Org     string `json:"org"`
 }
 
 type GrpcConfig struct {

@@ -54,8 +54,9 @@ func (d *Api) Init(ctx context.Context) error {
 
 	server := api.Group("/server") // 服务器模块
 	{
-		server.GET("", controller.Pong)       // 服务器列表
-		server.GET("/:uuid", controller.Pong) // 服务器详细信息
+		server.GET("", controller.Pong)                         // 服务器列表
+		server.GET("/:uuid", controller.Pong)                   // 服务器详细信息
+		server.POST("/chart", controller.ServerChartController) // 服务器性能信息绘图
 	}
 
 	certificate := api.Group("/certificate") // 证书模块

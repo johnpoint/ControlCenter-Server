@@ -25,6 +25,7 @@ var httpServerCommand = &cobra.Command{
 			&depend.Redis{},
 			&depend.Session{},
 			&depend.MongoDB{},
+			&depend.Influxdb{},
 			&depend.TaskProducer{},
 			&depend.Api{},
 		)
