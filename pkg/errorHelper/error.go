@@ -8,6 +8,12 @@ var (
 	// 通用错误码
 	OK      = &Err{Code: 0, Message: "OK"}
 	Unknown = &Err{Code: -1, Message: "未知错误"}
+
+	// 40100+ 请求异常
+	ReqParseError = &Err{Code: 40100, Message: "请求参数异常"}
+
+	// 50100+ 数据库异常
+	DataBaseError = &Err{Code: 50100, Message: "数据库异常"}
 )
 
 // Err 定义错误
@@ -37,6 +43,14 @@ func GetErrMessage(err error) string {
 	return trueErr.Message
 }
 
+func BuildErr(err *Err, errInfo error) *Err {
+	return &Err{
+		Code:      err.Code,
+		Message:   err.Message,
+		ErrorInfo: errInfo,
+	}
+}
+
 func DecodeErr(err error) (int, string) {
 	if err == nil {
 		return OK.Code, OK.Message
@@ -45,6 +59,9 @@ func DecodeErr(err error) (int, string) {
 	trueErr, ok := err.(*Err)
 	if !ok {
 		return Unknown.Code, Unknown.Message
+	}
+	if trueErr.ErrorInfo != nil {
+		trueErr.Message = fmt.Sprintf("%s: %+v", trueErr.Message, trueErr.ErrorInfo.Error())
 	}
 	return trueErr.Code, trueErr.Message
 }
