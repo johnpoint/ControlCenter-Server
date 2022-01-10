@@ -3,11 +3,12 @@
   "tcp_server_listen": "0.0.0.0:8080",
   "environment": "dev",
   "mongo_db_config": {
-    "url": "mongodb://admin:password@base_service_mongodb:27017/control_center",
+    "url": "mongodb://admin:password@base_service_mongodb:27017/control_center?authSource=admin",
     "database": "control_center"
   },
   "redis_config": {
-    "addr": "control_center_redis:6379"
+    "addr": "base_service_redis:6379",
+    "password": "123456"
   },
   "session": {
     "expire_time": 604800,
@@ -17,7 +18,7 @@
     "ctx_key": "token"
   },
   "task_producer": {
-    "Address": "amqp://admin:password@base_service_mq:5672/",
+    "Address": "amqp://admin:password@base_service_rabbitmq:5672/",
     "ExchangeName": "control_center",
     "ExchangeKind": "direct",
     "ExchangeDurable": true,
@@ -36,7 +37,7 @@
     "org": "default"
   },
   "performance_mq": {
-    "Address": "amqp://admin:password@base_service_mq:5672/",
+    "Address": "amqp://admin:password@base_service_rabbitmq:5672/",
     "ExchangeName": "performance_mq",
     "ExchangeKind": "direct",
     "ExchangeDurable": true,
@@ -48,7 +49,7 @@
     "ConsumerNum": 5
   },
   "tcp_server_mq": {
-    "Address": "amqp://admin:password@base_service_mq:5672/",
+    "Address": "amqp://admin:password@base_service_rabbitmq:5672/",
     "ExchangeName": "tcp_server_mq",
     "ExchangeKind": "direct",
     "ExchangeDurable": true,
