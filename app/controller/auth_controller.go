@@ -38,7 +38,6 @@ func Login(c *gin.Context) {
 		returnErrorMsg(c, infra.ErrAuthServise)
 		return
 	}
-	c.SetCookie("SESSION", uuid, 0, "/", config.Config.URL, true, true)
 	returnSuccessMsg(c, "", loginResp{
 		Token: uuid,
 	})

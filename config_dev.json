@@ -14,7 +14,7 @@
     "expire_time": 604800,
     "auto_renew": false,
     "prefix": "s:ccs-ng:token",
-    "header_name": "token",
+    "cookie_name": "SESSION",
     "ctx_key": "token"
   },
   "task_producer": {

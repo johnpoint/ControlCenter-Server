@@ -48,8 +48,9 @@ func (s *Session) validate() error {
 	return nil
 }
 
-func (s *Session) NewSession(ctx context.Context, uuid, value string) string {
-	s.driver.Set(ctx, uuid, value, time.Duration(s.config.ExpireTime)*time.Second)
+func (s *Session) NewSession(c *gin.Context, uuid, value string) string {
+	s.driver.Set(c, uuid, value, time.Duration(s.config.ExpireTime)*time.Second)
+	c.SetCookie(s.config.CookieName, uuid, 0, "/", "", true, true)
 	return uuid
 }
 
@@ -69,8 +70,8 @@ func MiddlewareFunc() func(c *gin.Context) {
 		}
 	}
 	return func(c *gin.Context) {
-		sessionID := c.GetHeader(
-			Si.config.HeaderName,
+		sessionID, _ := c.Cookie(
+			Si.config.CookieName,
 		)
 		sessionData := Si.driver.Get(c.Request.Context(), sessionID)
 		if len(sessionData) == 0 {
