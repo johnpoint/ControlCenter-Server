@@ -43,7 +43,7 @@ func ServerChartController(c *gin.Context) {
 	var req ServerChartReq
 	err := c.Bind(&req)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.BuildErr(errorHelper.ReqParseError, err))
+		returnErrorMsg(c, errorHelper.WarpErr(infra.ReqParseError, err))
 		return
 	}
 	if req.To == 0 {
@@ -58,10 +58,9 @@ func ServerChartController(c *gin.Context) {
 			fmt.Sprintf("%d", req.To)).
 		AddFilter(fmt.Sprintf(`fn: (r) => r["server_id"] == "%s"`, req.ID)).QL()
 
-	fmt.Println(query)
 	result, err := influxdbDao.GetQuery().Query(c, query)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.BuildErr(errorHelper.DataBaseError, err))
+		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 
