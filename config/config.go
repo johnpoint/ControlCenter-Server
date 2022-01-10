@@ -25,6 +25,7 @@ type ServiceConfig struct {
 	Session          *session.SessionConfig `json:"session"`            // session 配置
 	GrpcConfigMap    map[string]*GrpcConfig `json:"grpc_config_map"`    // grpc 配置
 	Salt             string                 `json:"salt"`               // 加密盐
+	AesKey           string                 `json:"aes_key"`            // Aes key
 	URL              string                 `json:"url"`                // 服务提供网址
 	InfluxDB         *influxDB.Config       `json:"influx_db"`          // 时序数据库
 	PerformanceMQ    *rabbitmq.Config       `json:"performance_mq"`     // 性能采集队列

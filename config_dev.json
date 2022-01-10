@@ -30,6 +30,7 @@
     "ConsumerNum": 5
   },
   "salt": "dev#salt",
+  "aes_key": "L8hVTPR9osdvbLJ3AiW5dCeL+nY7xN6f",
   "url": "",
   "influx_db": {
     "address": "http://base_service_influxdb:8086",
