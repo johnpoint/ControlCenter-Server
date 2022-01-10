@@ -2,6 +2,7 @@ package controller
 
 import (
 	"ControlCenter/dao/influxdbDao"
+	"ControlCenter/infra"
 	"ControlCenter/model/influxModel"
 	"ControlCenter/pkg/errorHelper"
 	"ControlCenter/pkg/influxDB"

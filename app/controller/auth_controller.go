@@ -24,11 +24,14 @@ func Login(c *gin.Context) {
 		return
 	}
 	var user mongoModel.ModelUser
-	err = mongoDao.Collection(user.CollectionName()).FindOne(c, bson.M{
+	err = user.DB().FindOne(c, bson.M{
 		"username": fmt.Sprintf("%s", reqData.Username),
-		"password": utils.Md5(fmt.Sprintf("%s%s", reqData.Password, config.Config.Salt)),
 	}).Decode(&user)
 	if err != nil {
+		returnErrorMsg(c, infra.ErrAuthInfoInvalid)
+		return
+	}
+	if !utils.EqualPassword(reqData.Password, user.Password) {
 		returnErrorMsg(c, infra.ErrAuthInfoInvalid)
 		return
 	}
@@ -41,4 +44,39 @@ func Login(c *gin.Context) {
 		Token: uuid,
 	})
 	return
+}
+
+func Register(c *gin.Context) {
+	var reqData request.Register
+	err := c.BindJSON(&reqData)
+	if err != nil {
+		returnErrorMsg(c, infra.ReqParseError)
+		return
+	}
+
+	var user mongoModel.ModelUser
+	err = new(mongoModel.ModelUser).DB().FindOne(c, bson.M{
+		"username": reqData.Username,
+	}).Decode(&user)
+	if len(user.ID) == 0 {
+		encryptPassword := utils.EncodePassword(reqData.Password)
+		if len(encryptPassword) == 0 {
+			returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+			return
+		}
+		_, err = new(mongoModel.ModelUser).DB().InsertOne(c, &mongoModel.ModelUser{
+			ID:       utils.RandomString(),
+			Username: reqData.Username,
+			Password: encryptPassword,
+		})
+		if err != nil {
+			returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+			return
+		}
+	} else {
+		fmt.Println(user)
+		returnErrorMsg(c, infra.ReqSameUsernameError)
+		return
+	}
+	returnSuccessMsg(c, "", nil)
 }

@@ -10,7 +10,7 @@ import (
 type ApiResp struct {
 	Code    int32       `json:"code"`
 	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
+	Data    interface{} `json:"data,omitempty"`
 }
 
 func returnErrorMsg(c *gin.Context, err error) {
