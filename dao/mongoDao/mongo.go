@@ -6,34 +6,35 @@ import (
 	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 	"time"
 )
 
 var MongoClientNotInit = errors.New("mongo client not init")
 
-var MongoClient *mongo.Client
+var mongoClient *mongo.Client
 
-func InitMongoClient(config *config.MongoDBConfig) {
+func InitMongoClient(config *config.MongoDBConfig) error {
 	client, err := mongo.NewClient(options.Client().ApplyURI(config.URL))
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	err = client.Connect(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+	mongoClient = client
+	return nil
 }
 
 func getMongoClient() (*mongo.Client, error) {
-	if MongoClient == nil {
+	if mongoClient == nil {
 		return nil, MongoClientNotInit
 	}
-	return MongoClient, nil
+	return mongoClient, nil
 }
 
-func Client(name string) *mongo.Collection {
+func Collection(name string) *mongo.Collection {
 	if client, err := getMongoClient(); err == nil {
 		return client.Database(config.Config.MongoDBConfig.Database).Collection(name)
 	} else {

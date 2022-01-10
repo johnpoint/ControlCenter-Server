@@ -25,7 +25,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	var user mongoModel.ModelUser
-	err = mongoDao.Client(user.CollectionName()).FindOne(c, bson.M{
+	err = mongoDao.Collection(user.CollectionName()).FindOne(c, bson.M{
 		"username": fmt.Sprintf("%s", reqData.Username),
 		"password": utils.Md5(fmt.Sprintf("%s%s", reqData.Password, config.Config.Salt)),
 	}).Decode(&user)

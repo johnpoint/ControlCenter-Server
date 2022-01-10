@@ -13,6 +13,9 @@ type MongoDB struct{}
 var _ bootstrap.Component = (*MongoDB)(nil)
 
 func (d *MongoDB) Init(ctx context.Context) error {
-	mongoDao.InitMongoClient(config.Config.MongoDBConfig)
+	err := mongoDao.InitMongoClient(config.Config.MongoDBConfig)
+	if err != nil {
+		return err
+	}
 	return nil
 }

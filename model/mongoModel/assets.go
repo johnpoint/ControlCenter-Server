@@ -25,5 +25,5 @@ func (a *ModelAssets) CollectionName() string {
 }
 
 func (a *ModelAssets) DB() *mongo.Collection {
-	return mongoDao.Client(a.CollectionName())
+	return mongoDao.Collection(a.CollectionName())
 }

@@ -18,11 +18,11 @@ func (m *ModelUser) CollectionName() string {
 }
 
 func (m *ModelUser) DB() *mongo.Collection {
-	return mongoDao.Client(m.CollectionName())
+	return mongoDao.Collection(m.CollectionName())
 }
 
 func (m *ModelUser) InsertOne(ctx context.Context) error {
-	_, err := mongoDao.Client(m.CollectionName()).InsertOne(ctx, bson.M{"$set": m})
+	_, err := mongoDao.Collection(m.CollectionName()).InsertOne(ctx, bson.M{"$set": m})
 	if err != nil {
 		return err
 	}
