@@ -16,33 +16,34 @@ type Session struct{}
 var _ bootstrap.Component = (*Session)(nil)
 
 func (d *Session) Init(ctx context.Context) error {
-	var err error
-	client, err = redisDao.GetClient()
-	if err != nil {
-		return err
-	}
 	session.Si.
-		SetDriver(&SessionDriver{}).
+		SetDriver(newSessionDriver(redisDao.GetClient())).
 		SetConfig(config.Config.Session)
 	return nil
 }
 
-var client *goRedis.Client
+func newSessionDriver(c *goRedis.Client) *SessionDriver {
+	return &SessionDriver{
+		c: c,
+	}
+}
 
-type SessionDriver struct{}
+type SessionDriver struct {
+	c *goRedis.Client
+}
 
 func (d *SessionDriver) Set(ctx context.Context, uuid, value string, expire time.Duration) {
-	client.Set(ctx, uuid, value, expire)
+	d.c.Set(ctx, uuid, value, expire)
 }
 
 func (d *SessionDriver) Renew(ctx context.Context, uuid string, expire time.Duration) {
-	client.Expire(ctx, uuid, expire)
+	d.c.Expire(ctx, uuid, expire)
 }
 
 func (d *SessionDriver) Get(ctx context.Context, uuid string) string {
-	return client.Get(ctx, uuid).Val()
+	return d.c.Get(ctx, uuid).Val()
 }
 
 func (d *SessionDriver) Del(ctx context.Context, uuid string) {
-	client.Del(ctx, uuid)
+	d.c.Del(ctx, uuid)
 }
