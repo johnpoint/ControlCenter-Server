@@ -31,12 +31,11 @@ func (h *Handle) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 }
 
 func (h *Handle) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
-	fmt.Println("OnClosed", err)
+	fmt.Println(time.Now().Format("20060102 15:04:05"), fmt.Sprintf("[OnOpened] %s %+v", c.RemoteAddr(), err))
 	return
 }
 
 func (h *Handle) PreWrite(c gnet.Conn) {
-	fmt.Println("PreWrite")
 	return
 }
 

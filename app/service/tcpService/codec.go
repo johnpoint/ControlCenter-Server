@@ -2,7 +2,6 @@ package tcpService
 
 import (
 	"errors"
-	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/panjf2000/gnet"
 )
@@ -22,9 +21,7 @@ type DataStruct struct {
 }
 
 func (d *TcpCodec) Encode(c gnet.Conn, buf []byte) ([]byte, error) {
-	fmt.Println("Encode")
 	buf = append(proto.EncodeVarint(uint64(len(buf))), buf...)
-	fmt.Println(proto.DecodeVarint(buf))
 	return buf, nil
 }
 

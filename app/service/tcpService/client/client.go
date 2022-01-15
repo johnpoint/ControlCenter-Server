@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-var tcpClient *gnet.Client
-
 func InitClient() {
 	client, err := gnet.NewClient(&Handle{},
 		gnet.WithCodec(&tcpService.TcpCodec{}),
@@ -18,7 +16,6 @@ func InitClient() {
 	if err != nil {
 		return
 	}
-	tcpClient = client
 
 	err = client.Start()
 	if err != nil {
