@@ -23,7 +23,9 @@ var clientCommand = &cobra.Command{
 				Path: configPath,
 			},
 			&depend.TcpClient{},
+			&depend.TcpClientAuth{},
 			&depend.PerformanceCollector{},
+			&depend.HeartBeat{},
 		)
 		err := i.Init(ctx)
 		if err != nil {
