@@ -22,6 +22,7 @@ var tcpServerCommand = &cobra.Command{
 			&depend.Config{
 				Path: configPath,
 			},
+			&depend.Redis{},
 			&depend.PerformanceProducer{},
 			&depend.TcpServerProducer{},
 			&depend.TcpServer{},

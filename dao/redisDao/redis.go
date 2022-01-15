@@ -15,9 +15,6 @@ func InitClient(cfg *goRedis.Options) {
 	return
 }
 
-func GetClient() (*goRedis.Client, error) {
-	if redisClient == nil {
-		return nil, RedisClientNotInit
-	}
-	return redisClient, nil
+func GetClient() *goRedis.Client {
+	return redisClient
 }

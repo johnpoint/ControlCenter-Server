@@ -22,6 +22,8 @@ var tcpServerConsumerCommand = &cobra.Command{
 			&depend.Config{
 				Path: configPath,
 			},
+			&depend.Redis{},
+			&depend.MongoDB{},
 			&depend.PerformanceProducer{},
 			&depend.TcpServerConsumer{},
 		)
