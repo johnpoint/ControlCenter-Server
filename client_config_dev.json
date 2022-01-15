@@ -1,5 +1,8 @@
 {
-  "server_id": "706e0e5f67934c5ebec173c8ad88dd67",
+  "server_id": "2fd1f0cbd8974efc8e8d40ef4551bee3",
   "remote_address": "127.0.0.1:38080",
-  "collection_interval": 3
+  "collection_interval": 3,
+  "heart_beat_duration": 5,
+  "heart_beat_fix_interval": 50,
+  "token": "d81672e9950e4f4fb9315dcaa7498611"
 }

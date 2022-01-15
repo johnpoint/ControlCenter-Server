@@ -32,9 +32,12 @@ type ServiceConfig struct {
 	TcpServerMQ      *rabbitmq.Config       `json:"tcp_server_mq"`      // tcp 服务器消息队列
 
 	// 客户端 agent 配置
-	ServerID           string `json:"server_id"`           // 服务器ID
-	RemoteAddress      string `json:"remote_address"`      // 远端服务器地址
-	CollectionInterval int64  `json:"collection_interval"` // 性能采集间隔时间(秒)
+	ServerID             string        `json:"server_id"`               // 服务器ID
+	Token                string        `json:"token"`                   // 服务器Token
+	RemoteAddress        string        `json:"remote_address"`          // 远端服务器地址
+	CollectionInterval   int64         `json:"collection_interval"`     // 性能采集间隔时间(秒)
+	HeartBeatDuration    time.Duration `json:"heart_beat_duration"`     // 心跳间隔
+	HeartBeatFixInterval int           `json:"heart_beat_fix_interval"` // 心跳修正次数间隔
 }
 
 type GrpcConfig struct {
