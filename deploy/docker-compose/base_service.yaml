@@ -26,6 +26,8 @@ services:
       - "30020:27017"
     networks:
       - NG_network
+    volumes:
+      - ./project_data/base_service/mongodb:/data/db
   base_service_redis:
     image: redis:latest
     container_name: base_service_redis
