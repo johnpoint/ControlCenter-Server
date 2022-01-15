@@ -1,11 +1,14 @@
 package controller
 
 import (
+	"ControlCenter/app/logic/assets"
 	"ControlCenter/dao/influxdbDao"
 	"ControlCenter/infra"
 	"ControlCenter/model/influxModel"
+	"ControlCenter/model/mongoModel"
 	"ControlCenter/pkg/errorHelper"
 	"ControlCenter/pkg/influxDB"
+	"ControlCenter/pkg/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
@@ -47,6 +50,21 @@ func ServerChartController(c *gin.Context) {
 		returnErrorMsg(c, errorHelper.WarpErr(infra.ReqParseError, err))
 		return
 	}
+	userID, exists := getUserIDFromContext(c)
+	if !exists {
+		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
+		return
+	}
+	model, err := assets.NewAssetsServer(c, req.ID, userID).Get()
+	if err != nil {
+		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		return
+	}
+	svr, ok := model.(*mongoModel.ModelServer)
+	if !ok {
+		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		return
+	}
 	if req.To == 0 {
 		req.To = time.Now().Unix()
 	}
@@ -57,7 +75,7 @@ func ServerChartController(c *gin.Context) {
 		AddRange(
 			fmt.Sprintf("%d", req.From),
 			fmt.Sprintf("%d", req.To)).
-		AddFilter(fmt.Sprintf(`fn: (r) => r["server_id"] == "%s"`, req.ID)).QL()
+		AddFilter(fmt.Sprintf(`fn: (r) => r["server_id"] == "%s"`, svr.ID)).QL()
 
 	result, err := influxdbDao.GetQuery().Query(c, query)
 	if err != nil {
@@ -91,5 +109,52 @@ func ServerChartController(c *gin.Context) {
 		})
 	}
 
+	returnSuccessMsg(c, "OK", resp)
+}
+
+type SetUpNewServerReq struct {
+	RemarkName string `json:"remark_name"`
+}
+
+type SetUpNewServerResp struct {
+	Token    string `json:"token"`
+	ServerID string `json:"server_id"`
+}
+
+func SetUpNewServer(c *gin.Context) {
+	var req SetUpNewServerReq
+	err := c.Bind(&req)
+	if err != nil {
+		returnErrorMsg(c, errorHelper.WarpErr(infra.ReqParseError, err))
+		return
+	}
+	userID, exists := getUserIDFromContext(c)
+	if !exists {
+		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
+		return
+	}
+	var resp SetUpNewServerResp
+	var assetsServer = assets.NewAssetsServer(c, utils.RandomString(), userID)
+	err = assetsServer.Add(&mongoModel.ModelServer{
+		ID:         utils.RandomString(),
+		RemarkName: req.RemarkName,
+		Token:      utils.RandomString(),
+	})
+	if err != nil {
+		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		return
+	}
+	model, err := assetsServer.Get()
+	if err != nil {
+		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		return
+	}
+	svr, ok := model.(*mongoModel.ModelServer)
+	if !ok {
+		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		return
+	}
+	resp.ServerID = svr.ID
+	resp.Token = svr.Token
 	returnSuccessMsg(c, "OK", resp)
 }

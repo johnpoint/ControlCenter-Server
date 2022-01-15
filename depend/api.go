@@ -41,12 +41,12 @@ func (d *Api) Init(ctx context.Context) error {
 
 	user := api.Group("/user") // 用户模块
 	{
-		user.GET("", controller.Pong)        // 获取当前用户信息
-		user.GET("/assets", controller.Pong) // 获取当前用户资产列表
+		user.GET("", controller.Pong) // 获取当前用户信息
 	}
 
 	assets := api.Group("/assets") // 资产相关(这些是资产的元数据信息，而不包括资产的内容)
 	{
+		assets.GET("", controller.AssetsList)    // 获取当前用户资产列表
 		assets.GET("/:uuid", controller.Pong)    // 获取资产信息
 		assets.POST("/:uuid", controller.Pong)   // 修改资产相关信息
 		assets.DELETE("/:uuid", controller.Pong) // 删除资产
@@ -55,6 +55,7 @@ func (d *Api) Init(ctx context.Context) error {
 	server := api.Group("/server") // 服务器模块
 	{
 		server.GET("", controller.Pong)                         // 服务器列表
+		server.PUT("", controller.SetUpNewServer)               // 新建服务器信息
 		server.GET("/:uuid", controller.Pong)                   // 服务器详细信息
 		server.POST("/chart", controller.ServerChartController) // 服务器性能信息绘图
 	}

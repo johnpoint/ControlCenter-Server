@@ -6,7 +6,7 @@ import (
 
 type Model interface {
 	CollectionName() string
-	//GetDB() *mongo.Collection
+	DB() *mongo.Collection
 }
 
 type DefaultModel struct{}

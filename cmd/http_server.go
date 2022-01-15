@@ -26,7 +26,6 @@ var httpServerCommand = &cobra.Command{
 			&depend.Session{},
 			&depend.MongoDB{},
 			&depend.Influxdb{},
-			&depend.TaskProducer{},
 			&depend.Api{},
 		)
 		err := i.Init(ctx)
