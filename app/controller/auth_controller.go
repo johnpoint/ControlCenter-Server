@@ -37,7 +37,7 @@ func Login(c *gin.Context) {
 	}
 	uuid := session.Si.NewSession(c, utils.RandomString(), user.ID)
 	if len(uuid) == 0 {
-		returnErrorMsg(c, infra.ErrAuthServise)
+		returnErrorMsg(c, infra.ErrAuthService)
 		return
 	}
 	returnSuccessMsg(c, "", loginResp{

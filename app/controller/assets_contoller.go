@@ -42,7 +42,8 @@ func AssetsList(c *gin.Context) {
 		resp.Page = req.Page
 		resp.PerPage = req.PageSize
 	} else {
-		opt.SetLimit(50)
+		opt.SetLimit(PaginationDefaultPageSize)
+		resp.PerPage = PaginationDefaultPageSize
 	}
 	filter := bson.M{
 		"authority": bson.M{
