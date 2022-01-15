@@ -19,8 +19,16 @@ enum ServerCommand {
 
 message CommandItem {
   string        server_id = 1;
-  bytes         server_token = 2;
-  ServerCommand command = 3;
-  bytes         command_buf = 4;
-  string SeqID = 5;
+  ServerCommand command = 2;
+  bytes         command_buf = 3;
+  string sequence_id = 4;
+}
+
+message AuthRequest {
+  string server_id = 1;
+  string token = 2;
+}
+
+message HeatBeat {
+  uint64 uptime = 1;
 }
