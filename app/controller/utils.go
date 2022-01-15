@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const PaginationDefaultPageSize = 20
+
 type ApiResp struct {
 	Code    int32       `json:"code"`
 	Message string      `json:"message"`
