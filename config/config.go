@@ -13,7 +13,8 @@ import (
 var Config = new(ServiceConfig)
 
 type ServiceConfig struct {
-	configPath string `json:"-"`
+	configPath  string `json:"-"`
+	ServiceName string `json:"service_name"`
 
 	// 服务端配置
 	HttpServerListen string                 `json:"http_server_listen"` // API 监听
