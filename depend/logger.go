@@ -2,11 +2,14 @@ package depend
 
 import (
 	"ControlCenter/config"
+	"ControlCenter/pkg/bootstrap"
 	"ControlCenter/pkg/log"
 	"context"
 )
 
 type Logger struct{}
+
+var _ bootstrap.Component = (*Logger)(nil)
 
 func (d *Logger) Init(ctx context.Context) error {
 	var options = make([]log.Option, 0)
