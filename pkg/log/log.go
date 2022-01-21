@@ -111,7 +111,7 @@ func NewDefaultLogger() *Logger {
 		},
 		OutputPaths:      []string{"stdout"},
 		ErrorOutputPaths: []string{"stderr"},
-	}.Build(zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel))
+	}.Build()
 	if err != nil {
 		panic(err)
 	}
