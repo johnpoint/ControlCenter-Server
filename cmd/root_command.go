@@ -25,7 +25,17 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(func() {
+		if configPath == "" {
+			configPath = "config_local.json"
+		}
+		bootstrap.AddGlobalComponent(
+			&depend.Config{
+				Path: configPath,
+			},
+			&depend.Logger{},
+		)
+	})
 	rootCmd.PersistentFlags().StringVar(&configPath, "config", "config_local.json", "config file (default is ./config_local.json)")
 	rootCmd.AddCommand(
 		httpServerCommand,          // API服务
@@ -35,17 +45,5 @@ func init() {
 		tcpServerCommand,           // tcp
 		performanceConsumerCommand, // 性能信息消费者
 		tcpServerConsumerCommand,   // tcp信息消费者
-	)
-}
-
-func initConfig() {
-	if configPath == "" {
-		configPath = "config_local.json"
-	}
-	bootstrap.AddGlobalComponent(
-		&depend.Config{
-			Path: configPath,
-		},
-		&depend.Logger{},
 	)
 }
