@@ -38,6 +38,7 @@ services:
     networks:
       - NG_network
   base_service_influxdb:
+    container_name: base_service_influxdb
     image: influxdb:latest
     ports:
       - "8086:8086"
