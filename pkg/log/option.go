@@ -24,6 +24,7 @@ func WithConsoleEncoding() Option {
 	})
 }
 
+// WrapLevelEncoder 自定义 level 编码方式
 func WrapLevelEncoder(levelEncoder LevelEncoder) Option {
 	return optionFunc(func(logger *Logger) {
 		logger.levelEncoder = levelEncoder
@@ -33,5 +34,19 @@ func WrapLevelEncoder(levelEncoder LevelEncoder) Option {
 func IsDev() Option {
 	return optionFunc(func(logger *Logger) {
 		logger.isDev = true
+	})
+}
+
+// WarpOutputPaths 自定义输出
+func WarpOutputPaths(paths []string) Option {
+	return optionFunc(func(logger *Logger) {
+		logger.outputPaths = paths
+	})
+}
+
+// WarpErrorOutputPaths 自定义error信息输出
+func WarpErrorOutputPaths(paths []string) Option {
+	return optionFunc(func(logger *Logger) {
+		logger.errorOutputPaths = paths
 	})
 }

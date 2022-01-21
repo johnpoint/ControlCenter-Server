@@ -26,11 +26,13 @@ var (
 )
 
 type Logger struct {
-	l            *zap.Logger
-	level        Level
-	encoding     string
-	levelEncoder LevelEncoder
-	isDev        bool
+	l                *zap.Logger
+	level            Level
+	encoding         string
+	levelEncoder     LevelEncoder
+	isDev            bool
+	outputPaths      []string
+	errorOutputPaths []string
 }
 
 func OverrideLoggerWithOption(keyValue map[string]interface{}, options ...Option) {
@@ -59,7 +61,7 @@ func OverrideLoggerWithOption(keyValue map[string]interface{}, options ...Option
 			EncodeDuration: zapcore.SecondsDurationEncoder,
 			EncodeCaller:   zapcore.ShortCallerEncoder,
 		},
-		OutputPaths:      []string{"stderr"},
+		OutputPaths:      []string{"stdout"},
 		ErrorOutputPaths: []string{"stderr"},
 		InitialFields:    keyValue,
 	}
@@ -69,6 +71,12 @@ func OverrideLoggerWithOption(keyValue map[string]interface{}, options ...Option
 	}
 	if l.levelEncoder != nil {
 		loggerConfig.EncoderConfig.EncodeLevel = l.levelEncoder
+	}
+	if len(l.outputPaths) != 0 {
+		loggerConfig.OutputPaths = l.outputPaths
+	}
+	if len(l.errorOutputPaths) != 0 {
+		loggerConfig.ErrorOutputPaths = l.errorOutputPaths
 	}
 
 	logger, err := loggerConfig.Build()
@@ -101,7 +109,7 @@ func NewDefaultLogger() *Logger {
 			EncodeDuration: zapcore.SecondsDurationEncoder,
 			EncodeCaller:   zapcore.ShortCallerEncoder,
 		},
-		OutputPaths:      []string{"stderr"},
+		OutputPaths:      []string{"stdout"},
 		ErrorOutputPaths: []string{"stderr"},
 	}.Build(zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel))
 	if err != nil {
@@ -113,21 +121,17 @@ func NewDefaultLogger() *Logger {
 }
 
 func (l *Logger) Info(msg string, fields ...Field) {
-	l.level = zap.InfoLevel
 	l.l.Info(msg, fields...)
 }
 
 func (l *Logger) Error(msg string, fields ...Field) {
-	l.level = zap.ErrorLevel
 	l.l.Error(msg, fields...)
 }
 
 func (l *Logger) Warn(msg string, fields ...Field) {
-	l.level = zap.WarnLevel
 	l.l.Warn(msg, fields...)
 }
 
 func (l *Logger) Panic(msg string, fields ...Field) {
-	l.level = zap.PanicLevel
 	l.l.Panic(msg, fields...)
 }
