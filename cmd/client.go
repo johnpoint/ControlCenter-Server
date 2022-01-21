@@ -19,9 +19,6 @@ var clientCommand = &cobra.Command{
 		ctx := context.Background()
 		i := bootstrap.Helper{}
 		i.AddComponent(
-			&depend.Config{
-				Path: configPath,
-			},
 			&depend.TcpClient{},
 			&depend.TcpClientAuth{},
 			&depend.PerformanceCollector{},

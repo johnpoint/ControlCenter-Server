@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"ControlCenter/depend"
+	"ControlCenter/pkg/bootstrap"
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
@@ -25,17 +27,25 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&configPath, "config", "config_local.json", "config file (default is ./config_local.json)")
-	rootCmd.AddCommand(httpServerCommand)          // API服务
-	rootCmd.AddCommand(clientCommand)              // 上报客户端
-	rootCmd.AddCommand(genConfigCommand)           // 生成空配置文件
-	rootCmd.AddCommand(taskConsumerCommand)        // 下发任务消费者
-	rootCmd.AddCommand(tcpServerCommand)           // tcp
-	rootCmd.AddCommand(performanceConsumerCommand) // 性能信息消费者
-	rootCmd.AddCommand(tcpServerConsumerCommand)   // tcp信息消费者
+	rootCmd.AddCommand(
+		httpServerCommand,          // API服务
+		clientCommand,              // 上报客户端
+		genConfigCommand,           // 生成空配置文件
+		taskConsumerCommand,        // 下发任务消费者
+		tcpServerCommand,           // tcp
+		performanceConsumerCommand, // 性能信息消费者
+		tcpServerConsumerCommand,   // tcp信息消费者
+	)
 }
 
 func initConfig() {
 	if configPath == "" {
 		configPath = "config_local.json"
 	}
+	bootstrap.AddGlobalComponent(
+		&depend.Config{
+			Path: configPath,
+		},
+		&depend.Logger{},
+	)
 }

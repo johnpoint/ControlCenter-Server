@@ -19,9 +19,6 @@ var httpServerCommand = &cobra.Command{
 		ctx := context.Background()
 		i := bootstrap.Helper{}
 		i.AddComponent(
-			&depend.Config{
-				Path: configPath,
-			},
 			&depend.Redis{},
 			&depend.Session{},
 			&depend.MongoDB{},
