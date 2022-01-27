@@ -36,7 +36,7 @@ func (d *Api) Init(ctx context.Context) error {
 
 	api := routerGin.Group("/api", session.MiddlewareFunc())
 	{
-		api.GET("", controller.Pong) // 获取首页详情
+		api.GET("/index", controller.Index) // 获取首页详情
 	}
 
 	user := api.Group("/user") // 用户模块
