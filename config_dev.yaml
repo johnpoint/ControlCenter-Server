@@ -1,0 +1,56 @@
+service_name: ControlCenter-NG
+http_server_listen: '0.0.0.0:80'
+tcp_server_listen: '0.0.0.0:8080'
+environment: dev
+mongo_db_config:
+  url: mongodb://admin:password@base_service_mongodb:27017/control_center?authSource=admin
+  database: control_center
+redis_config:
+  addr: 'base_service_redis:6379'
+  password: '123456'
+session:
+  expire_time: 604800
+  auto_renew: false
+  prefix: 's:ccs-ng:token'
+  cookie_name: SESSION
+  ctx_key: token
+task_producer:
+  rabbitmq-address: 'amqp://admin:password@base_service_rabbitmq:5672/'
+  exchange-name: control_center
+  exchange-kind: direct
+  exchange-durable: true
+  queue-name: control_center
+  queue-durable: true
+  bind-key: control_center
+  delivery-mode: 2
+  prefetch-count: 5
+  consumer-num: 5
+salt: 'dev#salt'
+aes_key: L8hVTPR9osdvbLJ3AiW5dCeL+nY7xN6f
+url: ''
+influx_db:
+  address: 'http://base_service_influxdb:8086'
+  token: HiKQBa1WyKtnZ-WMtqr2XDsjmQ6RDafLwkAg9KpkkhrHtaXtk1oHQJZJVjNVtYmqhxi9Lnnt1SMFLBNoeaDaFA==
+  org: default
+performance_mq:
+  rabbitmq-address: 'amqp://admin:password@base_service_rabbitmq:5672/'
+  exchange-name: performance_mq
+  exchange-kind: direct
+  exchange-durable: true
+  queue-name: performance_mq
+  queue-durable: true
+  bind-key: performance_mq
+  delivery-mode: 2
+  prefetch-size: 5
+  consumer-num: 5
+tcp_server_mq:
+  rabbitmq-address: 'amqp://admin:password@base_service_rabbitmq:5672/'
+  exchange-name: tcp_server_mq
+  exchange-kind: direct
+  exchange-durable: true
+  queue-name: tcp_server_mq
+  queue-durable: true
+  bind-key: tcp_server_mq
+  delivery-mode: 2
+  prefetch-count: 5
+  consumer-num: 5
