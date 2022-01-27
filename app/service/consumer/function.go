@@ -15,6 +15,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"go.mongodb.org/mongo-driver/bson"
 	"math/rand"
+	"net"
 	"time"
 )
 
@@ -46,8 +47,13 @@ func UpdateServerPerformanceData(ctx context.Context, item *cProto.CommandItem) 
 	if rand.Intn(10) == 5 {
 		var sent, rev uint64
 		for i := range data.InterfaceStat {
-			sent += data.NetInterfaceStat[i].BytesSent
-			rev += data.NetInterfaceStat[i].BytesRecv
+			for j := range data.InterfaceStat[i].Addrs {
+				if !HasLocalIP(net.ParseIP(data.InterfaceStat[i].Addrs[j].Addr)) {
+					sent += data.NetInterfaceStat[i].BytesSent
+					rev += data.NetInterfaceStat[i].BytesRecv
+					break
+				}
+			}
 		}
 		var svr mongoModel.ModelServer
 		_, err := svr.DB().UpdateOne(ctx, bson.M{
@@ -66,6 +72,22 @@ func UpdateServerPerformanceData(ctx context.Context, item *cProto.CommandItem) 
 	}
 
 	return nil
+}
+
+func HasLocalIP(ip net.IP) bool {
+	if ip.IsLoopback() {
+		return true
+	}
+
+	ip4 := ip.To4()
+	if ip4 == nil {
+		return false
+	}
+
+	return ip4[0] == 10 || // 10.0.0.0/8
+		(ip4[0] == 172 && ip4[1] >= 16 && ip4[1] <= 31) || // 172.16.0.0/12
+		(ip4[0] == 169 && ip4[1] == 254) || // 169.254.0.0/16
+		(ip4[0] == 192 && ip4[1] == 168) // 192.168.0.0/16
 }
 
 func ServerHeartBeat(ctx context.Context, item *cProto.CommandItem) error {
