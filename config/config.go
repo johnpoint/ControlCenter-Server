@@ -4,7 +4,7 @@ import (
 	"ControlCenter/pkg/apiMiddleware/session"
 	"ControlCenter/pkg/influxDB"
 	"ControlCenter/pkg/rabbitmq"
-	jsoniter "github.com/json-iterator/go"
+	"gopkg.in/yaml.v2"
 	"io"
 	"os"
 	"time"
@@ -62,7 +62,7 @@ func (c *ServiceConfig) ReadConfig() error {
 		return err
 	}
 
-	if err = jsoniter.Unmarshal(cfgByte, c); err != nil {
+	if err = yaml.Unmarshal(cfgByte, c); err != nil {
 		return err
 	}
 

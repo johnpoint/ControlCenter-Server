@@ -14,4 +14,4 @@ while ! nc -z base_service_redis 6379; do
   echo "wait for base_service_redis"
   sleep 1
 done
-/usr/src/ControlCenter $1 --config /usr/src/config_dev.json
+/usr/src/ControlCenter $1 --config /usr/src/config_dev.yaml

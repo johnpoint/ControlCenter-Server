@@ -1,4 +1,4 @@
 *
 !ControlCenter
-!config_dev.json
+!config_dev.yaml
 !start.sh

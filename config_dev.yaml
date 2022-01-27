@@ -41,7 +41,7 @@ performance_mq:
   queue-durable: true
   bind-key: performance_mq
   delivery-mode: 2
-  prefetch-size: 5
+  prefetch-count: 5
   consumer-num: 5
 tcp_server_mq:
   rabbitmq-address: 'amqp://admin:password@base_service_rabbitmq:5672/'
