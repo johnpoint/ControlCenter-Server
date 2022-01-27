@@ -7,10 +7,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type UserPower = uint64
+
+const (
+	UserPowerGuest  = iota + 1 // 游客
+	UserPowerUser              // 用户
+	UserPowerAdmin             // 管理员
+	UserPowerSystem            // 系统
+)
+
 type ModelUser struct {
-	ID       string `json:"_id" bson:"_id"`
-	Username string `json:"username" bson:"username"`
-	Password string `json:"password" bson:"password"`
+	ID       string    `json:"_id" bson:"_id"`
+	Username string    `json:"username" bson:"username"`
+	Password string    `json:"password" bson:"password"`
+	Power    UserPower `json:"power" bson:"power"`
+	Nickname string    `json:"nickname" bson:"nickname"`
 }
 
 func (m *ModelUser) CollectionName() string {

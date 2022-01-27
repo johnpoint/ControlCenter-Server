@@ -50,7 +50,7 @@ func Register(c *gin.Context) {
 	var reqData request.Register
 	err := c.BindJSON(&reqData)
 	if err != nil {
-		returnErrorMsg(c, infra.ReqParseError)
+		returnErrorMsg(c, errorHelper.WarpErr(infra.ReqParseError, err))
 		return
 	}
 
@@ -68,13 +68,14 @@ func Register(c *gin.Context) {
 			ID:       utils.RandomString(),
 			Username: reqData.Username,
 			Password: encryptPassword,
+			Power:    mongoModel.UserPowerUser,
+			Nickname: reqData.Nickname,
 		})
 		if err != nil {
 			returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
 			return
 		}
 	} else {
-		fmt.Println(user)
 		returnErrorMsg(c, infra.ReqSameUsernameError)
 		return
 	}

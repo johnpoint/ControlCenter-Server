@@ -8,4 +8,5 @@ type LoginReq struct {
 type Register struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Nickname string `json:"nickname"`
 }
