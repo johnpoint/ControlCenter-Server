@@ -5,9 +5,9 @@ import (
 	tcpClient "ControlCenter/app/service/tcpService/client"
 	"ControlCenter/config"
 	"ControlCenter/pkg/bootstrap"
+	"ControlCenter/pkg/log"
 	"ControlCenter/proto/controlProto"
 	"context"
-	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/shirou/gopsutil/host"
 	"time"
@@ -43,10 +43,10 @@ func heartBeatLoop() {
 			CommandBuf: itemByte,
 		}
 		itemByte, _ = proto.Marshal(&pack)
-		fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "heartBeatLoop", uptime)
+		log.Info("heartBeatLoop", log.Uint64("info", uptime))
 		err := tcpService.GetListenerByID(tcpClient.ListenerID).Send(itemByte)
 		if err != nil {
-			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), fmt.Sprintf("[heartBeatLoop] %s", err.Error()))
+			log.Error("heartBeatLoop", log.String("info", err.Error()))
 		}
 		time.Sleep(time.Second * config.Config.HeartBeatDuration)
 		uptime += uint64(config.Config.HeartBeatDuration)

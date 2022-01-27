@@ -31,9 +31,12 @@ func (d *TcpClientAuth) Init(ctx context.Context) error {
 	}
 	itemByte, _ = proto.Marshal(&item)
 	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "[TcpClientAuth]")
-	err := tcpService.GetListenerByID(tcpClient.ListenerID).Send(itemByte)
-	if err != nil {
-		fmt.Println(time.Now().Format("2006-01-02 15:04:05"), fmt.Sprintf("[TcpClientAuth] %s", err.Error()))
+	l := tcpService.GetListenerByID(tcpClient.ListenerID)
+	if l != nil {
+		err := l.Send(itemByte)
+		if err != nil {
+			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), fmt.Sprintf("[TcpClientAuth] %s", err.Error()))
+		}
 	}
 	return nil
 }

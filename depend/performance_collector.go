@@ -6,9 +6,10 @@ import (
 	tcpClient "ControlCenter/app/service/tcpService/client"
 	"ControlCenter/config"
 	"ControlCenter/pkg/bootstrap"
+	"ControlCenter/pkg/log"
+	"ControlCenter/pkg/utils"
 	"ControlCenter/proto/controlProto"
 	"context"
-	"fmt"
 	"github.com/golang/protobuf/proto"
 	jsoniter "github.com/json-iterator/go"
 	"time"
@@ -25,10 +26,11 @@ func (p *PerformanceCollector) Init(ctx context.Context) error {
 
 func runPerformanceCollectLoop() {
 	for {
-		fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "runPerformanceCollectLoop")
+		id := utils.RandomString()
+		log.Info("runPerformanceCollectLoop", log.String("info", "start"), log.String("id", id))
 		performanceData, err := performance.NewCollector().Do()
 		if err != nil {
-			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), fmt.Sprintf("[runPerformanceCollectLoop] %s", err.Error()))
+			log.Error("runPerformanceCollectLoop", log.String("info", err.Error()))
 		} else {
 			jsonByte, _ := jsoniter.Marshal(&performanceData)
 			var pack = controlProto.CommandItem{
@@ -39,9 +41,10 @@ func runPerformanceCollectLoop() {
 			itemByte, _ := proto.Marshal(&pack)
 			err := tcpService.GetListenerByID(tcpClient.ListenerID).Send(itemByte)
 			if err != nil {
-				fmt.Println(time.Now().Format("2006-01-02 15:04:05"), fmt.Sprintf("[runPerformanceCollectLoop] %s", err.Error()))
+				log.Error("runPerformanceCollectLoop", log.String("info", err.Error()))
 			}
 		}
+		log.Info("runPerformanceCollectLoop", log.String("info", "finish"), log.String("id", id))
 		time.Sleep(time.Duration(config.Config.CollectionInterval) * time.Second)
 	}
 }
