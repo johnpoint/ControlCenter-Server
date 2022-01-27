@@ -32,7 +32,9 @@ func (h *Handle) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 
 func (h *Handle) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
 	fmt.Println(time.Now().Format("20060102 15:04:05"), fmt.Sprintf("[OnOpened] %s %+v", c.RemoteAddr(), err))
-	return
+	time.Sleep(3 * time.Second)
+	InitClient()
+	return gnet.Shutdown
 }
 
 func (h *Handle) PreWrite(c gnet.Conn) {
