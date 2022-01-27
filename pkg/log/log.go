@@ -23,6 +23,7 @@ type EncoderConfig = zapcore.EncoderConfig
 
 var (
 	String = zap.String
+	Uint64 = zap.Uint64
 )
 
 type Logger struct {
@@ -51,7 +52,6 @@ func OverrideLoggerWithOption(keyValue map[string]interface{}, options ...Option
 			TimeKey:        "ts",
 			LevelKey:       "level",
 			NameKey:        "logger",
-			CallerKey:      "caller",
 			FunctionKey:    zapcore.OmitKey,
 			MessageKey:     "msg",
 			StacktraceKey:  "stacktrace",
@@ -59,7 +59,6 @@ func OverrideLoggerWithOption(keyValue map[string]interface{}, options ...Option
 			EncodeLevel:    zapcore.LowercaseLevelEncoder,
 			EncodeTime:     zapcore.EpochNanosTimeEncoder,
 			EncodeDuration: zapcore.SecondsDurationEncoder,
-			EncodeCaller:   zapcore.ShortCallerEncoder,
 		},
 		OutputPaths:      []string{"stdout"},
 		ErrorOutputPaths: []string{"stderr"},
@@ -99,7 +98,6 @@ func NewDefaultLogger() *Logger {
 			TimeKey:        "ts",
 			LevelKey:       "level",
 			NameKey:        "logger",
-			CallerKey:      "caller",
 			FunctionKey:    zapcore.OmitKey,
 			MessageKey:     "msg",
 			StacktraceKey:  "stacktrace",
@@ -107,7 +105,6 @@ func NewDefaultLogger() *Logger {
 			EncodeLevel:    zapcore.LowercaseLevelEncoder,
 			EncodeTime:     zapcore.EpochNanosTimeEncoder,
 			EncodeDuration: zapcore.SecondsDurationEncoder,
-			EncodeCaller:   zapcore.ShortCallerEncoder,
 		},
 		OutputPaths:      []string{"stdout"},
 		ErrorOutputPaths: []string{"stderr"},
