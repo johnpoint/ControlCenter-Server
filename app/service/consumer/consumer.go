@@ -3,15 +3,14 @@ package consumer
 import (
 	"ControlCenter/app/service/performance"
 	"ControlCenter/model/influxModel"
+	"ControlCenter/pkg/log"
 	"ControlCenter/proto/controlProto"
 	"ControlCenter/proto/mqProto"
 	"context"
 	"errors"
-	"fmt"
 	"github.com/golang/protobuf/proto"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/streadway/amqp"
-	"time"
 )
 
 // TaskConsumer 任务队列消费者
@@ -59,7 +58,7 @@ func TcpServerConsumer(ctx context.Context, delivery *amqp.Delivery) error {
 	}
 
 	jsonItem, _ := jsoniter.Marshal(&cmdItem)
-	fmt.Println(time.Now().Format("20060102 15:04:05"), string(jsonItem))
+	log.Info("TcpServerConsumer", log.String("info", string(jsonItem)))
 	fun, has := funcMap[cmdItem.Command]
 	if has {
 		err = fun(ctx, &cmdItem)

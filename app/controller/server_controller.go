@@ -166,11 +166,13 @@ func SetUpNewServer(c *gin.Context) {
 }
 
 type GetServerReq struct {
-	RemarkName string           `json:"remark_name"`
-	IPv4       string           `json:"ipv4"`
-	IPv6       string           `json:"ipv6"`
-	Load       *mongoModel.Load `json:"load"`
-	State      int              `json:"state"`
+	RemarkName  string           `json:"remark_name"`
+	Uptime      int64            `json:"uptime"`
+	Load        *mongoModel.Load `json:"load"`
+	State       int              `json:"state"`
+	Sent        int64            `json:"sent"`
+	Rev         int64            `json:"rev"`
+	LastUpdated int64            `json:"last_updated"`
 }
 
 func GetServerInfo(c *gin.Context) {
@@ -197,12 +199,17 @@ func GetServerInfo(c *gin.Context) {
 		state = 1
 	}
 
+	uptime, _ := redisDao.GetClient().Get(c, fmt.Sprintf("%s%s", redisDao.ServerUptimeKey, uuid)).Result()
+	uptimeInt, _ := strconv.ParseInt(uptime, 10, 64)
+
 	var resp = GetServerReq{
-		RemarkName: svr.RemarkName,
-		IPv4:       svr.IPv4,
-		IPv6:       svr.IPv6,
-		Load:       svr.Load,
-		State:      state,
+		RemarkName:  svr.RemarkName,
+		Load:        svr.Load,
+		State:       state,
+		Uptime:      uptimeInt,
+		Sent:        svr.BytesSent,
+		Rev:         svr.BytesRev,
+		LastUpdated: svr.LastUpdated,
 	}
 	returnSuccessMsg(c, "", resp)
 }
@@ -214,8 +221,6 @@ type GetServerListReq struct {
 
 type GetServerListItem struct {
 	ID         string `json:"id"`
-	IPv4       string `json:"ipv4"`
-	IPv6       string `json:"ipv6"`
 	RemarkName string `json:"remark_name"`
 	Uptime     uint64 `json:"uptime"`
 	Editable   bool   `json:"editable"`
@@ -310,8 +315,6 @@ func GetServerList(c *gin.Context) {
 		}
 		respList = append(respList, &GetServerListItem{
 			ID:         serverList[i].ID,
-			IPv4:       serverList[i].IPv4,
-			IPv6:       serverList[i].IPv6,
 			RemarkName: serverList[i].RemarkName,
 			Uptime:     uptimeUint,
 			Editable:   editable,

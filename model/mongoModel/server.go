@@ -6,13 +6,20 @@ import (
 )
 
 type ModelServer struct {
-	ID         string `json:"_id" bson:"_id"`
-	RemarkName string `json:"remark_name" bson:"remark_name"`
-	IPv4       string `json:"ipv4" bson:"ipv4"`
-	IPv6       string `json:"ipv6" bson:"ipv6"`
-	Uptime     int64  `json:"uptime" bson:"uptime"`
-	Load       *Load  `json:"load" bson:"load"`
-	Token      string `json:"token" bson:"token"`
+	ID               string              `json:"_id" bson:"_id"`
+	RemarkName       string              `json:"remark_name" bson:"remark_name"`
+	Uptime           int64               `json:"uptime" bson:"uptime"`
+	Load             *Load               `json:"load" bson:"load"`
+	Token            string              `json:"token" bson:"token"`
+	NetworkInterface []*NetworkInterface `json:"network_interface" bson:"network_interface"`
+	BytesSent        int64               `json:"bytes_sent" bson:"bytes_sent"`
+	BytesRev         int64               `json:"bytes_rev" bson:"bytes_rev"`
+	LastUpdated      int64               `json:"last_updated" bson:"last_updated"`
+}
+
+type NetworkInterface struct {
+	Name    string   `json:"name"`
+	Address []string `json:"address"`
 }
 
 type Load struct {

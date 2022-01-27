@@ -23,6 +23,7 @@ func (d *HeartBeat) Init(ctx context.Context) error {
 }
 
 func heartBeatLoop() {
+	time.Sleep(10 * time.Second)
 	var uptime uint64
 	var heartItem controlProto.HeatBeat
 	var loopTime = -1
