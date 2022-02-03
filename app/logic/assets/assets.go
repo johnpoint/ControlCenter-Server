@@ -1,14 +1,14 @@
 package assets
 
 import (
-	"ControlCenter/model/mongoModel"
+	"ControlCenter/model/mongomodel"
 )
 
 type Assets interface {
-	Get() (mongoModel.Model, error)
-	Add(assets mongoModel.Model) error
+	Get() (mongomodel.Model, error)
+	Add(assets mongomodel.Model) error
 	Remove() error
-	Edit(assets mongoModel.Model) error
+	Edit(assets mongomodel.Model) error
 	checkAuthority(authorityType int) bool
 }
 
@@ -16,15 +16,15 @@ type DefaultAssets struct{}
 
 var _ Assets = (*DefaultAssets)(nil)
 
-func (d *DefaultAssets) Get() (mongoModel.Model, error) {
-	return &mongoModel.DefaultModel{}, nil
+func (d *DefaultAssets) Get() (mongomodel.Model, error) {
+	return &mongomodel.DefaultModel{}, nil
 }
 
-func (d *DefaultAssets) Add(assets mongoModel.Model) error {
+func (d *DefaultAssets) Add(assets mongomodel.Model) error {
 	return nil
 }
 
-func (d *DefaultAssets) Edit(assets mongoModel.Model) error {
+func (d *DefaultAssets) Edit(assets mongomodel.Model) error {
 	return nil
 }
 

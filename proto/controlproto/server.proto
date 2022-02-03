@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package controlProto;
+
+
+option go_package = "ControlCenter-Server/proto/controlproto";
+
+service PushToServer {
+  rpc PushTask (CommandItem) returns(CommandItem);
+}
+
+enum ServerCommand {
+  CMD_ID_HELLO = 0;
+  CMD_ID_HEARTBEAT = 1;
+  CMD_ID_AUTH = 2;
+  CMD_ID_UPDATE_SERVER_INFO = 3;
+  CMD_ID_CLIENT_ACTION = 4;
+}
+
+message CommandItem {
+  string        server_id = 1;
+  ServerCommand command = 2;
+  bytes         command_buf = 3;
+  string sequence_id = 4;
+}
+
+message AuthRequest {
+  string server_id = 1;
+  string token = 2;
+}
+
+message HeatBeat {
+  uint64 uptime = 1;
+}

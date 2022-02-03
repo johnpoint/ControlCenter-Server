@@ -3,7 +3,7 @@ package depend
 import (
 	"ControlCenter/config"
 	"ControlCenter/pkg/bootstrap"
-	"ControlCenter/pkg/grpcClient"
+	"ControlCenter/pkg/grpcclient"
 	"context"
 	"errors"
 )
@@ -17,7 +17,7 @@ var _ bootstrap.Component = (*GrpcClient)(nil)
 
 func (d *GrpcClient) Init(ctx context.Context) error {
 	if grpcConfig, has := config.Config.GrpcConfigMap[d.Name]; has {
-		err := grpcClient.AddClient(d.Name, grpcConfig.ClientAddress)
+		err := grpcclient.AddClient(d.Name, grpcConfig.ClientAddress)
 		if err != nil {
 			return err
 		}

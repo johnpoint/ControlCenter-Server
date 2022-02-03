@@ -2,21 +2,20 @@ package controller
 
 import (
 	"ControlCenter/infra"
-	"ControlCenter/model/mongoModel"
-	"ControlCenter/pkg/errorHelper"
+	"ControlCenter/model/mongomodel"
+	"ControlCenter/pkg/errorhelper"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type AssetsListReq struct {
-	Page     int64 `json:"page"`
-	PageSize int64 `json:"page_size"`
+	PaginationReq
 }
 
 type AssetsListItem struct {
 	ID         string                `json:"id"`
-	Type       mongoModel.AssetsType `json:"type"`
+	Type       mongomodel.AssetsType `json:"type"`
 	Authority  int                   `json:"authority"`
 	RemarkName string                `json:"remark_name"`
 }
@@ -25,7 +24,7 @@ func AssetsList(c *gin.Context) {
 	var req AssetsListReq
 	err := c.Bind(&req)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ReqParseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ReqParseError, err))
 		return
 	}
 	userID, exists := getUserIDFromContext(c)
@@ -33,9 +32,9 @@ func AssetsList(c *gin.Context) {
 		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
 		return
 	}
-	var assets mongoModel.ModelAssets
+	var assets mongomodel.ModelAssets
 	var opt options.FindOptions
-	var resp Pagination
+	var resp PaginationResp
 	if req.Page > 0 && req.PageSize > 0 {
 		opt.SetSkip((req.Page - 1) * req.PageSize)
 		opt.SetLimit(req.PageSize)
@@ -54,18 +53,18 @@ func AssetsList(c *gin.Context) {
 	}
 	find, err := assets.DB().Find(c, filter, &opt)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
-	var assetsList []*mongoModel.ModelAssets
+	var assetsList []*mongomodel.ModelAssets
 	err = find.All(c, &assetsList)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 	resp.Total, _ = assets.DB().CountDocuments(c, filter)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 	var respList []*AssetsListItem

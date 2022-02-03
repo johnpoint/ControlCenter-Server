@@ -2,7 +2,7 @@ package controller
 
 import (
 	"ControlCenter/config"
-	"ControlCenter/pkg/errorHelper"
+	"ControlCenter/pkg/errorhelper"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +16,12 @@ type ApiResp struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
-type Pagination struct {
+type PaginationReq struct {
+	Page     int64 `json:"page"`
+	PageSize int64 `json:"page_size"`
+}
+
+type PaginationResp struct {
 	Total   int64       `json:"total"`
 	PerPage int64       `json:"per_page"`
 	Page    int64       `json:"page"`
@@ -25,7 +30,7 @@ type Pagination struct {
 
 func returnErrorMsg(c *gin.Context, err error) {
 	var errMsg string
-	errCode, errMsg := errorHelper.DecodeErr(err)
+	errCode, errMsg := errorhelper.DecodeErr(err)
 	c.JSON(http.StatusOK, ApiResp{
 		Code:    int32(errCode),
 		Message: errMsg,

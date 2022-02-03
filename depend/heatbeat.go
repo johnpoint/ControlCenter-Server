@@ -1,12 +1,12 @@
 package depend
 
 import (
-	"ControlCenter/app/service/tcpService"
-	tcpClient "ControlCenter/app/service/tcpService/client"
+	"ControlCenter/app/service/tcpservice"
+	tcpClient "ControlCenter/app/service/tcpservice/client"
 	"ControlCenter/config"
 	"ControlCenter/pkg/bootstrap"
 	"ControlCenter/pkg/log"
-	"ControlCenter/proto/controlProto"
+	"ControlCenter/proto/controlproto"
 	"context"
 	"github.com/golang/protobuf/proto"
 	"github.com/shirou/gopsutil/host"
@@ -25,7 +25,7 @@ func (d *HeartBeat) Init(ctx context.Context) error {
 func heartBeatLoop() {
 	time.Sleep(10 * time.Second)
 	var uptime uint64
-	var heartItem controlProto.HeatBeat
+	var heartItem controlproto.HeatBeat
 	var loopTime = -1
 	for {
 		if loopTime >= config.Config.HeartBeatFixInterval || loopTime == -1 {
@@ -38,14 +38,14 @@ func heartBeatLoop() {
 		}
 		heartItem.Uptime = uptime
 		itemByte, _ := proto.Marshal(&heartItem)
-		var pack = controlProto.CommandItem{
-			Command:    controlProto.ServerCommand_CMD_ID_HEARTBEAT,
+		var pack = controlproto.CommandItem{
+			Command:    controlproto.ServerCommand_CMD_ID_HEARTBEAT,
 			ServerId:   config.Config.ServerID,
 			CommandBuf: itemByte,
 		}
 		itemByte, _ = proto.Marshal(&pack)
 		log.Info("heartBeatLoop", log.Uint64("info", uptime))
-		err := tcpService.GetListenerByID(tcpClient.ListenerID).Send(itemByte)
+		err := tcpservice.GetListenerByID(tcpClient.ListenerID).Send(itemByte)
 		if err != nil {
 			log.Error("heartBeatLoop", log.String("info", err.Error()))
 		}

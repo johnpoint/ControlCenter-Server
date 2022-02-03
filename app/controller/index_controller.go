@@ -2,8 +2,8 @@ package controller
 
 import (
 	"ControlCenter/infra"
-	"ControlCenter/model/mongoModel"
-	"ControlCenter/pkg/errorHelper"
+	"ControlCenter/model/mongomodel"
+	"ControlCenter/pkg/errorhelper"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -15,7 +15,7 @@ type IndexResp struct {
 
 type UserInfo struct {
 	Username string               `json:"username"`
-	Power    mongoModel.UserPower `json:"power"`
+	Power    mongomodel.UserPower `json:"power"`
 	Nickname string               `json:"nickname"`
 }
 
@@ -32,9 +32,9 @@ func Index(c *gin.Context) {
 		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
 		return
 	}
-	var user mongoModel.ModelUser
+	var user mongomodel.ModelUser
 	user.DB().FindOne(c, bson.M{"_id": userID}).Decode(&user)
-	var assets mongoModel.ModelAssets
+	var assets mongomodel.ModelAssets
 	var data = make([]*Assets, 0)
 	cur, err := assets.DB().Aggregate(c, []bson.M{
 		{
@@ -61,12 +61,12 @@ func Index(c *gin.Context) {
 		},
 	})
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 	err = cur.All(c, &data)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 	resp.Assets = data

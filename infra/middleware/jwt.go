@@ -2,7 +2,7 @@ package apiMiddleware
 
 import (
 	"ControlCenter/infra"
-	"ControlCenter/pkg/errorHelper"
+	"ControlCenter/pkg/errorhelper"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -61,7 +61,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		if authHeader == "" {
 			c.JSON(http.StatusOK, gin.H{
 				"code": infra.ErrNeedVerifyInfo,
-				"msg":  errorHelper.GetErrMessage(infra.ErrNeedVerifyInfo),
+				"msg":  errorhelper.GetErrMessage(infra.ErrNeedVerifyInfo),
 			})
 			c.Abort()
 			return
@@ -71,7 +71,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		if !(len(parts) == 2 && parts[0] == "Bearer") {
 			c.JSON(http.StatusOK, gin.H{
 				"code": infra.ErrNeedVerifyInfo,
-				"msg":  errorHelper.GetErrMessage(infra.ErrNeedVerifyInfo),
+				"msg":  errorhelper.GetErrMessage(infra.ErrNeedVerifyInfo),
 			})
 			c.Abort()
 			return
@@ -81,7 +81,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"code": infra.ErrAuthInfoInvalid,
-				"msg":  errorHelper.GetErrMessage(infra.ErrAuthInfoInvalid),
+				"msg":  errorhelper.GetErrMessage(infra.ErrAuthInfoInvalid),
 			})
 			c.Abort()
 			return

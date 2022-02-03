@@ -2,10 +2,10 @@ package consumer
 
 import (
 	"ControlCenter/app/service/performance"
-	"ControlCenter/model/influxModel"
+	"ControlCenter/model/influxmodel"
 	"ControlCenter/pkg/log"
-	"ControlCenter/proto/controlProto"
-	"ControlCenter/proto/mqProto"
+	"ControlCenter/proto/controlproto"
+	"ControlCenter/proto/mqproto"
 	"context"
 	"errors"
 	"github.com/golang/protobuf/proto"
@@ -22,19 +22,19 @@ func TaskConsumer(ctx context.Context, delivery *amqp.Delivery) error {
 // PerformanceConsumer 性能数据消费者
 func PerformanceConsumer(ctx context.Context, delivery *amqp.Delivery) error {
 	defer delivery.Ack(true)
-	var data mqProto.MQItem
+	var data mqproto.MQItem
 	err := proto.Unmarshal(delivery.Body, &data)
 	if err != nil {
 		return err
 	}
 
-	var performancePack mqProto.PerformanceData
+	var performancePack mqproto.PerformanceData
 	err = proto.Unmarshal(data.Buff, &performancePack)
 	if err != nil {
 		return err
 	}
 
-	var serverInfo influxModel.ModelServerInfo
+	var serverInfo influxmodel.ModelServerInfo
 	err = jsoniter.Unmarshal(performancePack.Buff, &serverInfo)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func PerformanceConsumer(ctx context.Context, delivery *amqp.Delivery) error {
 // TcpServerConsumer 消费 tcp 服务器收到的包
 func TcpServerConsumer(ctx context.Context, delivery *amqp.Delivery) error {
 	defer delivery.Ack(true)
-	var cmdItem controlProto.CommandItem
+	var cmdItem controlproto.CommandItem
 	err := proto.Unmarshal(delivery.Body, &cmdItem)
 	if err != nil {
 		return err

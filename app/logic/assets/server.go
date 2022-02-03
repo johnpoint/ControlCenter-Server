@@ -1,7 +1,7 @@
 package assets
 
 import (
-	"ControlCenter/model/mongoModel"
+	"ControlCenter/model/mongomodel"
 	"ControlCenter/pkg/utils"
 	"context"
 	"errors"
@@ -26,11 +26,11 @@ func NewAssetsServer(ctx context.Context, id, userID string) *Server {
 
 var _ Assets = (*Server)(nil)
 
-func (s *Server) Get() (mongoModel.Model, error) {
-	if !s.checkAuthority(mongoModel.AuthorityTypeRead) {
+func (s *Server) Get() (mongomodel.Model, error) {
+	if !s.checkAuthority(mongomodel.AuthorityTypeRead) {
 		return nil, errors.New("authority error")
 	}
-	var svr mongoModel.ModelServer
+	var svr mongomodel.ModelServer
 	err := svr.DB().FindOne(s.ctx, bson.M{
 		"_id": s.ID,
 	}).Decode(&svr)
@@ -40,8 +40,8 @@ func (s *Server) Get() (mongoModel.Model, error) {
 	return &svr, nil
 }
 
-func (s *Server) Add(assets mongoModel.Model) error {
-	svr, ok := assets.(*mongoModel.ModelServer)
+func (s *Server) Add(assets mongomodel.Model) error {
+	svr, ok := assets.(*mongomodel.ModelServer)
 	if !ok {
 		return errors.New("cover error")
 	}
@@ -51,14 +51,14 @@ func (s *Server) Add(assets mongoModel.Model) error {
 	if err != nil {
 		return err
 	}
-	var asset = mongoModel.ModelAssets{
+	var asset = mongomodel.ModelAssets{
 		ID:         svr.ID,
-		AssetsType: mongoModel.AssetsTypeServer,
+		AssetsType: mongomodel.AssetsTypeServer,
 		RemarkName: svr.RemarkName,
 		Owner:      s.UserID,
-		Authority: []*mongoModel.Authority{
-			{UserID: s.UserID, Type: mongoModel.AuthorityTypeWrite},
-			{UserID: s.UserID, Type: mongoModel.AuthorityTypeRead},
+		Authority: []*mongomodel.Authority{
+			{UserID: s.UserID, Type: mongomodel.AuthorityTypeWrite},
+			{UserID: s.UserID, Type: mongomodel.AuthorityTypeRead},
 		},
 		CreateAt: time.Now().UnixNano() / 1e6,
 	}
@@ -69,11 +69,11 @@ func (s *Server) Add(assets mongoModel.Model) error {
 	return nil
 }
 
-func (s *Server) Edit(assets mongoModel.Model) error {
-	if !s.checkAuthority(mongoModel.AuthorityTypeWrite) {
+func (s *Server) Edit(assets mongomodel.Model) error {
+	if !s.checkAuthority(mongomodel.AuthorityTypeWrite) {
 		return errors.New("authority error")
 	}
-	svr, ok := assets.(*mongoModel.ModelServer)
+	svr, ok := assets.(*mongomodel.ModelServer)
 	if !ok {
 		return errors.New("cover error")
 	}
@@ -87,10 +87,10 @@ func (s *Server) Edit(assets mongoModel.Model) error {
 }
 
 func (s *Server) Remove() error {
-	if !s.checkAuthority(mongoModel.AuthorityTypeWrite) {
+	if !s.checkAuthority(mongomodel.AuthorityTypeWrite) {
 		return errors.New("authority error")
 	}
-	var svr mongoModel.ModelServer
+	var svr mongomodel.ModelServer
 	_, err := svr.DB().DeleteOne(s.ctx, bson.M{
 		"_id": utils.RandomString(),
 	})
@@ -101,7 +101,7 @@ func (s *Server) Remove() error {
 }
 
 func (s *Server) checkAuthority(authorityType int) bool {
-	var assets mongoModel.ModelAssets
+	var assets mongomodel.ModelAssets
 	err := assets.DB().FindOne(s.ctx, bson.M{
 		"_id": s.ID,
 		"authority": bson.M{

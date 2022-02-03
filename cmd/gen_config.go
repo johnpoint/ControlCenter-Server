@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"ControlCenter/config"
-	"ControlCenter/pkg/apiMiddleware/session"
-	"ControlCenter/pkg/influxDB"
+	"ControlCenter/pkg/apimiddleware/session"
+	"ControlCenter/pkg/influxdb"
 	"ControlCenter/pkg/rabbitmq"
 	"encoding/json"
 	"fmt"
@@ -21,7 +21,7 @@ var genConfigCommand = &cobra.Command{
 			Session:       &session.SessionConfig{},
 			PerformanceMQ: &rabbitmq.Config{},
 			GrpcConfigMap: make(map[string]*config.GrpcConfig),
-			InfluxDB:      &influxDB.Config{},
+			InfluxDB:      &influxdb.Config{},
 		}
 		jsonByte, _ := json.Marshal(&newConfig)
 		fmt.Println(string(jsonByte))

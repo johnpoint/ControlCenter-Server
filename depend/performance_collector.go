@@ -2,13 +2,13 @@ package depend
 
 import (
 	"ControlCenter/app/service/performance"
-	"ControlCenter/app/service/tcpService"
-	tcpClient "ControlCenter/app/service/tcpService/client"
+	"ControlCenter/app/service/tcpservice"
+	tcpClient "ControlCenter/app/service/tcpservice/client"
 	"ControlCenter/config"
 	"ControlCenter/pkg/bootstrap"
 	"ControlCenter/pkg/log"
 	"ControlCenter/pkg/utils"
-	"ControlCenter/proto/controlProto"
+	"ControlCenter/proto/controlproto"
 	"context"
 	"github.com/golang/protobuf/proto"
 	jsoniter "github.com/json-iterator/go"
@@ -33,13 +33,13 @@ func runPerformanceCollectLoop() {
 			log.Error("runPerformanceCollectLoop", log.String("info", err.Error()))
 		} else {
 			jsonByte, _ := jsoniter.Marshal(&performanceData)
-			var pack = controlProto.CommandItem{
-				Command:    controlProto.ServerCommand_CMD_ID_UPDATE_SERVER_INFO,
+			var pack = controlproto.CommandItem{
+				Command:    controlproto.ServerCommand_CMD_ID_UPDATE_SERVER_INFO,
 				ServerId:   config.Config.ServerID,
 				CommandBuf: jsonByte,
 			}
 			itemByte, _ := proto.Marshal(&pack)
-			err := tcpService.GetListenerByID(tcpClient.ListenerID).Send(itemByte)
+			err := tcpservice.GetListenerByID(tcpClient.ListenerID).Send(itemByte)
 			if err != nil {
 				log.Error("runPerformanceCollectLoop", log.String("info", err.Error()))
 			}

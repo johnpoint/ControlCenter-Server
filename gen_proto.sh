@@ -1,8 +1,8 @@
-rm proto/controlProto/*.go
-protoc --go_out=../ proto/controlProto/*.proto && protoc --go_out=../ --go-grpc_out=require_unimplemented_servers=false:../ proto/controlProto/*.proto
+rm proto/controlproto/*.go
+protoc --go_out=../ proto/controlproto/*.proto && protoc --go_out=../ --go-grpc_out=require_unimplemented_servers=false:../ proto/controlproto/*.proto
 
-rm proto/mqProto/*.go
-protoc --go_out=../ proto/mqProto/*.proto && protoc --go_out=../ --go-grpc_out=require_unimplemented_servers=false:../ proto/mqProto/*.proto
+rm proto/mqproto/*.go
+protoc --go_out=../ proto/mqproto/*.proto && protoc --go_out=../ --go-grpc_out=require_unimplemented_servers=false:../ proto/mqproto/*.proto
 
-rm proto/tcpProto/*.go
-protoc --go_out=../ proto/tcpProto/*.proto && protoc --go_out=../ --go-grpc_out=require_unimplemented_servers=false:../ proto/tcpProto/*.proto
+rm proto/tcpproto/*.go
+protoc --go_out=../ proto/tcpproto/*.proto && protoc --go_out=../ --go-grpc_out=require_unimplemented_servers=false:../ proto/tcpproto/*.proto

@@ -2,8 +2,8 @@ package depend
 
 import (
 	"ControlCenter/config"
-	"ControlCenter/dao/redisDao"
-	"ControlCenter/pkg/apiMiddleware/session"
+	"ControlCenter/dao/redisdao"
+	"ControlCenter/pkg/apimiddleware/session"
 	"ControlCenter/pkg/bootstrap"
 	"context"
 	goRedis "github.com/go-redis/redis/v8"
@@ -17,7 +17,7 @@ var _ bootstrap.Component = (*Session)(nil)
 
 func (d *Session) Init(ctx context.Context) error {
 	session.Si.
-		SetDriver(newSessionDriver(redisDao.GetClient())).
+		SetDriver(newSessionDriver(redisdao.GetClient())).
 		SetConfig(config.Config.Session)
 	return nil
 }

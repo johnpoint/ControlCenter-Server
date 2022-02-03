@@ -1,7 +1,7 @@
 package depend
 
 import (
-	tcpClient "ControlCenter/app/service/tcpService/client"
+	tcpClient "ControlCenter/app/service/tcpservice/client"
 	"ControlCenter/pkg/bootstrap"
 	"context"
 )

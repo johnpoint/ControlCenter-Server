@@ -1,8 +1,8 @@
 package performance
 
 import (
-	"ControlCenter/dao/influxdbDao"
-	"ControlCenter/model/influxModel"
+	"ControlCenter/dao/influxdbdao"
+	"ControlCenter/model/influxmodel"
 	"context"
 	"errors"
 	influxAPIWrite "github.com/influxdata/influxdb-client-go/v2/api/write"
@@ -12,7 +12,7 @@ import (
 type Archiver struct {
 	ctx      context.Context
 	serverID string
-	data     *influxModel.ModelServerInfo
+	data     *influxmodel.ModelServerInfo
 	point    *influxAPIWrite.Point
 }
 
@@ -49,7 +49,7 @@ func (a *Archiver) Save() error {
 		return err
 	}
 	a.buildPoint()
-	err := influxdbDao.GetWriteAPIBlocking(a.data).WritePoint(
+	err := influxdbdao.GetWriteAPIBlocking(a.data).WritePoint(
 		a.ctx,
 		a.point,
 	)
@@ -59,7 +59,7 @@ func (a *Archiver) Save() error {
 	return nil
 }
 
-func (a *Archiver) SetData(data *influxModel.ModelServerInfo) *Archiver {
+func (a *Archiver) SetData(data *influxmodel.ModelServerInfo) *Archiver {
 	a.data = data
 	return a
 }

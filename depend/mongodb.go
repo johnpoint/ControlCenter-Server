@@ -2,7 +2,7 @@ package depend
 
 import (
 	"ControlCenter/config"
-	"ControlCenter/dao/mongoDao"
+	"ControlCenter/dao/mongodao"
 	"ControlCenter/pkg/bootstrap"
 	"context"
 )
@@ -13,7 +13,7 @@ type MongoDB struct{}
 var _ bootstrap.Component = (*MongoDB)(nil)
 
 func (d *MongoDB) Init(ctx context.Context) error {
-	err := mongoDao.InitMongoClient(config.Config.MongoDBConfig)
+	err := mongodao.InitMongoClient(config.Config.MongoDBConfig)
 	if err != nil {
 		return err
 	}

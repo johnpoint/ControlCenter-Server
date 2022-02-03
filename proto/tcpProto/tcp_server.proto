@@ -1,9 +1,0 @@
-syntax = "proto3";
-package tcpProto;
-option go_package = "ControlCenter-Server/proto/tcpProto";
-import "proto/tcpProto/common.proto";
-
-service tcpServerService {
-  rpc Send (tcpProtoPack)returns (tcpProtoPack); // 发送消息
-}
-

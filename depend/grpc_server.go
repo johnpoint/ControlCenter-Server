@@ -1,7 +1,7 @@
 package depend
 
 import (
-	"ControlCenter/app/service/grpcService"
+	"ControlCenter/app/service/grpcservice"
 	"ControlCenter/config"
 	"ControlCenter/pkg/bootstrap"
 	"context"
@@ -18,7 +18,7 @@ var _ bootstrap.Component = (*GrpcServer)(nil)
 
 func (d *GrpcServer) Init(ctx context.Context) error {
 	if grpcConfig, has := config.Config.GrpcConfigMap[d.Name]; has {
-		err := grpcService.RunGrpcServer(grpcConfig.ServerListen, d.AddFunc)
+		err := grpcservice.RunGrpcServer(grpcConfig.ServerListen, d.AddFunc)
 		if err != nil {
 			return err
 		}

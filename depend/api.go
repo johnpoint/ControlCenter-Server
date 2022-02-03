@@ -3,8 +3,8 @@ package depend
 import (
 	"ControlCenter/app/controller"
 	"ControlCenter/config"
-	"ControlCenter/pkg/apiMiddleware"
-	"ControlCenter/pkg/apiMiddleware/session"
+	"ControlCenter/pkg/apimiddleware"
+	"ControlCenter/pkg/apimiddleware/session"
 	"ControlCenter/pkg/bootstrap"
 	"context"
 	"fmt"

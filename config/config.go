@@ -1,8 +1,8 @@
 package config
 
 import (
-	"ControlCenter/pkg/apiMiddleware/session"
-	"ControlCenter/pkg/influxDB"
+	"ControlCenter/pkg/apimiddleware/session"
+	"ControlCenter/pkg/influxdb"
 	"ControlCenter/pkg/rabbitmq"
 	"gopkg.in/yaml.v2"
 	"io"
@@ -28,9 +28,10 @@ type ServiceConfig struct {
 	Salt             string                 `yaml:"salt"`               // 加密盐
 	AesKey           string                 `yaml:"aes_key"`            // Aes key
 	URL              string                 `yaml:"url"`                // 服务提供网址
-	InfluxDB         *influxDB.Config       `yaml:"influx_db"`          // 时序数据库
+	InfluxDB         *influxdb.Config       `yaml:"influx_db"`          // 时序数据库
 	PerformanceMQ    *rabbitmq.Config       `yaml:"performance_mq"`     // 性能采集队列
 	TcpServerMQ      *rabbitmq.Config       `yaml:"tcp_server_mq"`      // tcp 服务器消息队列
+	CORS             []string               `yaml:"cors"`
 
 	// 客户端 agent 配置
 	ServerID             string        `yaml:"server_id"`               // 服务器ID

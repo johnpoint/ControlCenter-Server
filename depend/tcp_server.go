@@ -1,7 +1,7 @@
 package depend
 
 import (
-	"ControlCenter/app/service/tcpService/server"
+	"ControlCenter/app/service/tcpservice/server"
 	"ControlCenter/config"
 	"ControlCenter/pkg/bootstrap"
 	"context"

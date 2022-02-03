@@ -3,12 +3,12 @@ package consumer
 import (
 	"ControlCenter/app/service/performance"
 	"ControlCenter/app/service/producer"
-	"ControlCenter/dao/redisDao"
-	"ControlCenter/model/influxModel"
-	"ControlCenter/model/mongoModel"
+	"ControlCenter/dao/redisdao"
+	"ControlCenter/model/influxmodel"
+	"ControlCenter/model/mongomodel"
 	"ControlCenter/pkg/log"
-	cProto "ControlCenter/proto/controlProto"
-	"ControlCenter/proto/mqProto"
+	cProto "ControlCenter/proto/controlproto"
+	"ControlCenter/proto/mqproto"
 	"context"
 	"fmt"
 	"github.com/golang/protobuf/proto"
@@ -25,19 +25,19 @@ func UpdateServerPerformanceData(ctx context.Context, item *cProto.CommandItem) 
 	if err != nil {
 		return err
 	}
-	var pData = influxModel.ModelServerInfo{
+	var pData = influxmodel.ModelServerInfo{
 		CPU:    data.CPUStat.Percent[0],
 		Disk:   data.DiskUsageStat.UsedPercent,
 		Memory: data.VirtualMemory.UsedPercent,
 		Swap:   data.SwapMemoryStat.UsedPercent,
 	}
 	dataItem, _ := jsoniter.Marshal(&pData)
-	var performanceData = mqProto.PerformanceData{
+	var performanceData = mqproto.PerformanceData{
 		ServerId: item.ServerId,
 		Buff:     dataItem,
 	}
 	dataItem, _ = proto.Marshal(&performanceData)
-	var mqItem = mqProto.MQItem{
+	var mqItem = mqproto.MQItem{
 		Buff: dataItem,
 	}
 	mqByte, _ := proto.Marshal(&mqItem)
@@ -55,7 +55,7 @@ func UpdateServerPerformanceData(ctx context.Context, item *cProto.CommandItem) 
 				}
 			}
 		}
-		var svr mongoModel.ModelServer
+		var svr mongomodel.ModelServer
 		_, err := svr.DB().UpdateOne(ctx, bson.M{
 			"_id": item.ServerId,
 		}, bson.M{
@@ -96,7 +96,7 @@ func ServerHeartBeat(ctx context.Context, item *cProto.CommandItem) error {
 	if err != nil {
 		return err
 	}
-	_, err = redisDao.GetClient().Set(ctx, fmt.Sprintf("%s%s", redisDao.ServerUptimeKey, item.ServerId), reqData.Uptime, 0*time.Second).Result()
+	_, err = redisdao.GetClient().Set(ctx, fmt.Sprintf("%s%s", redisdao.ServerUptimeKey, item.ServerId), reqData.Uptime, 0*time.Second).Result()
 	if err != nil {
 		return err
 	}
@@ -109,13 +109,13 @@ func ServerAuth(ctx context.Context, item *cProto.CommandItem) error {
 	if err != nil {
 		return err
 	}
-	var svr mongoModel.ModelServer
+	var svr mongomodel.ModelServer
 	_ = svr.DB().FindOne(ctx, bson.M{
 		"_id":   reqData.ServerId,
 		"token": reqData.Token,
 	}).Decode(&svr)
 	if len(svr.ID) != 0 {
-		_, err = redisDao.GetClient().Set(ctx, fmt.Sprintf("%s%s", redisDao.ServerToken, item.ServerId), reqData.Token, 7*24*time.Hour).Result()
+		_, err = redisdao.GetClient().Set(ctx, fmt.Sprintf("%s%s", redisdao.ServerToken, item.ServerId), reqData.Token, 7*24*time.Hour).Result()
 		if err != nil {
 			return err
 		}

@@ -2,7 +2,7 @@ package depend
 
 import (
 	"ControlCenter/config"
-	"ControlCenter/dao/redisDao"
+	"ControlCenter/dao/redisdao"
 	"ControlCenter/pkg/bootstrap"
 	"context"
 	goRedis "github.com/go-redis/redis/v8"
@@ -14,7 +14,7 @@ type Redis struct{}
 var _ bootstrap.Component = (*Redis)(nil)
 
 func (d *Redis) Init(ctx context.Context) error {
-	redisDao.InitClient(&goRedis.Options{
+	redisdao.InitClient(&goRedis.Options{
 		Network:            config.Config.RedisConfig.Network,
 		Addr:               config.Config.RedisConfig.Addr,
 		Username:           config.Config.RedisConfig.Username,

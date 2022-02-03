@@ -2,13 +2,13 @@ package controller
 
 import (
 	"ControlCenter/app/logic/assets"
-	"ControlCenter/dao/influxdbDao"
-	"ControlCenter/dao/redisDao"
+	"ControlCenter/dao/influxdbdao"
+	"ControlCenter/dao/redisdao"
 	"ControlCenter/infra"
-	"ControlCenter/model/influxModel"
-	"ControlCenter/model/mongoModel"
-	"ControlCenter/pkg/errorHelper"
-	"ControlCenter/pkg/influxDB"
+	"ControlCenter/model/influxmodel"
+	"ControlCenter/model/mongomodel"
+	"ControlCenter/pkg/errorhelper"
+	"ControlCenter/pkg/influxdb"
 	"ControlCenter/pkg/utils"
 	"errors"
 	"fmt"
@@ -53,7 +53,7 @@ func ServerChartController(c *gin.Context) {
 	var req ServerChartReq
 	err := c.Bind(&req)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ReqParseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ReqParseError, err))
 		return
 	}
 	userID, exists := getUserIDFromContext(c)
@@ -63,12 +63,12 @@ func ServerChartController(c *gin.Context) {
 	}
 	model, err := assets.NewAssetsServer(c, req.ID, userID).Get()
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ErrAssetsAuthorityError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
 		return
 	}
-	svr, ok := model.(*mongoModel.ModelServer)
+	svr, ok := model.(*mongomodel.ModelServer)
 	if !ok {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ErrAssetsAuthorityError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
 		return
 	}
 	if req.To == 0 {
@@ -77,15 +77,15 @@ func ServerChartController(c *gin.Context) {
 	if req.From == 0 {
 		req.From = time.Now().Add(-1 * time.Hour).Unix()
 	}
-	var query = influxDB.NewQuery(new(influxModel.ModelServerInfo).BucketName()).
+	var query = influxdb.NewQuery(new(influxmodel.ModelServerInfo).BucketName()).
 		AddRange(
 			fmt.Sprintf("%d", req.From),
 			fmt.Sprintf("%d", req.To)).
 		AddFilter(fmt.Sprintf(`fn: (r) => r["server_id"] == "%s"`, svr.ID)).QL()
 
-	result, err := influxdbDao.GetQuery().Query(c, query)
+	result, err := influxdbdao.GetQuery().Query(c, query)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 
@@ -131,7 +131,7 @@ func SetUpNewServer(c *gin.Context) {
 	var req SetUpNewServerReq
 	err := c.Bind(&req)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ReqParseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ReqParseError, err))
 		return
 	}
 	userID, exists := getUserIDFromContext(c)
@@ -141,23 +141,23 @@ func SetUpNewServer(c *gin.Context) {
 	}
 	var resp SetUpNewServerResp
 	var assetsServer = assets.NewAssetsServer(c, utils.RandomString(), userID)
-	err = assetsServer.Add(&mongoModel.ModelServer{
+	err = assetsServer.Add(&mongomodel.ModelServer{
 		ID:         utils.RandomString(),
 		RemarkName: req.RemarkName,
 		Token:      utils.RandomString(),
 	})
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 	model, err := assetsServer.Get()
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ErrAssetsAuthorityError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
 		return
 	}
-	svr, ok := model.(*mongoModel.ModelServer)
+	svr, ok := model.(*mongomodel.ModelServer)
 	if !ok {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ErrAssetsAuthorityError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
 		return
 	}
 	resp.ServerID = svr.ID
@@ -168,7 +168,7 @@ func SetUpNewServer(c *gin.Context) {
 type GetServerReq struct {
 	RemarkName  string           `json:"remark_name"`
 	Uptime      int64            `json:"uptime"`
-	Load        *mongoModel.Load `json:"load"`
+	Load        *mongomodel.Load `json:"load"`
 	State       int              `json:"state"`
 	Sent        int64            `json:"sent"`
 	Rev         int64            `json:"rev"`
@@ -184,22 +184,22 @@ func GetServerInfo(c *gin.Context) {
 	}
 	model, err := assets.NewAssetsServer(c, uuid, userID).Get()
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ErrAssetsAuthorityError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
 		return
 	}
-	svr, ok := model.(*mongoModel.ModelServer)
+	svr, ok := model.(*mongomodel.ModelServer)
 	if !ok {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ErrAssetsAuthorityError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
 		return
 	}
 
 	var state int
-	_, err = redisDao.GetClient().Get(c, fmt.Sprintf("%s%s", redisDao.ServerAliveKey, uuid)).Result()
+	_, err = redisdao.GetClient().Get(c, fmt.Sprintf("%s%s", redisdao.ServerAliveKey, uuid)).Result()
 	if err == nil {
 		state = 1
 	}
 
-	uptime, _ := redisDao.GetClient().Get(c, fmt.Sprintf("%s%s", redisDao.ServerUptimeKey, uuid)).Result()
+	uptime, _ := redisdao.GetClient().Get(c, fmt.Sprintf("%s%s", redisdao.ServerUptimeKey, uuid)).Result()
 	uptimeInt, _ := strconv.ParseInt(uptime, 10, 64)
 
 	var resp = GetServerReq{
@@ -215,8 +215,7 @@ func GetServerInfo(c *gin.Context) {
 }
 
 type GetServerListReq struct {
-	Page     int64 `json:"page"`
-	PageSize int64 `json:"page_size"`
+	PaginationReq
 }
 
 type GetServerListItem struct {
@@ -231,7 +230,7 @@ func GetServerList(c *gin.Context) {
 	var req GetServerListReq
 	err := c.Bind(&req)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ReqParseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ReqParseError, err))
 		return
 	}
 	userID, exists := getUserIDFromContext(c)
@@ -239,9 +238,9 @@ func GetServerList(c *gin.Context) {
 		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
 		return
 	}
-	var resp Pagination
-	var assetsItem mongoModel.ModelAssets
-	var assetsList []*mongoModel.ModelAssets
+	var resp PaginationResp
+	var assetsItem mongomodel.ModelAssets
+	var assetsList []*mongomodel.ModelAssets
 	opts := options.FindOptions{}
 	if req.Page > 0 && req.PageSize > 0 {
 		opts.SetSkip((req.Page - 1) * req.PageSize)
@@ -253,7 +252,7 @@ func GetServerList(c *gin.Context) {
 		resp.PerPage = PaginationDefaultPageSize
 	}
 	var filter = bson.M{
-		"assets_type": mongoModel.AssetsTypeServer,
+		"assets_type": mongomodel.AssetsTypeServer,
 		"authority": bson.M{
 			"$elemMatch": bson.M{
 				"user_id": userID,
@@ -262,12 +261,12 @@ func GetServerList(c *gin.Context) {
 	}
 	cur, err := assetsItem.DB().Find(c, filter, &opts)
 	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 	err = cur.All(c, &assetsList)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 	resp.Total, _ = assetsItem.DB().CountDocuments(c, filter)
@@ -277,7 +276,7 @@ func GetServerList(c *gin.Context) {
 		svrIDs = append(svrIDs, assetsList[i].ID)
 		editableMap[assetsList[i].ID] = false
 		for j := range assetsList[i].Authority {
-			if assetsList[i].Authority[j].UserID == userID && assetsList[i].Authority[j].Type == mongoModel.AuthorityTypeWrite {
+			if assetsList[i].Authority[j].UserID == userID && assetsList[i].Authority[j].Type == mongomodel.AuthorityTypeWrite {
 				editableMap[assetsList[i].ID] = true
 			}
 		}
@@ -286,30 +285,30 @@ func GetServerList(c *gin.Context) {
 		returnSuccessMsg(c, "", resp)
 		return
 	}
-	var svr mongoModel.ModelServer
-	var serverList []*mongoModel.ModelServer
+	var svr mongomodel.ModelServer
+	var serverList []*mongomodel.ModelServer
 	cur, err = svr.DB().Find(c, bson.M{
 		"_id": bson.M{
 			"$in": svrIDs,
 		},
 	})
 	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 	err = cur.All(c, &serverList)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 	var respList []*GetServerListItem
 	for i := range serverList {
 		editable, _ := editableMap[serverList[i].ID]
-		uptime, _ := redisDao.GetClient().Get(c, fmt.Sprintf("%s%s", redisDao.ServerUptimeKey, serverList[i].ID)).Result()
+		uptime, _ := redisdao.GetClient().Get(c, fmt.Sprintf("%s%s", redisdao.ServerUptimeKey, serverList[i].ID)).Result()
 		fmt.Println("[uptime]", uptime)
 		uptimeUint, _ := strconv.ParseUint(uptime, 10, 64)
 		var state int
-		_, err = redisDao.GetClient().Get(c, fmt.Sprintf("%s%s", redisDao.ServerAliveKey, serverList[i].ID)).Result()
+		_, err = redisdao.GetClient().Get(c, fmt.Sprintf("%s%s", redisdao.ServerAliveKey, serverList[i].ID)).Result()
 		if err == nil {
 			state = 1
 		}

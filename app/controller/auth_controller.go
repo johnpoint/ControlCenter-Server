@@ -3,9 +3,9 @@ package controller
 import (
 	"ControlCenter/infra"
 	"ControlCenter/model/api/request"
-	"ControlCenter/model/mongoModel"
-	"ControlCenter/pkg/apiMiddleware/session"
-	"ControlCenter/pkg/errorHelper"
+	"ControlCenter/model/mongomodel"
+	"ControlCenter/pkg/apimiddleware/session"
+	"ControlCenter/pkg/errorhelper"
 	"ControlCenter/pkg/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -23,7 +23,7 @@ func Login(c *gin.Context) {
 		returnErrorMsg(c, infra.ErrAuthInfoInvalid)
 		return
 	}
-	var user mongoModel.ModelUser
+	var user mongomodel.ModelUser
 	err = user.DB().FindOne(c, bson.M{
 		"username": fmt.Sprintf("%s", reqData.Username),
 	}).Decode(&user)
@@ -50,29 +50,29 @@ func Register(c *gin.Context) {
 	var reqData request.Register
 	err := c.BindJSON(&reqData)
 	if err != nil {
-		returnErrorMsg(c, errorHelper.WarpErr(infra.ReqParseError, err))
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ReqParseError, err))
 		return
 	}
 
-	var user mongoModel.ModelUser
-	err = new(mongoModel.ModelUser).DB().FindOne(c, bson.M{
+	var user mongomodel.ModelUser
+	err = new(mongomodel.ModelUser).DB().FindOne(c, bson.M{
 		"username": reqData.Username,
 	}).Decode(&user)
 	if len(user.ID) == 0 {
 		encryptPassword := utils.EncodePassword(reqData.Password)
 		if len(encryptPassword) == 0 {
-			returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+			returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 			return
 		}
-		_, err = new(mongoModel.ModelUser).DB().InsertOne(c, &mongoModel.ModelUser{
+		_, err = new(mongomodel.ModelUser).DB().InsertOne(c, &mongomodel.ModelUser{
 			ID:       utils.RandomString(),
 			Username: reqData.Username,
 			Password: encryptPassword,
-			Power:    mongoModel.UserPowerUser,
+			Power:    mongomodel.UserPowerUser,
 			Nickname: reqData.Nickname,
 		})
 		if err != nil {
-			returnErrorMsg(c, errorHelper.WarpErr(infra.DataBaseError, err))
+			returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 			return
 		}
 	} else {
