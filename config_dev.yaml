@@ -54,3 +54,5 @@ tcp_server_mq:
   delivery-mode: 2
   prefetch-count: 5
   consumer-num: 5
+cors:
+  - http://localhost:8080

@@ -8,6 +8,8 @@ import (
 	"ControlCenter/pkg/bootstrap"
 	"context"
 	"fmt"
+	"github.com/gin-contrib/cors"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +22,15 @@ var _ bootstrap.Component = (*Api)(nil)
 func (d *Api) Init(ctx context.Context) error {
 	gin.SetMode(gin.ReleaseMode)
 	routerGin := gin.New()
-	routerGin.Use(apiMiddleware.LogPlusMiddleware())
+	routerGin.Use(cors.New(cors.Config{
+		AllowOrigins:     config.Config.CORS,
+		AllowMethods:     []string{"PUT", "GET", "POST"},
+		AllowHeaders:     []string{"Origin", "content-type", "Cookie"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+	routerGin.Use(apimiddleware.LogPlusMiddleware())
 	routerGin.GET("/ping", controller.Pong)
 
 	report := routerGin.Group("/report") // 数据上报接口
