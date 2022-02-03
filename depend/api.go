@@ -54,6 +54,14 @@ func (d *Api) Init(ctx context.Context) error {
 		user.GET("", controller.Pong) // 获取当前用户信息
 	}
 
+	ticket := api.Group("/support/ticket") // 客户支持
+	{
+		ticket.POST("", controller.ListTicket)          // 列表
+		ticket.PUT("/:uuid")                            // 添加工单
+		ticket.POST("/:uuid")                           // 修改工单(回复)
+		ticket.DELETE("/:uuid", controller.CloseTicket) // 关闭工单
+	}
+
 	assets := api.Group("/assets") // 资产相关(这些是资产的元数据信息，而不包括资产的内容)
 	{
 		assets.GET("", controller.AssetsList)    // 获取当前用户资产列表
