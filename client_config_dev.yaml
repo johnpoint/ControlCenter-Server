@@ -5,3 +5,4 @@ collection_interval: 3
 heart_beat_duration: 5
 heart_beat_fix_interval: 50
 token: d81672e9950e4f4fb9315dcaa7498611
+environment: local
