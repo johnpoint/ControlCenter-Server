@@ -10,6 +10,10 @@ type Level = zapcore.Level
 
 var l = NewDefaultLogger()
 
+func GetLogger() *Logger {
+	return l
+}
+
 var (
 	Info  = l.Info
 	Error = l.Error
@@ -19,6 +23,7 @@ var (
 
 type Config = zap.Config
 type LevelEncoder = zapcore.LevelEncoder
+type TimeEncoder = zapcore.TimeEncoder
 type EncoderConfig = zapcore.EncoderConfig
 
 var (
@@ -31,6 +36,7 @@ type Logger struct {
 	level            Level
 	encoding         string
 	levelEncoder     LevelEncoder
+	timeEncoder      TimeEncoder
 	isDev            bool
 	outputPaths      []string
 	errorOutputPaths []string
@@ -71,6 +77,9 @@ func OverrideLoggerWithOption(keyValue map[string]interface{}, options ...Option
 	if l.levelEncoder != nil {
 		loggerConfig.EncoderConfig.EncodeLevel = l.levelEncoder
 	}
+	if l.timeEncoder != nil {
+		loggerConfig.EncoderConfig.EncodeTime = l.timeEncoder
+	}
 	if len(l.outputPaths) != 0 {
 		loggerConfig.OutputPaths = l.outputPaths
 	}
@@ -102,7 +111,7 @@ func NewDefaultLogger() *Logger {
 			MessageKey:     "msg",
 			StacktraceKey:  "stacktrace",
 			LineEnding:     zapcore.DefaultLineEnding,
-			EncodeLevel:    zapcore.LowercaseLevelEncoder,
+			EncodeLevel:    zapcore.CapitalLevelEncoder,
 			EncodeTime:     zapcore.EpochNanosTimeEncoder,
 			EncodeDuration: zapcore.SecondsDurationEncoder,
 		},
