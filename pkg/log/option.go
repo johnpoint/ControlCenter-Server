@@ -31,6 +31,13 @@ func WrapLevelEncoder(levelEncoder LevelEncoder) Option {
 	})
 }
 
+// WrapTimeEncoder 自定义 time 编码方式
+func WrapTimeEncoder(timeEncoder TimeEncoder) Option {
+	return optionFunc(func(logger *Logger) {
+		logger.timeEncoder = timeEncoder
+	})
+}
+
 func IsDev() Option {
 	return optionFunc(func(logger *Logger) {
 		logger.isDev = true
