@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gitlab.heywoods.cn/go-sdk/omega/net/grpcOption"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/connectivity"
@@ -67,7 +66,6 @@ func (c *Client) Init() error {
 		conn, err := grpc.Dial(
 			c.Address,
 			grpc.WithInsecure(),
-			grpcOption.DialOption(),
 			grpc.WithUnaryInterceptor(retryInterceptor),
 		)
 		if err != nil {
