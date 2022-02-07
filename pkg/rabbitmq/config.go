@@ -20,7 +20,7 @@ type Config struct {
 	NoLocal         bool                   `yaml:"no-local"`
 	NoWait          bool                   `yaml:"no-wait"`
 	Args            map[string]interface{} `yaml:"args"`
-	ConsumerNum     int                    `yaml:"consumer-num"`
+	ChannelNum      int                    `yaml:"channel-num"`
 }
 
 func (c *Config) Validate() error {

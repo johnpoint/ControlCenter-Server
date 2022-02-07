@@ -24,7 +24,7 @@ task_producer:
   bind-key: control_center
   delivery-mode: 2
   prefetch-count: 5
-  consumer-num: 5
+  channel-num: 5
 salt: 'dev#salt'
 aes_key: L8hVTPR9osdvbLJ3AiW5dCeL+nY7xN6f
 url: ''
@@ -42,7 +42,7 @@ performance_mq:
   bind-key: performance_mq
   delivery-mode: 2
   prefetch-count: 5
-  consumer-num: 5
+  channel-num: 5
 tcp_server_mq:
   rabbitmq-address: 'amqp://admin:password@base_service_rabbitmq:5672/'
   exchange-name: tcp_server_mq
@@ -53,6 +53,6 @@ tcp_server_mq:
   bind-key: tcp_server_mq
   delivery-mode: 2
   prefetch-count: 5
-  consumer-num: 5
+  channel-num: 5
 cors:
   - http://localhost:8080

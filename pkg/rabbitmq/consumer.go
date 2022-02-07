@@ -1,10 +1,10 @@
 package rabbitmq
 
 import (
+	"ControlCenter/pkg/log"
 	"context"
 	"errors"
 	"fmt"
-	"gitlab.heywoods.cn/go-sdk/omega/component/log"
 	"os"
 	"os/signal"
 	"sync"
@@ -15,6 +15,7 @@ import (
 )
 
 type consumer struct {
+	ctx     context.Context
 	logger  *log.Logger
 	alarm   Alarm
 	channel *channel
@@ -26,8 +27,14 @@ func (c *consumer) Validate() error {
 	if c.channel == nil {
 		return errors.New("channel is nil")
 	}
+	if c.logger == nil {
+		c.logger = log.GetLogger()
+	}
 	if c.channel.config == nil {
 		return errors.New("channel config is nil")
+	}
+	if c.channel.config.ChannelNum == 0 {
+		c.channel.config.ChannelNum = 0
 	}
 	if c.channel.config.QueueName == "" {
 		return errors.New("queue is nil")
@@ -38,10 +45,37 @@ func (c *consumer) Validate() error {
 	return nil
 }
 
-func (c *consumer) GetConn() <-chan amqp.Delivery {
-	reconnectCount := 0
-	maxReconnectCount := 3
-	alarmFlag := false
+func (c *consumer) GetDelivery(index int) (<-chan amqp.Delivery, error) {
+	if len(c.channel.Chan)-1 < index {
+		return nil, errors.New("out of range")
+	}
+	delivery, err := c.channel.Chan[index].Consume(
+		c.channel.config.QueueName, // queue
+		"",                         // consumer
+		c.channel.config.AutoAck,   // auto-ack
+		c.channel.config.Exclusive, // exclusive
+		c.channel.config.NoLocal,   // no-local
+		c.channel.config.NoWait,    // no-wait
+		c.channel.config.Args,      // args
+	)
+	if err != nil {
+		// 失败重新连接MQ
+		return nil, errors.New("get deliver error, " + err.Error())
+	}
+	return delivery, nil
+}
+
+func (c *consumer) GetConn() error {
+	c.channel.l.Lock()
+	defer c.channel.l.Unlock()
+	if c.channel.Conn != nil {
+		if !c.channel.Conn.IsClosed() {
+			return nil
+		}
+	}
+	var reconnectCount = 0
+	var maxReconnectCount = 3
+	var alarmFlag bool
 	for {
 		time.Sleep(time.Duration(reconnectCount*reconnectCount) * time.Second)
 		err := c.channel.Init()
@@ -59,64 +93,102 @@ func (c *consumer) GetConn() <-chan amqp.Delivery {
 					}
 					alarmFlag = true
 				}
-				continue
 			}
 			// 指数退让重试
 			reconnectCount++
-		} else {
-			delivery, err := c.channel.Chan.Consume(
-				c.channel.config.QueueName, // queue
-				"",                         // consumer
-				c.channel.config.AutoAck,   // auto-ack
-				c.channel.config.Exclusive, // exclusive
-				c.channel.config.NoLocal,   // no-local
-				c.channel.config.NoWait,    // no-wait
-				c.channel.config.Args,      // args
-			)
-			if err != nil {
-				// 失败重新连接MQ
-				reconnectCount++
-				continue
-			}
-			if alarmFlag {
-				fmt.Printf("RabbitMQ-Consumer err: %+v", err)
-				if c.alarm != nil {
-					_ = c.alarm.SetMsg(map[string]string{
-						"Title":   "RabbitMQ 重连成功",
-						"Address": c.channel.config.Address,
-						"Queue":   c.channel.config.QueueName,
-					})
-				}
-				_ = c.alarm.Do()
-			}
-			return delivery
+			continue
 		}
+		return nil
 	}
 }
 
-func (c *consumer) Run(handles func(context.Context, *amqp.Delivery) error) {
-RECONNECT:
-	delivery := c.GetConn()
+type Action int
 
+const (
+	// Ack default ack this msg after you have successfully processed this delivery.
+	Ack Action = iota
+	// NackDiscard the message will be dropped or delivered to a server configured dead-letter queue.
+	NackDiscard
+	// NackRequeue deliver this message to a different consumer.
+	NackRequeue
+)
+
+func (c *consumer) Run(handler func(context.Context, *amqp.Delivery) Action) {
+RECONNECT:
+	err := c.GetConn()
+	if err != nil {
+		time.Sleep(3 * time.Second)
+		goto RECONNECT
+	}
+
+	for i := range c.channel.Chan {
+		go c.doHandlerLoop(c.ctx, i, handler)
+	}
+}
+
+func (c *consumer) reCreateChannel(index int) error {
+	// 判断连接是否被关闭了
+	if c.channel.Conn.IsClosed() {
+		err := c.GetConn()
+		if err != nil {
+			return err
+		}
+	}
+	if len(c.channel.Chan)-1 < index {
+		return errors.New("out of range")
+	}
+	c.channel.Chan[index].Close()
+	newChan, err := c.channel.Conn.Channel()
+	if err != nil {
+		return err
+	}
+	err = newChan.Qos(c.channel.config.PrefetchCount, c.channel.config.PrefetchSize, false)
+	if err != nil {
+		return err
+	}
+	c.channel.Chan[index] = newChan
+	return nil
+}
+
+func (c *consumer) doHandlerLoop(ctx context.Context, channelIndex int, handler func(context.Context, *amqp.Delivery) Action) {
+RUNLOOP:
 	cc := make(chan *amqp.Error)
-	ctx := context.Background()
-	c.channel.Chan.NotifyClose(cc)
+	c.channel.Chan[channelIndex].NotifyClose(cc)
+	delivery, err := c.GetDelivery(channelIndex)
+	if err != nil {
+		c.logger.Error("consumer.doHandlerLoop", log.String("info", fmt.Sprintf("can't get delivery: %+v", err)))
+		time.Sleep(3 * time.Second)
+		goto RUNLOOP
+	}
 	for {
 		select {
 		case msg, ok := <-delivery:
 			if !ok {
-				fmt.Println("RabbitMQ-Consumer err: Consumer Msg Not ok")
 				if !c.close {
-					goto RECONNECT
+					c.reCreateChannel(channelIndex)
+					goto RUNLOOP
 				} else {
 					return
 				}
 			}
 			if !c.close {
 				c.wait.Add(1)
-				err := handles(ctx, &msg)
-				if err != nil {
-					fmt.Printf("RabbitMQ-Consumer err: %+v\n", err)
+				switch handler(ctx, &msg) {
+				case Ack:
+					err := msg.Ack(false)
+					if err != nil {
+						c.logger.Error("consumer.doHandlerLoop", log.String("info", "can't ack message: "+err.Error()))
+					}
+				case NackDiscard:
+					err := msg.Nack(false, false)
+					if err != nil {
+						c.logger.Error("consumer.doHandlerLoop", log.String("info", "can't nack message: "+err.Error()))
+					}
+				case NackRequeue:
+					err := msg.Nack(false, true)
+					if err != nil {
+						c.logger.Error("consumer.doHandlerLoop", log.String("info", "can't nack message: "+err.Error()))
+					}
 				}
 				c.wait.Done()
 			} else {
@@ -125,8 +197,8 @@ RECONNECT:
 
 		case <-cc:
 			if !c.close {
-				fmt.Printf("RabbitMQ-Consumer err: Consumer Close\n")
-				goto RECONNECT
+				c.reCreateChannel(channelIndex)
+				goto RUNLOOP
 			} else {
 				return
 			}

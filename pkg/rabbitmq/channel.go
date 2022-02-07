@@ -1,20 +1,24 @@
 package rabbitmq
 
 import (
+	"ControlCenter/pkg/log"
 	"errors"
 	"github.com/streadway/amqp"
-	"gitlab.heywoods.cn/go-sdk/omega/component/log"
+	"sync"
 )
 
 type channel struct {
 	logger *log.Logger
-	Chan   *amqp.Channel
+	Chan   []*amqp.Channel
 	Conn   *amqp.Connection
 	config *Config
+	l      sync.Mutex
 }
 
 func (r *channel) Close() {
-	r.Chan.Close()
+	for i := range r.Chan {
+		r.Chan[i].Close()
+	}
 	r.Conn.Close()
 }
 
@@ -30,8 +34,11 @@ func (r *channel) Init() error {
 	if r.Conn != nil {
 		r.Conn.Close()
 	}
-	if r.Chan != nil {
-		r.Chan.Close()
+	if len(r.Chan) != 0 {
+		for i := range r.Chan {
+			r.Chan[i].Close()
+		}
+		r.Chan = make([]*amqp.Channel, 0)
 	}
 	// 连接初始化
 	var err error
@@ -39,14 +46,18 @@ func (r *channel) Init() error {
 	if err != nil {
 		return err
 	}
-	r.Chan, err = r.Conn.Channel()
-	if err != nil {
-		return err
+	for i := 0; i < r.config.ChannelNum; i++ {
+		newChan, err := r.Conn.Channel()
+		if err != nil {
+			return err
+		}
+		err = newChan.Qos(r.config.PrefetchCount, r.config.PrefetchSize, false)
+		if err != nil {
+			return err
+		}
+		r.Chan = append(r.Chan, newChan)
 	}
-	err = r.Chan.Qos(r.config.PrefetchCount, r.config.PrefetchSize, false)
-	if err != nil {
-		return err
-	}
+
 	exchange := Exchange{
 		Name:    r.config.ExchangeName,
 		Kind:    r.config.ExchangeKind,
@@ -70,38 +81,41 @@ func (r *channel) Init() error {
 }
 
 func (r *channel) Bind(ex Exchange, qu Queue, key string, noWait bool, args map[string]interface{}) error {
-	err := r.Chan.ExchangeDeclare(
-		ex.Name,
-		ex.Kind,
-		ex.Durable,
-		ex.AutoDelete,
-		ex.Internal,
-		ex.NoWait,
-		ex.Args,
-	)
-	if err != nil {
-		return err
+	for i := range r.Chan {
+		err := r.Chan[i].ExchangeDeclare(
+			ex.Name,
+			ex.Kind,
+			ex.Durable,
+			ex.AutoDelete,
+			ex.Internal,
+			ex.NoWait,
+			ex.Args,
+		)
+		if err != nil {
+			return err
+		}
+		_, err = r.Chan[i].QueueDeclare(
+			qu.Name,
+			qu.Durable,
+			qu.AutoDelete,
+			qu.Exclusive,
+			qu.NoWait,
+			qu.Args,
+		)
+		if err != nil {
+			return err
+		}
+		err = r.Chan[i].QueueBind(
+			qu.Name, // queue name, 这里指的是 test_logs
+			key,     // routing key
+			ex.Name, // exchange
+			noWait,
+			args,
+		)
+		if err != nil {
+			return err
+		}
 	}
-	_, err = r.Chan.QueueDeclare(
-		qu.Name,
-		qu.Durable,
-		qu.AutoDelete,
-		qu.Exclusive,
-		qu.NoWait,
-		qu.Args,
-	)
-	if err != nil {
-		return err
-	}
-	err = r.Chan.QueueBind(
-		qu.Name, // queue name, 这里指的是 test_logs
-		key,     // routing key
-		ex.Name, // exchange
-		noWait,
-		args,
-	)
-	if err != nil {
-		return err
-	}
+
 	return nil
 }

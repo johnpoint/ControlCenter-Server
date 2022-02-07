@@ -1,6 +1,7 @@
 package rabbitmq
 
 import (
+	"ControlCenter/pkg/log"
 	"context"
 	"errors"
 	"github.com/streadway/amqp"
@@ -8,11 +9,18 @@ import (
 )
 
 type RabbitMQ struct {
+	ctx      context.Context
 	alarm    Alarm
 	consumer *consumer
 	producer *producer
-	handle   func(context.Context, *amqp.Delivery) error
+	handle   func(context.Context, *amqp.Delivery) Action
 	config   *Config
+	logger   log.Logger
+}
+
+func (r *RabbitMQ) WithContext(ctx context.Context) *RabbitMQ {
+	r.ctx = ctx
+	return r
 }
 
 func (r *RabbitMQ) SetAlarm(alarm Alarm) *RabbitMQ {
@@ -25,12 +33,15 @@ func (r *RabbitMQ) SetConfig(config *Config) *RabbitMQ {
 	return r
 }
 
-func (r *RabbitMQ) SetHandle(handle func(context.Context, *amqp.Delivery) error) *RabbitMQ {
+func (r *RabbitMQ) SetHandle(handle func(context.Context, *amqp.Delivery) Action) *RabbitMQ {
 	r.handle = handle
 	return r
 }
 
 func (r *RabbitMQ) Validate() error {
+	if r.ctx == nil {
+		r.ctx = context.TODO()
+	}
 	if r.config == nil {
 		return errors.New("config is nil")
 	}
@@ -43,6 +54,7 @@ func (r *RabbitMQ) StartConsumer() {
 	}
 	// 初始化队列
 	r.consumer = &consumer{
+		ctx:   r.ctx,
 		alarm: r.alarm,
 		channel: &channel{
 			config: r.config,
@@ -76,6 +88,7 @@ func (r *RabbitMQ) StartProducer() (chan<- []byte, error) {
 	r.producer.channel = &channel{
 		config: r.config,
 	}
+	r.config.ChannelNum = 1
 	err = r.producer.channel.Init()
 	if err != nil {
 		return nil, err
