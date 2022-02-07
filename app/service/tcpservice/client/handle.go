@@ -3,6 +3,7 @@ package client
 import (
 	"ControlCenter/app/service/tcpservice"
 	"ControlCenter/pkg/log"
+	"errors"
 	"github.com/panjf2000/gnet"
 	"time"
 )
@@ -31,6 +32,9 @@ func (h *Handle) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 }
 
 func (h *Handle) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
+	if err == nil {
+		err = errors.New("nil")
+	}
 	log.Info("OnClosed", log.String("info", c.RemoteAddr().String()), log.String("err", err.Error()))
 	time.Sleep(3 * time.Second)
 	InitClient()
