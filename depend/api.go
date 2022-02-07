@@ -57,8 +57,8 @@ func (d *Api) Init(ctx context.Context) error {
 	ticket := api.Group("/support/ticket") // 客户支持
 	{
 		ticket.POST("", controller.ListTicket)          // 列表
-		ticket.PUT("/:uuid")                            // 添加工单
-		ticket.POST("/:uuid")                           // 修改工单(回复)
+		ticket.PUT("", controller.CreateTicket)         // 创建工单                            // 添加工单
+		ticket.POST("/:uuid", controller.PostTicket)    // 修改工单(回复)
 		ticket.DELETE("/:uuid", controller.CloseTicket) // 关闭工单
 	}
 

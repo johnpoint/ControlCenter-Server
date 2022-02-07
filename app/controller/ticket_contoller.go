@@ -4,6 +4,7 @@ import (
 	"ControlCenter/infra"
 	"ControlCenter/model/mongomodel"
 	"ControlCenter/pkg/errorhelper"
+	"ControlCenter/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -130,6 +131,101 @@ func CloseTicket(c *gin.Context) {
 		"$set": bson.M{
 			"status":     mongomodel.TicketStatusClosed,
 			"updated_at": time.Now().UnixNano() / 1e6,
+		},
+	})
+	if err != nil {
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
+		return
+	}
+	returnSuccessMsg(c, "", nil)
+}
+
+type CreateTicketReq struct {
+	Title   string                 `json:"title"`
+	Content string                 `json:"content"`
+	Level   mongomodel.TicketLevel `json:"level"`
+}
+
+func CreateTicket(c *gin.Context) {
+	var reqData CreateTicketReq
+	err := c.BindJSON(&reqData)
+	if err != nil {
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ReqParseError, err))
+		return
+	}
+	userID, exists := getUserIDFromContext(c)
+	if !exists {
+		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
+		return
+	}
+	var ticket = mongomodel.ModelTicket{
+		ID:        utils.RandomString(),
+		Title:     reqData.Title,
+		CreatedAt: time.Now().UnixNano() / 1e6,
+		Level:     reqData.Level,
+		Record: []*mongomodel.TicketRecord{
+			{Sender: userID, Content: reqData.Content, CreatedAt: time.Now().UnixNano() / 1e6},
+		},
+		Status: mongomodel.TicketStatusPending,
+	}
+	_, err = ticket.DB().InsertOne(c, &ticket)
+	if err != nil {
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
+		return
+	}
+	returnSuccessMsg(c, "", nil)
+}
+
+type PostTicketReq struct {
+	Content string `json:"content"`
+}
+
+func PostTicket(c *gin.Context) {
+	var reqData CreateTicketReq
+	err := c.BindJSON(&reqData)
+	if err != nil {
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ReqParseError, err))
+		return
+	}
+	userID, exists := getUserIDFromContext(c)
+	if !exists {
+		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
+		return
+	}
+	var user mongomodel.ModelUser
+	_ = user.DB().FindOne(c, bson.M{"_id": userID}).Decode(&user)
+	if len(user.ID) == 0 {
+		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
+		return
+	}
+	var filter = bson.M{
+		"_id": c.Param("uuid"),
+	}
+	var updateStatus mongomodel.TicketStatus
+	switch user.Power {
+	case mongomodel.UserPowerOperation:
+		filter["op_id"] = userID
+		updateStatus = mongomodel.TicketStatusWaitOwner
+	case mongomodel.UserPowerAdmin:
+		updateStatus = mongomodel.TicketStatusWaitOwner
+	case mongomodel.UserPowerSystem:
+		updateStatus = mongomodel.TicketStatusWaitOwner
+	default:
+		filter["user_id"] = userID
+		updateStatus = mongomodel.TicketStatusWaitOP
+	}
+	var ticket mongomodel.ModelTicket
+	_, err = ticket.DB().UpdateOne(c, filter, bson.M{
+		"$addToSet": bson.M{
+			"record": &mongomodel.TicketRecord{
+				Sender:    userID,
+				Content:   reqData.Content,
+				CreatedAt: time.Now().UnixNano() / 1e6,
+			},
+		},
+		"$set": bson.M{
+			"updated_at": time.Now().UnixNano() / 1e6,
+			"status":     updateStatus,
 		},
 	})
 	if err != nil {
