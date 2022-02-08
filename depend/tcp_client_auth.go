@@ -18,6 +18,7 @@ type TcpClientAuth struct{}
 var _ bootstrap.Component = (*TcpClientAuth)(nil)
 
 func (d *TcpClientAuth) Init(ctx context.Context) error {
+	time.Sleep(5 * time.Second)
 	var req = controlproto.AuthRequest{
 		Token:    config.Config.Token,
 		ServerId: config.Config.ServerID,
