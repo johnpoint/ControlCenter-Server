@@ -17,24 +17,19 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"math"
 	"strconv"
 	"time"
 )
 
 type ServerChartReq struct {
-	ID   string `json:"id,omitempty"`
-	From int64  `json:"from,omitempty"`
-	To   int64  `json:"to,omitempty"`
+	From int64 `json:"from,omitempty"`
+	To   int64 `json:"to,omitempty"`
 }
 
 type ServerChartResp struct {
-	XAxis  []string                       `json:"XAxis"`
-	Points map[string][]*PerformancePoint `json:"Points"`
-}
-
-type PerformancePoint struct {
-	Time  string  `json:"time"`
-	Value float64 `json:"value"`
+	XAxis  []string             `json:"x_axis"`
+	Points map[string][]float64 `json:"points"`
 }
 
 type PerformanceResult struct {
@@ -61,7 +56,7 @@ func ServerChartController(c *gin.Context) {
 		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
 		return
 	}
-	model, err := assets.NewAssetsServer(c, req.ID, userID).Get()
+	model, err := assets.NewAssetsServer(c, c.Param("uuid"), userID).Get()
 	if err != nil {
 		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
 		return
@@ -101,7 +96,7 @@ func ServerChartController(c *gin.Context) {
 	}
 
 	var resp = ServerChartResp{
-		Points: map[string][]*PerformancePoint{},
+		Points: map[string][]float64{},
 	}
 	var xAxis = make(map[string]struct{})
 	for i := range results {
@@ -110,9 +105,7 @@ func ServerChartController(c *gin.Context) {
 			resp.XAxis = append(resp.XAxis, timeStr)
 			xAxis[timeStr] = struct{}{}
 		}
-		resp.Points[results[i].Field] = append(resp.Points[results[i].Field], &PerformancePoint{
-			Value: results[i].Value, Time: timeStr,
-		})
+		resp.Points[results[i].Field] = append(resp.Points[results[i].Field], math.Ceil(results[i].Value*100))
 	}
 
 	returnSuccessMsg(c, "OK", resp)
