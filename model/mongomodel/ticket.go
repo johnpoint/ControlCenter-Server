@@ -23,21 +23,22 @@ const (
 )
 
 type ModelTicket struct {
-	ID        string          `bson:"_id"`
-	Title     string          `bson:"title"`
-	OpID      string          `bson:"op_id"`
-	UserID    string          `bson:"user_id"`
-	Level     TicketLevel     `bson:"level"`
-	Status    TicketStatus    `bson:"status"`
-	Record    []*TicketRecord `bson:"record"`
-	CreatedAt int64           `bson:"created_at"`
-	UpdatedAt int64           `bson:"updated_at"`
+	ID        string          `bson:"_id" json:"id"`
+	Title     string          `bson:"title" json:"title"`
+	OpID      string          `bson:"op_id" json:"op_id"`
+	UserID    string          `bson:"user_id" json:"user_id"`
+	Level     TicketLevel     `bson:"level" json:"level"`
+	Status    TicketStatus    `bson:"status" json:"status"`
+	Record    []*TicketRecord `bson:"record" json:"record"`
+	CreatedAt int64           `bson:"created_at" json:"created_at"`
+	UpdatedAt int64           `bson:"updated_at" json:"updated_at"`
 }
 
 type TicketRecord struct {
-	Sender    string `bson:"sender"`
-	Content   string `bson:"content"`
-	CreatedAt int64  `bson:"created_at"`
+	Sender    string `bson:"sender" json:"sender"`
+	Content   string `bson:"content" json:"content"`
+	CreatedAt int64  `bson:"created_at" json:"created_at"`
+	IsSelf    bool   `json:"is_self" bson:"-"`
 }
 
 func (m *ModelTicket) CollectionName() string {

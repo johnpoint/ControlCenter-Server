@@ -57,8 +57,9 @@ func (d *Api) Init(ctx context.Context) error {
 	ticket := api.Group("/support/ticket") // 客户支持
 	{
 		ticket.POST("", controller.ListTicket)          // 列表
-		ticket.PUT("", controller.CreateTicket)         // 创建工单                            // 添加工单
+		ticket.PUT("", controller.CreateTicket)         // 创建工单
 		ticket.POST("/:uuid", controller.PostTicket)    // 修改工单(回复)
+		ticket.GET("/:uuid", controller.GetTicket)      // 获取工单信息
 		ticket.DELETE("/:uuid", controller.CloseTicket) // 关闭工单
 	}
 
@@ -72,10 +73,10 @@ func (d *Api) Init(ctx context.Context) error {
 
 	server := api.Group("/server") // 服务器模块
 	{
-		server.GET("", controller.GetServerList)                // 服务器列表
-		server.PUT("", controller.SetUpNewServer)               // 新建服务器信息
-		server.GET("/:uuid", controller.GetServerInfo)          // 服务器详细信息
-		server.POST("/chart", controller.ServerChartController) // 服务器性能信息绘图
+		server.GET("", controller.GetServerList)                      // 服务器列表
+		server.PUT("", controller.SetUpNewServer)                     // 新建服务器信息
+		server.GET("/:uuid", controller.GetServerInfo)                // 服务器详细信息
+		server.POST("/:uuid/chart", controller.ServerChartController) // 服务器性能信息绘图
 	}
 
 	certificate := api.Group("/certificate") // 证书模块
