@@ -5,10 +5,10 @@ import (
 	tcpClient "ControlCenter/app/service/tcpservice/client"
 	"ControlCenter/config"
 	"ControlCenter/pkg/bootstrap"
+	"ControlCenter/pkg/log"
 	"ControlCenter/pkg/utils"
 	"ControlCenter/proto/controlproto"
 	"context"
-	"fmt"
 	"github.com/golang/protobuf/proto"
 	"time"
 )
@@ -31,12 +31,11 @@ func (d *TcpClientAuth) Init(ctx context.Context) error {
 		SequenceId: utils.RandomString(),
 	}
 	itemByte, _ = proto.Marshal(&item)
-	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "[TcpClientAuth]")
 	l := tcpservice.GetListenerByID(tcpClient.ListenerID)
 	if l != nil {
 		err := l.Send(itemByte)
 		if err != nil {
-			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), fmt.Sprintf("[TcpClientAuth] %s", err.Error()))
+			log.Error("TcpClientAuth", log.String("info", err.Error()))
 		}
 	}
 	return nil

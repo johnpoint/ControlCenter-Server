@@ -1,9 +1,9 @@
 package apimiddleware
 
 import (
+	"ControlCenter/pkg/log"
 	"ControlCenter/pkg/utils"
 	"bytes"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
 	"io"
@@ -57,14 +57,14 @@ func LogPlusMiddleware() gin.HandlerFunc {
 
 		r.Resp = customWriter.body.String()
 		r.Out = time.Now()
-		log(&r)
+		logReq(&r)
 	}
 }
 
-func log(req *reqLog) {
+func logReq(req *reqLog) {
 	logByte, err := jsoniter.Marshal(req)
 	if err != nil {
 		return
 	}
-	fmt.Printf("[%s] %s %s\n%s", time.Now().Format("2006-01-02 03:04:05"), req.Method, req.URL, string(logByte))
+	log.Info("LogPlusMiddleware", log.Strings("info", []string{req.Method, req.URL, string(logByte)}))
 }

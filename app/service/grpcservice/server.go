@@ -2,6 +2,7 @@ package grpcservice
 
 import (
 	"ControlCenter/pkg/errorhelper"
+	"ControlCenter/pkg/log"
 	"fmt"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
@@ -49,9 +50,9 @@ func RunGrpcServer(listen string, addFunc func(grpcServer *grpc.Server)) error {
 
 	reflection.Register(grpcServer)
 	go func() {
-		fmt.Println("[grpcServer] start")
+		log.Info("RunGrpcServer", log.String("step", "run"))
 		if err := grpcServer.Serve(lis); err != nil {
-			fmt.Println(err.Error())
+			panic(err)
 		}
 	}()
 	stopChan := make(chan os.Signal)

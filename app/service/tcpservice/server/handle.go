@@ -4,6 +4,7 @@ import (
 	"ControlCenter/app/service/producer"
 	"ControlCenter/app/service/tcpservice"
 	"ControlCenter/dao/redisdao"
+	"ControlCenter/pkg/log"
 	"ControlCenter/pkg/utils"
 	"ControlCenter/proto/controlproto"
 	"context"
@@ -28,7 +29,7 @@ func (t *Handle) OnShutdown(server gnet.Server) {
 }
 
 func (t *Handle) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
-	fmt.Println(time.Now().Format("20060102 15:04:05"), fmt.Sprintf("[OnOpened] %s", c.RemoteAddr()))
+	log.Info("tcpServer", log.String("step", "[OnOpened]"+c.RemoteAddr().String()))
 	cID := utils.RandomString()
 	c.SetContext(tcpservice.DataStruct{
 		ChannelID: cID,
@@ -41,7 +42,11 @@ func (t *Handle) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 }
 
 func (t *Handle) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
-	fmt.Println(time.Now().Format("20060102 15:04:05"), fmt.Sprintf("[OnClosed] %s %+v", c.RemoteAddr(), err))
+	if err != nil {
+		log.Error("tcpServer", log.Strings("step", []string{"OnClosed", c.RemoteAddr().String(), err.Error()}))
+	} else {
+		log.Info("tcpServer", log.String("step", "OnClosed "+c.RemoteAddr().String()))
+	}
 	r, ok := c.Context().(tcpservice.DataStruct)
 	if !ok {
 		return gnet.Close
@@ -71,7 +76,6 @@ func (t *Handle) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Actio
 	}
 
 	if commandItem.Command != controlproto.ServerCommand_CMD_ID_AUTH {
-		fmt.Println(fmt.Sprintf("%s%s", redisdao.ServerToken, commandItem.ServerId))
 		result, err := redisdao.GetClient().Exists(context.Background(), fmt.Sprintf("%s%s", redisdao.ServerToken, commandItem.ServerId)).Result()
 		if result == 0 {
 			return
@@ -84,12 +88,12 @@ func (t *Handle) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Actio
 	}
 
 	jsonByte, _ := jsoniter.Marshal(&commandItem)
-	fmt.Println(time.Now().Format("20060102 15:04:05"), fmt.Sprintf("[React] %s", string(jsonByte)))
+	log.Info("tcpServer", log.Strings("step", []string{"React", string(jsonByte)}))
 
 	if producer.TcpServerProducer != nil {
 		producer.TcpServerProducer <- frame
 	} else {
-		fmt.Println(time.Now().Format("20060102 15:04:05"), "[React] TcpServerProducer is nil")
+		log.Error("tcpServer", log.Strings("step", []string{"React", "TcpServerProducer is nil"}))
 	}
 
 	return

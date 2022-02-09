@@ -298,7 +298,6 @@ func GetServerList(c *gin.Context) {
 	for i := range serverList {
 		editable, _ := editableMap[serverList[i].ID]
 		uptime, _ := redisdao.GetClient().Get(c, fmt.Sprintf("%s%s", redisdao.ServerUptimeKey, serverList[i].ID)).Result()
-		fmt.Println("[uptime]", uptime)
 		uptimeUint, _ := strconv.ParseUint(uptime, 10, 64)
 		var state int
 		_, err = redisdao.GetClient().Get(c, fmt.Sprintf("%s%s", redisdao.ServerAliveKey, serverList[i].ID)).Result()

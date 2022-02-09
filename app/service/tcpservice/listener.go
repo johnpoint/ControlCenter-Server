@@ -1,9 +1,9 @@
 package tcpservice
 
 import (
+	"ControlCenter/pkg/log"
 	"ControlCenter/pkg/utils"
 	"errors"
-	"fmt"
 	"github.com/panjf2000/gnet"
 	"sync"
 )
@@ -59,7 +59,7 @@ func (l *Listener) RevLoop() {
 			}
 			err := l.c.AsyncWrite(b)
 			if err != nil {
-				fmt.Println(err.Error())
+				log.Error("Listener.RevLoop", log.String("info", err.Error()))
 			}
 		}
 	}

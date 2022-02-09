@@ -79,7 +79,7 @@ func StreamClientInterceptor(optFuncs ...CallOption) grpc.StreamClientIntercepto
 	return func(parentCtx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
 		grpcOpts, retryOpts := filterCallOptions(opts)
 		callOpts := reuseOrNewWithCallOptions(intOpts, retryOpts)
-		fmt.Println(callOpts.max)
+		//fmt.Println(callOpts.max)
 		// short circuit for simplicity, and avoiding allocations.
 		if callOpts.max == 0 {
 			return streamer(parentCtx, desc, cc, method, grpcOpts...)

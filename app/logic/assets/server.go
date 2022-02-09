@@ -5,7 +5,6 @@ import (
 	"ControlCenter/pkg/utils"
 	"context"
 	"errors"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"time"
 )
@@ -46,7 +45,6 @@ func (s *Server) Add(assets mongomodel.Model) error {
 		return errors.New("cover error")
 	}
 	s.ID = svr.ID
-	fmt.Println(s.ID, svr.ID)
 	_, err := svr.DB().InsertOne(s.ctx, &svr)
 	if err != nil {
 		return err
