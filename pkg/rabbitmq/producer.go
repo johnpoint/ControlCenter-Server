@@ -2,8 +2,8 @@ package rabbitmq
 
 import (
 	"errors"
-	"fmt"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"go.uber.org/zap"
 )
 
 type producer struct {
@@ -76,7 +76,7 @@ func (p *producer) Send(body []byte, channel *channel) {
 		}
 		if err != nil {
 			if retryCount >= maxReconnectCount {
-				fmt.Printf("RabbitMQ-Producer err: %+v\n", err)
+				p.logger.Error("RabbitMQ.Producer", zap.String("info", err.Error()))
 				if p.alarm != nil {
 					_ = p.alarm.SetMsg(map[string]string{
 						"Title":   "RabbitMQ-Producer 连接失败超出阈值",

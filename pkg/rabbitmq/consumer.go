@@ -82,7 +82,7 @@ func (c *consumer) GetConn() error {
 		if err != nil {
 			if reconnectCount >= maxReconnectCount {
 				if !alarmFlag {
-					fmt.Printf("RabbitMQ-Consumer err: %+v", err)
+					c.logger.Error("RabbitMQ.Consumer", zap.String("info", err.Error()))
 					if c.alarm != nil {
 						_ = c.alarm.SetMsg(map[string]string{
 							"Title":   "RabbitMQ 连接失败超出阈值",
