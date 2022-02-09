@@ -26,9 +26,14 @@ type Helper struct {
 	components []Component
 }
 
+func (i *Helper) WithLogger(logger Logger) *Helper {
+	i.logger = logger
+	return i
+}
+
 func (i *Helper) loadGlobalComponent(ctx context.Context) error {
 	for j := range globalComponent {
-		i.logger.Info("Bootstrap", zap.String("load", reflect.TypeOf(globalComponent[j]).String()))
+		i.logger.Info("Bootstrap", zap.String("step", reflect.TypeOf(globalComponent[j]).String()))
 		err := globalComponent[j].Init(ctx)
 		if err != nil {
 			return err
