@@ -2,8 +2,7 @@ package bootstrap
 
 import (
 	"context"
-	"fmt"
-	"log"
+	"go.uber.org/zap"
 	"math/rand"
 	"reflect"
 	"time"
@@ -18,17 +17,18 @@ func AddGlobalComponent(components ...Component) {
 func NewBoot(ctx context.Context, components ...Component) *Helper {
 	return &Helper{
 		components: components,
+		logger:     NewDefaultLogger(),
 	}
 }
 
 type Helper struct {
-	*log.Logger
+	logger     Logger
 	components []Component
 }
 
 func (i *Helper) loadGlobalComponent(ctx context.Context) error {
 	for j := range globalComponent {
-		fmt.Println(fmt.Sprintf("[Bootstrap] %s", reflect.TypeOf(globalComponent[j])))
+		i.logger.Info("Bootstrap", zap.String("load", reflect.TypeOf(globalComponent[j]).String()))
 		err := globalComponent[j].Init(ctx)
 		if err != nil {
 			return err
@@ -39,7 +39,7 @@ func (i *Helper) loadGlobalComponent(ctx context.Context) error {
 
 func (i *Helper) loadComponent(ctx context.Context) error {
 	for j := range i.components {
-		fmt.Println(fmt.Sprintf("[Bootstrap] %s", reflect.TypeOf(i.components[j])))
+		i.logger.Info("Bootstrap", zap.String("step", reflect.TypeOf(i.components[j]).String()))
 		err := i.components[j].Init(ctx)
 		if err != nil {
 			return err
@@ -49,18 +49,24 @@ func (i *Helper) loadComponent(ctx context.Context) error {
 }
 
 func (i *Helper) InitWithoutGlobalComponent(ctx context.Context) error {
-	fmt.Println("[Bootstrap] Start")
+	if i.logger == nil {
+		i.logger = NewDefaultLogger()
+	}
+	i.logger.Info("Bootstrap", zap.String("step", "start"))
 	rand.Seed(time.Now().UnixNano())
 	err := i.loadComponent(ctx)
 	if err != nil {
 		return err
 	}
-	fmt.Println("[Bootstrap] Finish")
+	i.logger.Info("Bootstrap", zap.String("step", "finish"))
 	return nil
 }
 
 func (i *Helper) Init(ctx context.Context) error {
-	fmt.Println("[Bootstrap] Start")
+	if i.logger == nil {
+		i.logger = NewDefaultLogger()
+	}
+	i.logger.Info("Bootstrap", zap.String("step", "start"))
 	rand.Seed(time.Now().UnixNano())
 	err := i.loadGlobalComponent(ctx)
 	if err != nil {
@@ -70,7 +76,7 @@ func (i *Helper) Init(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("[Bootstrap] Finish")
+	i.logger.Info("Bootstrap", zap.String("step", "finish"))
 	return nil
 }
 
