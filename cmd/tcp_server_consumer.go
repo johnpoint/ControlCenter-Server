@@ -17,14 +17,12 @@ var tcpServerConsumerCommand = &cobra.Command{
 	Short: "Start tcp server consumer",
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
-		i := bootstrap.Helper{}
-		i.AddComponent(
+		err := bootstrap.NewBoot(ctx,
 			&depend.Redis{},
 			&depend.MongoDB{},
 			&depend.PerformanceProducer{},
 			&depend.TcpServerConsumer{},
-		)
-		err := i.Init(ctx)
+		).Init(ctx)
 		if err != nil {
 			panic(err)
 			return

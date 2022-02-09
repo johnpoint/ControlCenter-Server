@@ -17,14 +17,12 @@ var clientCommand = &cobra.Command{
 	Short: "Start client",
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
-		i := bootstrap.Helper{}
-		i.AddComponent(
+		err := bootstrap.NewBoot(ctx,
 			&depend.TcpClient{},
 			&depend.TcpClientAuth{},
 			&depend.PerformanceCollector{},
 			&depend.HeartBeat{},
-		)
-		err := i.Init(ctx)
+		).Init(ctx)
 		if err != nil {
 			panic(err)
 			return

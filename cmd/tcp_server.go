@@ -17,8 +17,7 @@ var tcpServerCommand = &cobra.Command{
 	Short: "Start tcp server",
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
-		i := bootstrap.Helper{}
-		i.AddComponent(
+		err := bootstrap.NewBoot(ctx,
 			&depend.Redis{},
 			&depend.PerformanceProducer{},
 			&depend.TcpServerProducer{},
@@ -29,8 +28,7 @@ var tcpServerCommand = &cobra.Command{
 			//		tcpProto.RegisterTcpServerServiceServer(grpcServer, &grpcService.TcpServerService{})
 			//	},
 			//},
-		)
-		err := i.Init(ctx)
+		).Init(ctx)
 		if err != nil {
 			panic(err)
 			return

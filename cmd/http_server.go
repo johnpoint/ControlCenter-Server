@@ -17,15 +17,13 @@ var httpServerCommand = &cobra.Command{
 	Short: "Start http server",
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
-		i := bootstrap.Helper{}
-		i.AddComponent(
+		err := bootstrap.NewBoot(ctx,
 			&depend.Redis{},
 			&depend.Session{},
 			&depend.MongoDB{},
 			&depend.Influxdb{},
 			&depend.Api{},
-		)
-		err := i.Init(ctx)
+		).Init(ctx)
 		if err != nil {
 			panic(err)
 			return

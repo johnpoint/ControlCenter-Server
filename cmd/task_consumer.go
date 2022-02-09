@@ -17,11 +17,9 @@ var taskConsumerCommand = &cobra.Command{
 	Short: "Start task consumer",
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
-		i := bootstrap.Helper{}
-		i.AddComponent(
+		err := bootstrap.NewBoot(ctx,
 			&depend.TaskConsumer{},
-		)
-		err := i.Init(ctx)
+		).Init(ctx)
 		if err != nil {
 			panic(err)
 			return
