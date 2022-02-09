@@ -221,7 +221,7 @@ type GetServerListItem struct {
 
 func GetServerList(c *gin.Context) {
 	var req GetServerListReq
-	err := c.Bind(&req)
+	err := c.BindJSON(&req)
 	if err != nil {
 		returnErrorMsg(c, errorhelper.WarpErr(infra.ReqParseError, err))
 		return
