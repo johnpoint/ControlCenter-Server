@@ -2,6 +2,7 @@ package mongomodel
 
 import (
 	"ControlCenter/dao/mongodao"
+	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -39,6 +40,10 @@ type TicketRecord struct {
 	Content   string `bson:"content" json:"content"`
 	CreatedAt int64  `bson:"created_at" json:"created_at"`
 	IsSelf    bool   `json:"is_self" bson:"-"`
+}
+
+func (m *ModelTicket) InitIndex(ctx context.Context) error {
+	return nil
 }
 
 func (m *ModelTicket) CollectionName() string {

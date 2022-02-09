@@ -2,6 +2,7 @@ package mongomodel
 
 import (
 	"ControlCenter/dao/mongodao"
+	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -28,6 +29,10 @@ type ModelAssets struct {
 	Owner      string       `json:"owner" bson:"owner"`
 	Authority  []*Authority `json:"authority" bson:"authority"`
 	CreateAt   int64        `json:"create_at" bson:"create_at"`
+}
+
+func (a *ModelAssets) InitIndex(ctx context.Context) error {
+	return nil
 }
 
 func (a *ModelAssets) CollectionName() string {

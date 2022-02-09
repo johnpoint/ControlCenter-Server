@@ -3,6 +3,7 @@ package depend
 import (
 	"ControlCenter/config"
 	"ControlCenter/dao/mongodao"
+	"ControlCenter/model/mongomodel"
 	"ControlCenter/pkg/bootstrap"
 	"context"
 )
@@ -17,5 +18,18 @@ func (d *MongoDB) Init(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	// 初始化索引
+	var needInitIndex = []mongomodel.Model{
+		&mongomodel.ModelAssetsOnlineRate{},
+	}
+
+	for i := range needInitIndex {
+		err := needInitIndex[i].InitIndex(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

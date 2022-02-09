@@ -25,6 +25,10 @@ type ModelUser struct {
 	Nickname string    `json:"nickname" bson:"nickname"`
 }
 
+func (m *ModelUser) InitIndex(ctx context.Context) error {
+	return nil
+}
+
 func (m *ModelUser) CollectionName() string {
 	return "user"
 }

@@ -2,6 +2,7 @@ package mongomodel
 
 import (
 	"ControlCenter/dao/mongodao"
+	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -15,6 +16,10 @@ type ModelServer struct {
 	BytesSent        int64               `json:"bytes_sent" bson:"bytes_sent"`
 	BytesRev         int64               `json:"bytes_rev" bson:"bytes_rev"`
 	LastUpdated      int64               `json:"last_updated" bson:"last_updated"`
+}
+
+func (m *ModelServer) InitIndex(ctx context.Context) error {
+	return nil
 }
 
 type NetworkInterface struct {
