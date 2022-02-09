@@ -27,8 +27,9 @@ type TimeEncoder = zapcore.TimeEncoder
 type EncoderConfig = zapcore.EncoderConfig
 
 var (
-	String = zap.String
-	Uint64 = zap.Uint64
+	String  = zap.String
+	Uint64  = zap.Uint64
+	Strings = zap.Strings
 )
 
 type Logger struct {
