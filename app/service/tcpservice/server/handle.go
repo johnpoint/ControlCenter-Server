@@ -15,6 +15,13 @@ import (
 	"time"
 )
 
+const onlineRateKey = "s:ccs-ng:server_online_rate:"
+
+type OfflineData struct {
+	DownTime  int64 `json:"down_time"`
+	OfflineAt int64 `json:"offline_at"`
+}
+
 type Handle struct {
 	*gnet.EventServer
 }
@@ -42,16 +49,31 @@ func (t *Handle) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
 }
 
 func (t *Handle) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
-	if err != nil {
-		log.Error("tcpServer", log.Strings("step", []string{"OnClosed", c.RemoteAddr().String(), err.Error()}))
-	} else {
-		log.Info("tcpServer", log.String("step", "OnClosed "+c.RemoteAddr().String()))
-	}
+	var logStr = []string{"OnClosed"}
 	r, ok := c.Context().(tcpservice.DataStruct)
+	if ok {
+		logStr = append(logStr, r.ServerID, r.ChannelID)
+	}
+	if err != nil {
+		logStr = append(logStr, err.Error())
+		log.Error("tcpServer", log.Strings("step", logStr))
+	} else {
+		log.Info("tcpServer", log.Strings("step", logStr))
+	}
 	if !ok {
 		return gnet.Close
 	}
+
 	connMap.Delete(r.ChannelID)
+
+	if len(r.ServerID) != 0 {
+		var data OfflineData
+		result, _ := redisdao.GetClient().Get(context.Background(), fmt.Sprintf("%s%s:%s", onlineRateKey, time.Now().Format("20060102"), r.ServerID)).Result()
+		_ = jsoniter.Unmarshal([]byte(result), &data)
+		data.OfflineAt = time.Now().UnixNano() / 1e6
+		item, _ := jsoniter.Marshal(&data)
+		redisdao.GetClient().Set(context.Background(), fmt.Sprintf("%s%s:%s", onlineRateKey, time.Now().Format("20060102"), r.ServerID), string(item), 25*time.Hour)
+	}
 	return
 }
 
@@ -71,6 +93,7 @@ func (t *Handle) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Actio
 	})
 	if !r.NotNew {
 		r.NotNew = true
+		r.ServerID = commandItem.ServerId
 		tcpservice.NewListener(c)
 		c.SetContext(r)
 	}
@@ -83,7 +106,19 @@ func (t *Handle) React(frame []byte, c gnet.Conn) (out []byte, action gnet.Actio
 
 		_, err = redisdao.GetClient().Set(context.Background(), fmt.Sprintf("%s%s", redisdao.ServerAliveKey, commandItem.ServerId), "", 10*time.Second).Result()
 		if err != nil {
-			// TODO: 日志以及告警
+			log.Error("tcpServer", log.String("info", err.Error()))
+		}
+	} else {
+		if len(r.ServerID) != 0 {
+			var data OfflineData
+			result, _ := redisdao.GetClient().Get(context.Background(), fmt.Sprintf("%s%s:%s", onlineRateKey, time.Now().Format("20060102"), r.ServerID)).Result()
+			_ = jsoniter.Unmarshal([]byte(result), &data)
+			if data.OfflineAt != 0 {
+				data.DownTime += time.Now().UnixNano()/1e6 - data.OfflineAt
+				data.OfflineAt = 0
+			}
+			item, _ := jsoniter.Marshal(&data)
+			redisdao.GetClient().Set(context.Background(), fmt.Sprintf("%s%s:%s", onlineRateKey, time.Now().Format("20060102"), r.ServerID), string(item), 25*time.Hour)
 		}
 	}
 
