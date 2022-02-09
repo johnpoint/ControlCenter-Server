@@ -33,8 +33,8 @@ var clientCommand = &cobra.Command{
 
 		select {
 		case signal := <-stopChan:
-			log.Info("signal", log.String("info", "Catch signal:"+signal.String()+",and wait 30 sec"))
-			time.Sleep(30 * time.Second)
+			log.Info("signal", log.String("info", "Catch signal:"+signal.String()+",and wait 5 sec"))
+			time.Sleep(5 * time.Second)
 			return
 		}
 	},
