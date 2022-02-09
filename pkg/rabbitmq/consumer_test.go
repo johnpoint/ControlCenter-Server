@@ -24,7 +24,6 @@ func TestConsumer(t *testing.T) {
 		PrefetchCount:   5,
 	}).
 		SetHandle(func(ctx context.Context, delivery *amqp.Delivery) Action {
-			defer delivery.Ack(true)
 			for i := 0; i < 10; i++ {
 				fmt.Println(i)
 				time.Sleep(time.Second)
