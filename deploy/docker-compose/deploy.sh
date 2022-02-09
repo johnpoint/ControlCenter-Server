@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x
+#set -x
 export USERID=${UID}
 export GROUPID=${GID}
 export RABBITMQ_USERNAME="admin"
