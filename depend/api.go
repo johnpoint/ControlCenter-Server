@@ -6,8 +6,8 @@ import (
 	"ControlCenter/pkg/apimiddleware"
 	"ControlCenter/pkg/apimiddleware/session"
 	"ControlCenter/pkg/bootstrap"
+	"ControlCenter/pkg/log"
 	"context"
-	"fmt"
 	"github.com/gin-contrib/cors"
 	"time"
 
@@ -92,7 +92,7 @@ func (d *Api) Init(ctx context.Context) error {
 	}
 
 	go func() {
-		fmt.Println("[init] HTTP Listen at " + config.Config.HttpServerListen)
+		log.Info("gin", log.String("info", "HTTP Listen at "+config.Config.HttpServerListen))
 		err := routerGin.Run(config.Config.HttpServerListen)
 		if err != nil {
 			panic(err)

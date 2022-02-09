@@ -3,8 +3,8 @@ package cmd
 import (
 	"ControlCenter/depend"
 	"ControlCenter/pkg/bootstrap"
+	"ControlCenter/pkg/log"
 	"context"
-	"fmt"
 	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
@@ -28,7 +28,7 @@ var tcpServerCommand = &cobra.Command{
 			//		tcpProto.RegisterTcpServerServiceServer(grpcServer, &grpcService.TcpServerService{})
 			//	},
 			//},
-		).Init(ctx)
+		).WithLogger(log.GetLogger()).Init(ctx)
 		if err != nil {
 			panic(err)
 			return
@@ -39,7 +39,7 @@ var tcpServerCommand = &cobra.Command{
 
 		select {
 		case signal := <-stopChan:
-			fmt.Println("[System] Catch signal:" + signal.String() + ",and wait 30 sec")
+			log.Info("signal", log.String("info", "Catch signal:"+signal.String()+",and wait 30 sec"))
 			time.Sleep(30 * time.Second)
 			return
 		}

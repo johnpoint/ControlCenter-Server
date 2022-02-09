@@ -3,8 +3,8 @@ package cmd
 import (
 	"ControlCenter/depend"
 	"ControlCenter/pkg/bootstrap"
+	"ControlCenter/pkg/log"
 	"context"
-	"fmt"
 	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
@@ -23,7 +23,7 @@ var httpServerCommand = &cobra.Command{
 			&depend.MongoDB{},
 			&depend.Influxdb{},
 			&depend.Api{},
-		).Init(ctx)
+		).WithLogger(log.GetLogger()).Init(ctx)
 		if err != nil {
 			panic(err)
 			return
@@ -34,7 +34,7 @@ var httpServerCommand = &cobra.Command{
 
 		select {
 		case signal := <-stopChan:
-			fmt.Println("[System] Catch signal:" + signal.String() + ",and wait 30 sec")
+			log.Info("signal", log.String("info", "Catch signal:"+signal.String()+",and wait 30 sec"))
 			time.Sleep(30 * time.Second)
 			return
 		}
