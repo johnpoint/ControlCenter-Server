@@ -1,10 +1,9 @@
 package rabbitmq
 
 import (
-	"ControlCenter/pkg/log"
 	"errors"
 	"fmt"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type producer struct {
@@ -17,7 +16,7 @@ type producer struct {
 	sendBodyLength int
 	sendBody       chan []byte
 	alarm          Alarm
-	logger         *log.Logger
+	logger         Logger
 }
 
 func (p *producer) Validate() error {
@@ -28,7 +27,7 @@ func (p *producer) Validate() error {
 		p.contentType = "text/plain"
 	}
 	if p.logger == nil {
-		p.logger = log.GetLogger()
+		p.logger = NewDefaultLogger()
 	}
 	if p.channel.config.ChannelNum == 0 {
 		p.channel.config.ChannelNum = 1

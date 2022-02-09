@@ -10,7 +10,7 @@ import (
 	"context"
 	"github.com/golang/protobuf/proto"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 // TaskConsumer 任务队列消费者

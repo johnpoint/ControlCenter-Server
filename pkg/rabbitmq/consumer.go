@@ -1,22 +1,22 @@
 package rabbitmq
 
 import (
-	"ControlCenter/pkg/log"
 	"context"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
 
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type consumer struct {
 	ctx     context.Context
-	logger  *log.Logger
+	logger  Logger
 	alarm   Alarm
 	channel *channel
 	close   bool
@@ -28,7 +28,7 @@ func (c *consumer) Validate() error {
 		return errors.New("channel is nil")
 	}
 	if c.logger == nil {
-		c.logger = log.GetLogger()
+		c.logger = NewDefaultLogger()
 	}
 	if c.channel.config == nil {
 		return errors.New("channel config is nil")
@@ -156,7 +156,7 @@ RUNLOOP:
 	c.channel.Chan[channelIndex].NotifyClose(cc)
 	delivery, err := c.GetDelivery(channelIndex)
 	if err != nil {
-		c.logger.Error("consumer.doHandlerLoop", log.String("info", fmt.Sprintf("can't get delivery: %+v", err)))
+		c.logger.Error("consumer.doHandlerLoop", zap.String("info", fmt.Sprintf("can't get delivery: %+v", err)))
 		time.Sleep(3 * time.Second)
 		goto RUNLOOP
 	}
@@ -177,17 +177,17 @@ RUNLOOP:
 				case Ack:
 					err := msg.Ack(false)
 					if err != nil {
-						c.logger.Error("consumer.doHandlerLoop", log.String("info", "can't ack message: "+err.Error()))
+						c.logger.Error("consumer.doHandlerLoop", zap.String("info", "can't ack message: "+err.Error()))
 					}
 				case NackDiscard:
 					err := msg.Nack(false, false)
 					if err != nil {
-						c.logger.Error("consumer.doHandlerLoop", log.String("info", "can't nack message: "+err.Error()))
+						c.logger.Error("consumer.doHandlerLoop", zap.String("info", "can't nack message: "+err.Error()))
 					}
 				case NackRequeue:
 					err := msg.Nack(false, true)
 					if err != nil {
-						c.logger.Error("consumer.doHandlerLoop", log.String("info", "can't nack message: "+err.Error()))
+						c.logger.Error("consumer.doHandlerLoop", zap.String("info", "can't nack message: "+err.Error()))
 					}
 				}
 				c.wait.Done()

@@ -14,9 +14,9 @@ require (
 	github.com/influxdata/influxdb-client-go/v2 v2.6.0
 	github.com/json-iterator/go v1.1.12
 	github.com/panjf2000/gnet v1.6.0
+	github.com/rabbitmq/amqp091-go v1.3.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/spf13/cobra v1.2.1
-	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
 	go.mongodb.org/mongo-driver v1.7.3
 	go.uber.org/zap v1.19.1

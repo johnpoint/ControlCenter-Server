@@ -1,14 +1,13 @@
 package rabbitmq
 
 import (
-	"ControlCenter/pkg/log"
 	"errors"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"sync"
 )
 
 type channel struct {
-	logger *log.Logger
+	logger Logger
 	Chan   []*amqp.Channel
 	Conn   *amqp.Connection
 	config *Config

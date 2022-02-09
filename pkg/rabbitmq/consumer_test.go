@@ -3,7 +3,7 @@ package rabbitmq
 import (
 	"context"
 	"fmt"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,14 +23,14 @@ func TestConsumer(t *testing.T) {
 		DeliveryMode:    2,
 		PrefetchCount:   5,
 	}).
-		SetHandle(func(ctx context.Context, delivery *amqp.Delivery) error {
+		SetHandle(func(ctx context.Context, delivery *amqp.Delivery) Action {
 			defer delivery.Ack(true)
 			for i := 0; i < 10; i++ {
 				fmt.Println(i)
 				time.Sleep(time.Second)
 			}
 			fmt.Println(string(delivery.Body))
-			return nil
+			return Ack
 		}).
 		StartConsumer()
 	ch1 := make(chan os.Signal)

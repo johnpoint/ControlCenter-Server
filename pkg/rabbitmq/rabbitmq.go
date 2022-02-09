@@ -1,10 +1,9 @@
 package rabbitmq
 
 import (
-	"ControlCenter/pkg/log"
 	"context"
 	"errors"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"time"
 )
 
@@ -15,7 +14,7 @@ type RabbitMQ struct {
 	producer *producer
 	handle   func(context.Context, *amqp.Delivery) Action
 	config   *Config
-	logger   log.Logger
+	logger   Logger
 }
 
 func (r *RabbitMQ) WithContext(ctx context.Context) *RabbitMQ {
@@ -25,6 +24,11 @@ func (r *RabbitMQ) WithContext(ctx context.Context) *RabbitMQ {
 
 func (r *RabbitMQ) SetAlarm(alarm Alarm) *RabbitMQ {
 	r.alarm = alarm
+	return r
+}
+
+func (r *RabbitMQ) WithLogger(logger Logger) *RabbitMQ {
+	r.logger = logger
 	return r
 }
 
