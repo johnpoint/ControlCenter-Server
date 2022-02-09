@@ -32,14 +32,13 @@ func ListTicket(c *gin.Context) {
 		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
 		return
 	}
-	var user mongomodel.ModelUser
-	_ = user.DB().FindOne(c, bson.M{"_id": userID}).Decode(&user)
-	if len(user.ID) == 0 {
+	user, err := getUserInfoByUserID(c, userID)
+	if err != nil {
 		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
 		return
 	}
 	var reqData ListTicketReq
-	err := c.BindJSON(&reqData)
+	err = c.BindJSON(&reqData)
 	if err != nil {
 		returnErrorMsg(c, errorhelper.WarpErr(infra.ReqParseError, err))
 		return
@@ -249,9 +248,8 @@ func GetTicket(c *gin.Context) {
 		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
 		return
 	}
-	var user mongomodel.ModelUser
-	_ = user.DB().FindOne(c, bson.M{"_id": userID}).Decode(&user)
-	if len(user.ID) == 0 {
+	user, err := getUserInfoByUserID(c, userID)
+	if err != nil {
 		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
 		return
 	}

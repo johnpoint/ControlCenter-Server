@@ -73,7 +73,7 @@ func (d *Api) Init(ctx context.Context) error {
 
 	server := api.Group("/server") // 服务器模块
 	{
-		server.GET("", controller.GetServerList)                      // 服务器列表
+		server.POST("", controller.GetServerList)                     // 服务器列表
 		server.PUT("", controller.SetUpNewServer)                     // 新建服务器信息
 		server.GET("/:uuid", controller.GetServerInfo)                // 服务器详细信息
 		server.POST("/:uuid/chart", controller.ServerChartController) // 服务器性能信息绘图
@@ -81,8 +81,8 @@ func (d *Api) Init(ctx context.Context) error {
 
 	certificate := api.Group("/certificate") // 证书模块
 	{
-		certificate.GET("", controller.Pong)       // 证书列表
-		certificate.GET("/:uuid", controller.Pong) // 证书详细信息
+		certificate.POST("", controller.CertificateList) // 证书列表
+		certificate.GET("/:uuid", controller.Pong)       // 证书详细信息
 	}
 
 	configuration := api.Group("/configuration") // 配置文件模块

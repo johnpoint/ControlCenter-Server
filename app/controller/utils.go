@@ -2,8 +2,15 @@ package controller
 
 import (
 	"ControlCenter/config"
+	"ControlCenter/dao/redisdao"
+	"ControlCenter/model/mongomodel"
 	"ControlCenter/pkg/errorhelper"
+	"context"
+	"fmt"
+	jsoniter "github.com/json-iterator/go"
+	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,4 +66,23 @@ func getUserIDFromContext(c *gin.Context) (string, bool) {
 		return userID.(string), exists
 	}
 	return "", exists
+}
+
+const userInfoCache = "s:ccs-ng:cache:user_info:"
+
+func getUserInfoByUserID(ctx context.Context, userID string) (mongomodel.ModelUser, error) {
+	var u mongomodel.ModelUser
+	result, _ := redisdao.GetClient().Get(ctx, fmt.Sprintf("%s%s", userInfoCache, userID)).Result()
+	err := jsoniter.Unmarshal([]byte(result), &u)
+	if err != nil || len(u.ID) == 0 {
+		err = u.DB().FindOne(ctx, bson.M{
+			"_id": userID,
+		}).Decode(&u)
+		if err != nil {
+			return mongomodel.ModelUser{}, err
+		}
+		cache, _ := jsoniter.Marshal(&u)
+		redisdao.GetClient().Set(ctx, fmt.Sprintf("%s%s", userInfoCache, userID), string(cache), 72*time.Hour)
+	}
+	return u, nil
 }

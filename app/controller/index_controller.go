@@ -32,8 +32,11 @@ func Index(c *gin.Context) {
 		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
 		return
 	}
-	var user mongomodel.ModelUser
-	user.DB().FindOne(c, bson.M{"_id": userID}).Decode(&user)
+	user, err := getUserInfoByUserID(c, userID)
+	if err != nil {
+		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
+		return
+	}
 	var assets mongomodel.ModelAssets
 	var data = make([]*Assets, 0)
 	cur, err := assets.DB().Aggregate(c, []bson.M{
