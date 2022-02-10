@@ -16,6 +16,7 @@ func AddGlobalComponent(components ...Component) {
 
 func NewBoot(ctx context.Context, components ...Component) *Helper {
 	return &Helper{
+		ctx:        ctx,
 		components: components,
 		logger:     NewDefaultLogger(),
 	}
