@@ -22,6 +22,7 @@ func NewBoot(ctx context.Context, components ...Component) *Helper {
 }
 
 type Helper struct {
+	ctx        context.Context
 	logger     Logger
 	components []Component
 }
@@ -31,10 +32,15 @@ func (i *Helper) WithLogger(logger Logger) *Helper {
 	return i
 }
 
-func (i *Helper) loadGlobalComponent(ctx context.Context) error {
+func (i *Helper) WithContext(ctx context.Context) *Helper {
+	i.ctx = ctx
+	return i
+}
+
+func (i *Helper) loadGlobalComponent() error {
 	for j := range globalComponent {
 		i.logger.Info("Bootstrap", zap.String("step", reflect.TypeOf(globalComponent[j]).String()))
-		err := globalComponent[j].Init(ctx)
+		err := globalComponent[j].Init(i.ctx)
 		if err != nil {
 			return err
 		}
@@ -42,10 +48,10 @@ func (i *Helper) loadGlobalComponent(ctx context.Context) error {
 	return nil
 }
 
-func (i *Helper) loadComponent(ctx context.Context) error {
+func (i *Helper) loadComponent() error {
 	for j := range i.components {
 		i.logger.Info("Bootstrap", zap.String("step", reflect.TypeOf(i.components[j]).String()))
-		err := i.components[j].Init(ctx)
+		err := i.components[j].Init(i.ctx)
 		if err != nil {
 			return err
 		}
@@ -53,13 +59,16 @@ func (i *Helper) loadComponent(ctx context.Context) error {
 	return nil
 }
 
-func (i *Helper) InitWithoutGlobalComponent(ctx context.Context) error {
+func (i *Helper) InitWithoutGlobalComponent() error {
 	if i.logger == nil {
 		i.logger = NewDefaultLogger()
 	}
+	if i.ctx == nil {
+		i.ctx = context.TODO()
+	}
 	i.logger.Info("Bootstrap", zap.String("step", "start"))
 	rand.Seed(time.Now().UnixNano())
-	err := i.loadComponent(ctx)
+	err := i.loadComponent()
 	if err != nil {
 		return err
 	}
@@ -67,17 +76,17 @@ func (i *Helper) InitWithoutGlobalComponent(ctx context.Context) error {
 	return nil
 }
 
-func (i *Helper) Init(ctx context.Context) error {
+func (i *Helper) Init() error {
 	if i.logger == nil {
 		i.logger = NewDefaultLogger()
 	}
 	i.logger.Info("Bootstrap", zap.String("step", "start"))
 	rand.Seed(time.Now().UnixNano())
-	err := i.loadGlobalComponent(ctx)
+	err := i.loadGlobalComponent()
 	if err != nil {
 		return err
 	}
-	err = i.loadComponent(ctx)
+	err = i.loadComponent()
 	if err != nil {
 		return err
 	}
