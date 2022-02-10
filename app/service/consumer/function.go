@@ -57,6 +57,25 @@ func UpdateServerPerformanceData(ctx context.Context, item *cProto.CommandItem) 
 			}
 		}
 
+		var networkInterfaceInfoMap = make(map[string]*mongomodel.InterfaceInfo, 0)
+		for i := range data.NetInterfaceStat {
+			networkInterfaceInfoMap[data.NetInterfaceStat[i].Name] = &mongomodel.InterfaceInfo{
+				Name:      data.NetInterfaceStat[i].Name,
+				BytesSent: data.NetInterfaceStat[i].BytesSent,
+				BytesRecv: data.NetInterfaceStat[i].BytesRecv,
+			}
+		}
+
+		var networkInterfaceInfo = make([]*mongomodel.InterfaceInfo, 0)
+		for i := range data.InterfaceStat {
+			if info, has := networkInterfaceInfoMap[data.InterfaceStat[i].Name]; has {
+				for j := range data.InterfaceStat[i].Addrs {
+					info.Addr = append(info.Addr, data.InterfaceStat[i].Addrs[j].Addr)
+				}
+				networkInterfaceInfo = append(networkInterfaceInfo, info)
+			}
+		}
+
 		// 更新数据库内数据
 		var svr mongomodel.ModelServer
 		_, err := svr.DB().UpdateOne(ctx, bson.M{
@@ -68,6 +87,17 @@ func UpdateServerPerformanceData(ctx context.Context, item *cProto.CommandItem) 
 				"bytes_rev":      rev,
 				"last_updated":   time.Now().UnixNano() / 1e6,
 				"partition_stat": data.PartitionStat,
+				"system_state": &mongomodel.SystemInfo{
+					OS:                   data.SystemInfoStat.OS,
+					Platform:             data.SystemInfoStat.Platform,
+					PlatformFamily:       data.SystemInfoStat.PlatformFamily,
+					PlatformVersion:      data.SystemInfoStat.PlatformVersion,
+					KernelVersion:        data.SystemInfoStat.KernelVersion,
+					KernelArch:           data.SystemInfoStat.KernelArch,
+					VirtualizationSystem: data.SystemInfoStat.VirtualizationSystem,
+					VirtualizationRole:   data.SystemInfoStat.VirtualizationRole,
+				},
+				"network_interface": networkInterfaceInfo,
 			},
 		})
 		if err != nil {

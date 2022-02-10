@@ -160,13 +160,12 @@ func SetUpNewServer(c *gin.Context) {
 }
 
 type GetServerResp struct {
-	RemarkName  string           `json:"remark_name"`
-	Uptime      int64            `json:"uptime"`
-	Load        *mongomodel.Load `json:"load"`
-	State       int              `json:"state"`
-	Sent        int64            `json:"sent"`
-	Rev         int64            `json:"rev"`
-	LastUpdated int64            `json:"last_updated"`
+	RemarkName  string                 `json:"remark_name"`
+	Uptime      int64                  `json:"uptime"`
+	Load        *mongomodel.Load       `json:"load"`
+	State       int                    `json:"state"`
+	SystemState *mongomodel.SystemInfo `json:"system_state"`
+	LastUpdated int64                  `json:"last_updated"`
 }
 
 func GetServerInfo(c *gin.Context) {
@@ -201,8 +200,41 @@ func GetServerInfo(c *gin.Context) {
 		Load:        svr.Load,
 		State:       state,
 		Uptime:      uptimeInt,
+		LastUpdated: svr.LastUpdated,
+		SystemState: svr.SystemState,
+	}
+	returnSuccessMsg(c, "", &resp)
+}
+
+type GetServerNetworkInfoResp struct {
+	Sent        int64                       `json:"sent"`
+	Rev         int64                       `json:"rev"`
+	Interface   []*mongomodel.InterfaceInfo `json:"interface"`
+	LastUpdated int64                       `json:"last_updated"`
+}
+
+func GetServerNetworkInfo(c *gin.Context) {
+	uuid := c.Param("uuid")
+	userID, exists := getUserIDFromContext(c)
+	if !exists {
+		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
+		return
+	}
+	model, err := assets.NewAssetsServer(c, uuid, userID).Get()
+	if err != nil {
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
+		return
+	}
+	svr, ok := model.(*mongomodel.ModelServer)
+	if !ok {
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
+		return
+	}
+
+	var resp = GetServerNetworkInfoResp{
 		Sent:        svr.BytesSent,
 		Rev:         svr.BytesRev,
+		Interface:   svr.NetworkInterface,
 		LastUpdated: svr.LastUpdated,
 	}
 	returnSuccessMsg(c, "", &resp)
