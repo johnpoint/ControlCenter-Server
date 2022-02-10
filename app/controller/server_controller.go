@@ -160,14 +160,13 @@ func SetUpNewServer(c *gin.Context) {
 }
 
 type GetServerResp struct {
-	RemarkName    string                `json:"remark_name"`
-	Uptime        int64                 `json:"uptime"`
-	Load          *mongomodel.Load      `json:"load"`
-	State         int                   `json:"state"`
-	Sent          int64                 `json:"sent"`
-	Rev           int64                 `json:"rev"`
-	LastUpdated   int64                 `json:"last_updated"`
-	PartitionStat []*disk.PartitionStat `json:"partition_stat"`
+	RemarkName  string           `json:"remark_name"`
+	Uptime      int64            `json:"uptime"`
+	Load        *mongomodel.Load `json:"load"`
+	State       int              `json:"state"`
+	Sent        int64            `json:"sent"`
+	Rev         int64            `json:"rev"`
+	LastUpdated int64            `json:"last_updated"`
 }
 
 func GetServerInfo(c *gin.Context) {
@@ -198,12 +197,51 @@ func GetServerInfo(c *gin.Context) {
 	uptimeInt, _ := strconv.ParseInt(uptime, 10, 64)
 
 	var resp = GetServerResp{
-		RemarkName:    svr.RemarkName,
-		Load:          svr.Load,
-		State:         state,
-		Uptime:        uptimeInt,
-		Sent:          svr.BytesSent,
-		Rev:           svr.BytesRev,
+		RemarkName:  svr.RemarkName,
+		Load:        svr.Load,
+		State:       state,
+		Uptime:      uptimeInt,
+		Sent:        svr.BytesSent,
+		Rev:         svr.BytesRev,
+		LastUpdated: svr.LastUpdated,
+	}
+	returnSuccessMsg(c, "", &resp)
+}
+
+type GetServerPartitionReq struct {
+	PaginationReq
+}
+
+type GetServerPartitionResp struct {
+	LastUpdated   int64                 `json:"last_updated"`
+	PartitionStat []*disk.PartitionStat `json:"partition_stat"`
+}
+
+func GetServerPartitionInfo(c *gin.Context) {
+	var req GetServerPartitionReq
+	err := c.BindJSON(&req)
+	if err != nil {
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ReqParseError, err))
+		return
+	}
+	uuid := c.Param("uuid")
+	userID, exists := getUserIDFromContext(c)
+	if !exists {
+		returnErrorMsg(c, infra.ErrNeedVerifyInfo)
+		return
+	}
+	model, err := assets.NewAssetsServer(c, uuid, userID).Get()
+	if err != nil {
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
+		return
+	}
+	svr, ok := model.(*mongomodel.ModelServer)
+	if !ok {
+		returnErrorMsg(c, errorhelper.WarpErr(infra.ErrAssetsAuthorityError, err))
+		return
+	}
+
+	var resp = GetServerPartitionResp{
 		LastUpdated:   svr.LastUpdated,
 		PartitionStat: svr.PartitionStat,
 	}

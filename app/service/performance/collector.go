@@ -89,7 +89,7 @@ func (c *Collector) getDisk() error {
 	if c.Err != nil {
 		return c.Err
 	}
-	if len(c.Data.PartitionStat) > 30 {
+	if len(c.Data.PartitionStat) > 50 {
 		c.Data.PartitionStat = make([]disk.PartitionStat, 0)
 	}
 	return nil

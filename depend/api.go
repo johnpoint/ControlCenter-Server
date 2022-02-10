@@ -73,10 +73,11 @@ func (d *Api) Init(ctx context.Context) error {
 
 	server := api.Group("/server") // 服务器模块
 	{
-		server.POST("", controller.GetServerList)                     // 服务器列表
-		server.PUT("", controller.SetUpNewServer)                     // 新建服务器信息
-		server.GET("/:uuid", controller.GetServerInfo)                // 服务器详细信息
-		server.POST("/:uuid/chart", controller.ServerChartController) // 服务器性能信息绘图
+		server.POST("", controller.GetServerList)                          // 服务器列表
+		server.PUT("", controller.SetUpNewServer)                          // 新建服务器信息
+		server.GET("/:uuid", controller.GetServerInfo)                     // 服务器详细信息
+		server.POST("/:uuid/chart", controller.ServerChartController)      // 服务器性能信息绘图
+		server.POST("/:uuid/partition", controller.GetServerPartitionInfo) // 服务器分区信息
 	}
 
 	certificate := api.Group("/certificate") // 证书模块
