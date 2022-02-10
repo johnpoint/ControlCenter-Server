@@ -79,5 +79,5 @@ func Index(c *gin.Context) {
 		Nickname: user.Nickname,
 	}
 
-	returnSuccessMsg(c, "", resp)
+	returnSuccessMsg(c, "", &resp)
 }

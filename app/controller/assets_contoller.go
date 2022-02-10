@@ -83,5 +83,5 @@ func AssetsList(c *gin.Context) {
 		})
 	}
 	resp.Data = respList
-	returnSuccessMsg(c, "", resp)
+	returnSuccessMsg(c, "", &resp)
 }

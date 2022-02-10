@@ -94,7 +94,7 @@ func ListTicket(c *gin.Context) {
 		})
 	}
 	resp.Data = respItems
-	returnSuccessMsg(c, "", resp)
+	returnSuccessMsg(c, "", &resp)
 }
 
 func CloseTicket(c *gin.Context) {
@@ -180,7 +180,7 @@ func CreateTicket(c *gin.Context) {
 	}
 	var resp CreateTicketResp
 	resp.ID = id.InsertedID.(string)
-	returnSuccessMsg(c, "", resp)
+	returnSuccessMsg(c, "", &resp)
 }
 
 type PostTicketReq struct {

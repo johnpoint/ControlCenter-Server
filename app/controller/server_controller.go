@@ -207,7 +207,7 @@ func GetServerInfo(c *gin.Context) {
 		LastUpdated:   svr.LastUpdated,
 		PartitionStat: svr.PartitionStat,
 	}
-	returnSuccessMsg(c, "", resp)
+	returnSuccessMsg(c, "", &resp)
 }
 
 type GetServerListReq struct {
@@ -278,7 +278,7 @@ func GetServerList(c *gin.Context) {
 		}
 	}
 	if len(svrIDs) == 0 {
-		returnSuccessMsg(c, "", resp)
+		returnSuccessMsg(c, "", &resp)
 		return
 	}
 	var svr mongomodel.ModelServer
@@ -316,5 +316,5 @@ func GetServerList(c *gin.Context) {
 		})
 	}
 	resp.Data = respList
-	returnSuccessMsg(c, "", resp)
+	returnSuccessMsg(c, "", &resp)
 }
