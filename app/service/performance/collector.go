@@ -20,6 +20,7 @@ type Data struct {
 	SwapMemoryStat   *mem.SwapMemoryStat    `json:"swap_memory_stat"`   // 虚拟内存
 	CPUStat          *CPUStat               `json:"cpu_stat"`           // CPU 信息
 	DiskUsageStat    *disk.UsageStat        `json:"disk_usage_stat"`    // 硬盘信息
+	PartitionStat    []disk.PartitionStat   `json:"partition_stat"`     // 分区信息
 	SystemInfoStat   *host.InfoStat         `json:"system_info_stat"`   // 系统基本信息
 	NetInterfaceStat []net.IOCountersStat   `json:"net_interface_stat"` // 网卡信息
 	Load             *load.AvgStat          `json:"load"`               // 负载
@@ -83,6 +84,13 @@ func (c *Collector) getDisk() error {
 	c.Data.DiskUsageStat, c.Err = disk.Usage("/")
 	if c.Err != nil {
 		return c.Err
+	}
+	c.Data.PartitionStat, c.Err = disk.Partitions(true)
+	if c.Err != nil {
+		return c.Err
+	}
+	if len(c.Data.PartitionStat) > 30 {
+		c.Data.PartitionStat = make([]disk.PartitionStat, 0)
 	}
 	return nil
 }

@@ -45,6 +45,7 @@ func UpdateServerPerformanceData(ctx context.Context, item *cProto.CommandItem) 
 
 	// 十分之一的机率更新 load
 	if rand.Intn(10) == 5 {
+		// 流量统计
 		var sent, rev uint64
 		for i := range data.InterfaceStat {
 			for j := range data.InterfaceStat[i].Addrs {
@@ -55,15 +56,18 @@ func UpdateServerPerformanceData(ctx context.Context, item *cProto.CommandItem) 
 				}
 			}
 		}
+
+		// 更新数据库内数据
 		var svr mongomodel.ModelServer
 		_, err := svr.DB().UpdateOne(ctx, bson.M{
 			"_id": item.ServerId,
 		}, bson.M{
 			"$set": bson.M{
-				"load":         data.Load,
-				"bytes_sent":   sent,
-				"bytes_rev":    rev,
-				"last_updated": time.Now().UnixNano() / 1e6,
+				"load":           data.Load,
+				"bytes_sent":     sent,
+				"bytes_rev":      rev,
+				"last_updated":   time.Now().UnixNano() / 1e6,
+				"partition_stat": data.PartitionStat,
 			},
 		})
 		if err != nil {

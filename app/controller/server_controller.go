@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/shirou/gopsutil/disk"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -158,14 +159,15 @@ func SetUpNewServer(c *gin.Context) {
 	returnSuccessMsg(c, "OK", resp)
 }
 
-type GetServerReq struct {
-	RemarkName  string           `json:"remark_name"`
-	Uptime      int64            `json:"uptime"`
-	Load        *mongomodel.Load `json:"load"`
-	State       int              `json:"state"`
-	Sent        int64            `json:"sent"`
-	Rev         int64            `json:"rev"`
-	LastUpdated int64            `json:"last_updated"`
+type GetServerResp struct {
+	RemarkName    string                `json:"remark_name"`
+	Uptime        int64                 `json:"uptime"`
+	Load          *mongomodel.Load      `json:"load"`
+	State         int                   `json:"state"`
+	Sent          int64                 `json:"sent"`
+	Rev           int64                 `json:"rev"`
+	LastUpdated   int64                 `json:"last_updated"`
+	PartitionStat []*disk.PartitionStat `json:"partition_stat"`
 }
 
 func GetServerInfo(c *gin.Context) {
@@ -195,14 +197,15 @@ func GetServerInfo(c *gin.Context) {
 	uptime, _ := redisdao.GetClient().Get(c, fmt.Sprintf("%s%s", redisdao.ServerUptimeKey, uuid)).Result()
 	uptimeInt, _ := strconv.ParseInt(uptime, 10, 64)
 
-	var resp = GetServerReq{
-		RemarkName:  svr.RemarkName,
-		Load:        svr.Load,
-		State:       state,
-		Uptime:      uptimeInt,
-		Sent:        svr.BytesSent,
-		Rev:         svr.BytesRev,
-		LastUpdated: svr.LastUpdated,
+	var resp = GetServerResp{
+		RemarkName:    svr.RemarkName,
+		Load:          svr.Load,
+		State:         state,
+		Uptime:        uptimeInt,
+		Sent:          svr.BytesSent,
+		Rev:           svr.BytesRev,
+		LastUpdated:   svr.LastUpdated,
+		PartitionStat: svr.PartitionStat,
 	}
 	returnSuccessMsg(c, "", resp)
 }
