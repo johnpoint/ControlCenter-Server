@@ -22,7 +22,7 @@ var clientCommand = &cobra.Command{
 			&depend.TcpClientAuth{},
 			&depend.PerformanceCollector{},
 			&depend.HeartBeat{},
-		).WithLogger(log.GetLogger()).Init(ctx)
+		).WithLogger(log.GetLogger()).Init()
 		if err != nil {
 			panic(err)
 			return

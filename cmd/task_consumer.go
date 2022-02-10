@@ -19,7 +19,7 @@ var taskConsumerCommand = &cobra.Command{
 		ctx := context.Background()
 		err := bootstrap.NewBoot(ctx,
 			&depend.TaskConsumer{},
-		).WithLogger(log.GetLogger()).Init(ctx)
+		).WithLogger(log.GetLogger()).Init()
 		if err != nil {
 			panic(err)
 			return

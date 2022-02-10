@@ -28,7 +28,7 @@ var tcpServerCommand = &cobra.Command{
 			//		tcpProto.RegisterTcpServerServiceServer(grpcServer, &grpcService.TcpServerService{})
 			//	},
 			//},
-		).WithLogger(log.GetLogger()).Init(ctx)
+		).WithLogger(log.GetLogger()).Init()
 		if err != nil {
 			panic(err)
 			return

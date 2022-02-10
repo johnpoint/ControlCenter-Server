@@ -22,7 +22,7 @@ var tcpServerConsumerCommand = &cobra.Command{
 			&depend.MongoDB{},
 			&depend.PerformanceProducer{},
 			&depend.TcpServerConsumer{},
-		).WithLogger(log.GetLogger()).Init(ctx)
+		).WithLogger(log.GetLogger()).Init()
 		if err != nil {
 			panic(err)
 			return

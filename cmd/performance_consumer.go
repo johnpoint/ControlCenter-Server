@@ -20,7 +20,7 @@ var performanceConsumerCommand = &cobra.Command{
 		err := bootstrap.NewBoot(ctx,
 			&depend.Influxdb{},
 			&depend.PerformanceConsumer{},
-		).WithLogger(log.GetLogger()).Init(ctx)
+		).WithLogger(log.GetLogger()).Init()
 		if err != nil {
 			panic(err)
 			return

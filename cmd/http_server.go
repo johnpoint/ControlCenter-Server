@@ -23,7 +23,7 @@ var httpServerCommand = &cobra.Command{
 			&depend.MongoDB{},
 			&depend.Influxdb{},
 			&depend.Api{},
-		).WithLogger(log.GetLogger()).Init(ctx)
+		).WithLogger(log.GetLogger()).Init()
 		if err != nil {
 			panic(err)
 			return
